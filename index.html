@@ -232,7 +232,18 @@
   .badge{ font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; letter-spacing:.2px; }
   .badge.cash{ background:rgba(227,169,59,0.18); color:var(--marigold-deep); }
   .badge.upi{ background:rgba(44,72,112,0.15); color:var(--indigo); }
-  .entry-actions{ display:flex; gap:6px; flex:none; }
+  .entry-actions{ display:flex; gap:6px; flex:none; align-items:center; }
+  .verify-btn{
+    border:none; background:var(--paper-alt); color:var(--ink-soft);
+    min-width:32px; height:32px; padding:0 8px; border-radius:9px;
+    display:flex; align-items:center; justify-content:center; gap:4px;
+    cursor:pointer; font-family:var(--font-body); font-size:11px; font-weight:700;
+  }
+  .verify-btn svg{ width:16px; height:16px; flex:none; }
+  .verify-btn.verified{ background:rgba(63,107,58,.14); color:var(--good); }
+  .verify-btn.unverified{ background:rgba(180,56,46,.10); color:#B4382E; }
+  .badge.upi.verified{ background:rgba(63,107,58,.14); color:var(--good); }
+  .badge.upi.unverified{ background:rgba(180,56,46,.10); color:#B4382E; }
   .iconbtn{
     border:none; background:var(--paper-alt); color:var(--ink-soft);
     width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center;
@@ -300,6 +311,19 @@
   }
   .set-default-btn:active{ background:var(--paper-alt); }
   .default-hint{ font-size:11.5px; color:var(--ink-soft); margin-top:5px; }
+  .verify-card{
+    background:var(--paper-alt); border:1px solid var(--line); border-radius:14px;
+    padding:12px; margin-bottom:14px; text-align:center;
+  }
+  .verify-status{ font-size:14px; font-weight:700; margin-bottom:4px; }
+  .verify-status.good{ color:var(--good); }
+  .verify-status.pending{ color:#B4382E; }
+  .verify-method{ font-size:11.5px; color:var(--ink-soft); }
+  .proof-preview{ margin-top:12px; background:#fff; border-radius:12px; padding:8px; }
+  .proof-preview img{ width:100%; max-height:240px; object-fit:contain; display:block; border-radius:8px; }
+  .proof-actions{ display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+  .proof-actions .btn{ width:100%; justify-content:center; }
+  .verify-note{ font-size:11.5px; color:var(--ink-soft); margin-top:10px; line-height:1.45; }
   .link-toggle{ text-align:center; font-size:13px; color:var(--indigo); font-weight:600; margin-top:6px; cursor:pointer; }
   .bulk-box{ display:none; }
   .bulk-box.show{ display:block; }
@@ -667,6 +691,29 @@ Aman Khan"></textarea>
   </div>
 </div>
 
+<!-- UPI VERIFICATION MODAL -->
+<div class="overlay" id="verifyOverlay">
+  <div class="modal">
+    <h3>UPI Verification</h3>
+    <div class="verify-card">
+      <div class="verify-status pending" id="verifyStatusText">⚠ Not Verified UPI</div>
+      <div class="verify-method" id="verifyMethodText">Payment proof has not been verified yet.</div>
+      <div class="proof-preview" id="proofPreview" style="display:none;"></div>
+    </div>
+    <div class="proof-actions">
+      <button class="btn btn-ghost" id="verifyUploadBtn">📁 Upload Image</button>
+      <button class="btn btn-ghost" id="verifyCameraBtn">📷 Take Image</button>
+      <button class="btn btn-primary" id="verifySelfBtn">✓ Self Verified</button>
+    </div>
+    <div class="verify-note">Verification is stored with this transaction. Proof images are saved locally in the app's permanent proof archive and are not automatically deleted.</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="verifyCloseBtn" style="flex:1;justify-content:center;">Close</button>
+    </div>
+  </div>
+</div>
+<input type="file" accept="image/*" id="verifyUploadInput" style="display:none;">
+<input type="file" accept="image/*" capture="environment" id="verifyCameraInput" style="display:none;">
+
 <!-- QR MODAL -->
 <div class="overlay qr-overlay" id="qrOverlay">
   <div class="qr-card">
@@ -902,10 +949,13 @@ Aman Khan"></textarea>
               '<div class="entry-name">'+escapeHtml(nm)+'</div>'+
               '<div class="entry-meta">'+
                 '<span class="amount">₹'+fmt(e.amount)+'</span>'+
-                '<span class="badge '+(e.mode==="upi"?"upi":"cash")+'">'+(e.mode==="upi"?"UPI":"CASH")+'</span>'+
+                (e.mode==="upi"
+                  ? '<span class="badge upi '+(e.verification && e.verification.status==="verified"?"verified":"unverified")+'">'+(e.verification && e.verification.status==="verified"?"✓ Verified UPI":"⚠ Not Verified UPI")+'</span>'
+                  : '<span class="badge cash">CASH</span>')+
               '</div>'+
             '</div>'+
             '<div class="entry-actions">'+
+              (e.mode==="upi" ? '<button class="verify-btn '+(e.verification && e.verification.status==="verified"?"verified":"unverified")+' verifyEntryBtn" data-id="'+e.id+'" title="UPI verification">'+svgCheck()+'</button>' : '')+
               '<button class="iconbtn editRowBtn" data-id="'+e.id+'">'+svgEdit()+'</button>'+
               '<button class="iconbtn danger delRowBtn" data-id="'+e.id+'">'+svgTrash()+'</button>'+
             '</div>'+
@@ -931,9 +981,15 @@ Aman Khan"></textarea>
         var amt = Number(document.getElementById("editAmount").value) || 0;
         var en = ev.entries.find(function(x){return x.id===editingId;});
         if(en){
+          var oldStudentId = en.studentId, oldAmount = Number(en.amount)||0, oldMode = en.mode;
           en.studentId = findOrCreateStudent(nmVal || "Unnamed");
           en.amount = amt;
           en.mode = currentMode.val;
+          if(en.mode !== "upi") {
+            en.verification = null;
+          } else if(oldStudentId !== en.studentId || oldAmount !== amt || oldMode !== "upi") {
+            en.verification = null;
+          }
         }
         editingId = null;
         save(); renderAll();
@@ -943,6 +999,9 @@ Aman Khan"></textarea>
 
     entryList.querySelectorAll(".editRowBtn").forEach(function(btn){
       btn.addEventListener("click", function(){ editingId = Number(btn.getAttribute("data-id")); renderAll(); });
+    });
+    entryList.querySelectorAll(".verifyEntryBtn").forEach(function(btn){
+      btn.addEventListener("click", function(){ openVerify(Number(btn.getAttribute("data-id"))); });
     });
     entryList.querySelectorAll(".delRowBtn").forEach(function(btn){
       btn.addEventListener("click", function(){
@@ -1037,7 +1096,8 @@ Aman Khan"></textarea>
     printBtn.style.display = "flex";
     var rows = "";
     ev.entries.forEach(function(e,i){
-      rows += '<tr><td>'+(i+1)+'</td><td>'+escapeHtml(getStudentName(e.studentId))+'</td><td class="c">'+(e.mode==="upi"?"UPI":"Cash")+'</td><td class="r">₹'+fmt(e.amount)+'</td></tr>';
+      var invVerify = e.mode==="upi" ? (e.verification && e.verification.status==="verified" ? '✓ Verified' : '⚠ Not Verified') : '—';
+      rows += '<tr><td>'+(i+1)+'</td><td>'+escapeHtml(getStudentName(e.studentId))+'</td><td class="c">'+(e.mode==="upi"?"UPI":"Cash")+'</td><td class="c">'+invVerify+'</td><td class="r">₹'+fmt(e.amount)+'</td></tr>';
     });
     paper.innerHTML = ''+
       '<div class="inv-top">'+
@@ -1047,9 +1107,9 @@ Aman Khan"></textarea>
       '</div>'+
       '<hr class="inv-rule">'+
       '<table class="inv-table">'+
-        '<thead><tr><th>Sr.</th><th>Name</th><th class="c">Mode</th><th class="r">Amount</th></tr></thead>'+
+        '<thead><tr><th>Sr.</th><th>Name</th><th class="c">Mode</th><th class="c">Verification</th><th class="r">Amount</th></tr></thead>'+
         '<tbody>'+rows+'</tbody>'+
-        '<tfoot><tr class="inv-total-row"><td colspan="3">Total ('+t.count+' entries)</td><td class="r">₹'+fmt(t.total)+'</td></tr></tfoot>'+
+        '<tfoot><tr class="inv-total-row"><td colspan="4">Total ('+t.count+' entries)</td><td class="r">₹'+fmt(t.total)+'</td></tr></tfoot>'+
       '</table>'+
       '<div class="inv-foot">Cash: ₹'+fmt(t.cash)+' &nbsp;•&nbsp; UPI: ₹'+fmt(t.upi)+'<br>Thank you for contributing! 🙏</div>'+
       '<div class="inv-sign">'+
@@ -1246,6 +1306,65 @@ Aman Khan"></textarea>
   var qrOverlay = document.getElementById("qrOverlay");
   var qrFileInput = document.getElementById("qrFileInput");
 
+  // ---- UPI verification proof archive (IndexedDB; proof images are never auto-deleted) ----
+  var PROOF_DB_NAME = "collection_sathi_proofs_v1";
+  var PROOF_STORE = "proofs";
+  var proofDbPromise = null;
+  var verifyEntryId = null;
+
+  function getProofDb(){
+    if(!window.indexedDB) return Promise.reject(new Error("IndexedDB unavailable"));
+    if(proofDbPromise) return proofDbPromise;
+    proofDbPromise = new Promise(function(resolve,reject){
+      var req = indexedDB.open(PROOF_DB_NAME, 1);
+      req.onupgradeneeded = function(){
+        var db = req.result;
+        if(!db.objectStoreNames.contains(PROOF_STORE)){
+          db.createObjectStore(PROOF_STORE, { keyPath:"id" });
+        }
+      };
+      req.onsuccess = function(){ resolve(req.result); };
+      req.onerror = function(){ reject(req.error || new Error("Could not open proof archive")); };
+    });
+    return proofDbPromise;
+  }
+
+  function makeProofId(){
+    if(window.crypto && crypto.randomUUID) return "proof_"+crypto.randomUUID();
+    return "proof_"+Date.now()+"_"+Math.random().toString(36).slice(2);
+  }
+
+  function saveProofImage(entryId, blob, method){
+    return getProofDb().then(function(db){
+      return new Promise(function(resolve,reject){
+        var id = makeProofId();
+        var tx = db.transaction(PROOF_STORE, "readwrite");
+        tx.objectStore(PROOF_STORE).put({
+          id:id, entryId:entryId, blob:blob, method:method, createdAt:new Date().toISOString()
+        });
+        tx.oncomplete = function(){ resolve(id); };
+        tx.onerror = function(){ reject(tx.error || new Error("Could not save proof image")); };
+        tx.onabort = function(){ reject(tx.error || new Error("Could not save proof image")); };
+      });
+    });
+  }
+
+  function getProofImage(proofId){
+    return getProofDb().then(function(db){
+      return new Promise(function(resolve,reject){
+        var tx = db.transaction(PROOF_STORE, "readonly");
+        var req = tx.objectStore(PROOF_STORE).get(proofId);
+        req.onsuccess = function(){ resolve(req.result || null); };
+        req.onerror = function(){ reject(req.error || new Error("Could not read proof image")); };
+      });
+    });
+  }
+
+  function verificationLabel(e){
+    if(e.mode !== "upi") return "";
+    return e.verification && e.verification.status === "verified" ? "Verified UPI" : "Not Verified UPI";
+  }
+
   function renderQrCard(){
     var wrap = document.getElementById("qrImageWrap");
     var removeBtn = document.getElementById("qrRemoveBtn");
@@ -1304,6 +1423,96 @@ Aman Khan"></textarea>
       img.src = e.target.result;
     };
     reader.readAsDataURL(file);
+  });
+
+  // ---- UPI verification UI ----
+  var verifyOverlay = document.getElementById("verifyOverlay");
+  var verifyUploadInput = document.getElementById("verifyUploadInput");
+  var verifyCameraInput = document.getElementById("verifyCameraInput");
+
+  function findEntryById(id){
+    for(var i=0;i<state.events.length;i++){
+      var found = state.events[i].entries.find(function(x){ return x.id===id; });
+      if(found) return found;
+    }
+    return null;
+  }
+
+  function renderVerifyModal(){
+    var e = findEntryById(verifyEntryId);
+    if(!e) return;
+    var verified = e.verification && e.verification.status === "verified";
+    var status = document.getElementById("verifyStatusText");
+    var method = document.getElementById("verifyMethodText");
+    var preview = document.getElementById("proofPreview");
+    status.className = "verify-status "+(verified?"good":"pending");
+    status.textContent = verified ? "✓ Verified UPI" : "⚠ Not Verified UPI";
+    method.textContent = verified ? (e.verification.method === "image" ? "Verified with payment proof image." : "Verified manually by Self Verified.") : "Payment proof has not been verified yet.";
+    preview.style.display = "none";
+    preview.innerHTML = "";
+    if(verified && e.verification.method === "image" && e.verification.proofId){
+      getProofImage(e.verification.proofId).then(function(rec){
+        if(!rec || verifyEntryId !== e.id) return;
+        var url = URL.createObjectURL(rec.blob);
+        preview.innerHTML = '<img src="'+url+'" alt="UPI payment proof">';
+        preview.style.display = "block";
+      }).catch(function(){});
+    }
+  }
+
+  function openVerify(id){
+    var e = findEntryById(id);
+    if(!e || e.mode !== "upi") return;
+    verifyEntryId = id;
+    renderVerifyModal();
+    verifyOverlay.classList.add("open");
+  }
+
+  function closeVerify(){
+    verifyOverlay.classList.remove("open");
+    verifyEntryId = null;
+    document.getElementById("proofPreview").innerHTML = "";
+  }
+
+  function handleProofFile(file){
+    if(!file || verifyEntryId === null) return;
+    if(!file.type || file.type.indexOf("image/") !== 0){ showToast("Please choose an image."); return; }
+    var entryId = verifyEntryId;
+    saveProofImage(entryId, file, "image").then(function(proofId){
+      var e = findEntryById(entryId);
+      if(!e) return;
+      e.verification = { status:"verified", method:"image", proofId:proofId, verifiedAt:new Date().toISOString() };
+      save();
+      renderVerifyModal();
+      renderAll();
+      showToast("UPI verified — proof image saved permanently on this device.");
+    }).catch(function(){
+      showToast("Proof image save nahi ho payi, dubara try karo.");
+    });
+  }
+
+  document.getElementById("verifyUploadBtn").addEventListener("click", function(){ verifyUploadInput.click(); });
+  document.getElementById("verifyCameraBtn").addEventListener("click", function(){ verifyCameraInput.click(); });
+  document.getElementById("verifySelfBtn").addEventListener("click", function(){
+    var e = findEntryById(verifyEntryId);
+    if(!e) return;
+    e.verification = { status:"verified", method:"self", proofId:null, verifiedAt:new Date().toISOString() };
+    save();
+    renderVerifyModal();
+    renderAll();
+    showToast("UPI marked as self verified.");
+  });
+  document.getElementById("verifyCloseBtn").addEventListener("click", closeVerify);
+  verifyOverlay.addEventListener("click", function(e){ if(e.target === verifyOverlay) closeVerify(); });
+  verifyUploadInput.addEventListener("change", function(){
+    var file = verifyUploadInput.files && verifyUploadInput.files[0];
+    verifyUploadInput.value = "";
+    handleProofFile(file);
+  });
+  verifyCameraInput.addEventListener("change", function(){
+    var file = verifyCameraInput.files && verifyCameraInput.files[0];
+    verifyCameraInput.value = "";
+    handleProofFile(file);
   });
 
   // ---- print ----
