@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Collection Sathi</title>
+<meta name="description" content="Collection Sathi (Chanda Sathi) — a free, open-source app to track group money collection with Cash/UPI split, multi-round history, and one-tap printable invoices. Ideal for chanda, festival funds, class collections, and community contributions.">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#6B1420">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Collection Sathi">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Caveat:wght@600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root{
+    --paper:#FBF1E4;
+    --paper-alt:#F1E1C4;
+    --card:#FFFCF6;
+    --ink:#2E1B14;
+    --ink-soft:#6B5240;
+    --maroon:#6B1420;
+    --maroon-deep:#450B14;
+    --vermillion:#D6483A;
+    --marigold:#E3A93B;
+    --marigold-deep:#B9821F;
+    --indigo:#2C4870;
+    --indigo-deep:#1C3050;
+    --whatsapp:#25D366;
+    --line: rgba(46,27,20,0.14);
+    --shadow: rgba(46,27,20,0.18);
+    --good:#3F6B3A;
+    --font-display:'Yatra One','Noto Sans Devanagari',serif;
+    --font-body:'Work Sans','Segoe UI',system-ui,sans-serif;
+    color-scheme: light;
+
+    box-sizing:border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html,body{height:100%;}
+  html{ scroll-padding-top: env(safe-area-inset-top, 0px); }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-body);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .app{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+    background:var(--paper);
+    position:relative;
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:sticky;
+    top:0;
+    z-index:20;
+    padding: calc(14px + env(safe-area-inset-top,0px)) 18px 14px;
+    background: linear-gradient(135deg, var(--maroon-deep), var(--maroon) 55%, var(--vermillion));
+    border-bottom: 3px solid var(--marigold);
+    box-shadow: 0 6px 16px var(--shadow);
+  }
+  .hdr-row{ display:flex; align-items:center; gap:10px; }
+  .hdr-emoji{ font-size:26px; line-height:1; filter: drop-shadow(0 2px 2px rgba(0,0,0,.35)); }
+  #titleInput{
+    flex:1;
+    background:transparent;
+    border:none;
+    outline:none;
+    color:var(--marigold);
+    font-family:var(--font-display);
+    font-size:22px;
+    padding:2px 4px;
+    border-bottom: 1px dashed rgba(227,169,59,0.5);
+  }
+  #titleInput::placeholder{ color: rgba(227,169,59,0.6); }
+  .hdr-sub{
+    margin:6px 2px 0;
+    font-size:12.5px;
+    color:#F1DCC0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .hdr-total-chip{
+    background:rgba(0,0,0,0.22);
+    border:1px solid rgba(227,169,59,0.45);
+    color:var(--marigold);
+    padding:3px 10px;
+    border-radius:20px;
+    font-weight:600;
+    font-size:12.5px;
+  }
+  .qr-btn{
+    flex:none; width:34px; height:34px; border-radius:10px;
+    background:rgba(0,0,0,0.22); border:1px solid rgba(227,169,59,0.45); color:var(--marigold);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .qr-btn svg{ width:18px; height:18px; }
+  .qr-overlay{ align-items:center; }
+  .qr-card{
+    background:var(--card); border-radius:20px; padding:22px; width:88%; max-width:340px;
+    text-align:center; box-shadow:0 8px 24px var(--shadow); position:relative;
+  }
+  .qr-card h3{ font-family:var(--font-display); font-size:19px; margin:0; color:var(--maroon); }
+  .qr-close{ position:absolute; top:12px; right:12px; }
+  .qr-image-wrap{ background:#fff; border-radius:14px; padding:14px; margin:16px 0; min-height:120px; display:flex; align-items:center; justify-content:center; }
+  .qr-image-wrap img{ width:100%; display:block; border-radius:6px; }
+  .qr-empty{ color:var(--ink-soft); font-size:13.5px; padding:14px 6px; }
+
+  /* ---------- MAIN ---------- */
+  main{
+    flex:1;
+    padding: 16px 16px 90px;
+    overflow-y:auto;
+  }
+  .tab-panel{ display:none; }
+  .tab-panel.active{ display:block; animation: fade .18s ease; }
+  @keyframes fade{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
+
+  .section-label{
+    font-size:13px;
+    color:var(--ink-soft);
+    font-weight:600;
+    margin: 4px 2px 10px;
+  }
+
+  .round-info{ margin: 2px 2px 12px; display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
+  .round-title{ font-weight:700; font-size:16px; color:var(--maroon); }
+  .round-date{ font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
+  .round-switch{ font-size:12px; font-weight:700; color:var(--indigo); white-space:nowrap; cursor:pointer; }
+
+  /* ---------- ADD BAR ---------- */
+  .btn{
+    border:none;
+    cursor:pointer;
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:14px;
+    border-radius:12px;
+    padding:10px 14px;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    transition: transform .12s ease, filter .12s ease;
+  }
+  .btn:active{ transform:scale(0.96); }
+  .btn svg{ width:16px; height:16px; flex:none; }
+  .btn-primary{ background:var(--vermillion); color:#fff; box-shadow:0 3px 8px var(--shadow); }
+  .btn-ghost{ background:var(--card); color:var(--ink); border:1px solid var(--line); }
+  .btn-gold{ background:var(--marigold); color:#3A2205; box-shadow:0 3px 8px var(--shadow); }
+  .btn-whatsapp{ background:var(--whatsapp); color:#053019; box-shadow:0 3px 8px var(--shadow); }
+  .btn-block{ width:100%; justify-content:center; }
+  .btn-row{ display:flex; gap:10px; margin-top:14px; }
+  .btn-row .btn{ flex:1; }
+  .btn-sm{ padding:6px 10px; font-size:12.5px; border-radius:9px; }
+
+  /* ---------- STUDENT CARD ---------- */
+  .empty{
+    text-align:center;
+    padding:40px 12px;
+    color:var(--ink-soft);
+  }
+  .empty .big{ font-size:38px; margin-bottom:8px; }
+
+  .entry{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:12px;
+    margin-bottom:10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    box-shadow: 0 2px 6px var(--shadow);
+  }
+  .idx{
+    width:28px; height:28px; border-radius:50%;
+    background:var(--paper-alt);
+    color:var(--ink-soft);
+    display:flex; align-items:center; justify-content:center;
+    font-size:12.5px; font-weight:700; flex:none;
+  }
+  .entry-main{ flex:1; min-width:0; }
+  .entry-name{ font-weight:600; font-size:15px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .entry-meta{ display:flex; align-items:center; gap:8px; margin-top:4px; }
+  .amount{ font-weight:700; font-size:14.5px; color:var(--ink); }
+  .badge{ font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; letter-spacing:.2px; }
+  .badge.cash{ background:rgba(227,169,59,0.18); color:var(--marigold-deep); }
+  .badge.upi{ background:rgba(44,72,112,0.15); color:var(--indigo); }
+  .entry-actions{ display:flex; gap:6px; flex:none; }
+  .iconbtn{
+    border:none; background:var(--paper-alt); color:var(--ink-soft);
+    width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .iconbtn.danger{ color:#B4382E; }
+  .iconbtn svg{ width:16px; height:16px; }
+
+  .entry.editing{ flex-direction:column; align-items:stretch; }
+  .edit-fields{ display:flex; gap:8px; width:100%; }
+  .edit-fields input[type="text"]{ flex:1.4; }
+  .edit-fields input[type="number"]{ flex:1; }
+  input[type="text"], input[type="number"], textarea{
+    background:var(--paper-alt);
+    border:1px solid var(--line);
+    color:var(--ink);
+    border-radius:9px;
+    padding:9px 10px;
+    font-family:var(--font-body);
+    font-size:14px;
+    outline:none;
+    width:100%;
+  }
+  .mode-toggle{ display:flex; gap:6px; margin-top:8px; }
+  .mode-opt{
+    flex:1; text-align:center; padding:8px 6px; border-radius:9px;
+    border:1px solid var(--line); font-size:13px; font-weight:600; cursor:pointer;
+    color:var(--ink-soft); background:var(--paper-alt);
+  }
+  .mode-opt.sel-cash{ background:var(--marigold); color:#3A2205; border-color:var(--marigold-deep); }
+  .mode-opt.sel-upi{ background:var(--indigo); color:#fff; border-color:var(--indigo-deep); }
+  .edit-actions{ display:flex; gap:8px; margin-top:10px; }
+
+  /* ---------- MODAL ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(20,10,6,0.55);
+    display:none; align-items:flex-end; justify-content:center; z-index:50;
+  }
+  .overlay.open{ display:flex; }
+  .modal{
+    background:var(--card);
+    width:100%; max-width:480px;
+    border-radius:20px 20px 0 0;
+    padding: 18px 18px calc(18px + env(safe-area-inset-bottom,0px));
+    box-shadow: 0 -8px 24px var(--shadow);
+    animation: slideup .2s ease;
+    max-height:85vh;
+    overflow-y:auto;
+  }
+  @keyframes slideup{ from{ transform:translateY(24px); opacity:.5;} to{ transform:none; opacity:1;} }
+  .modal h3{ font-family:var(--font-display); font-size:19px; margin:0 0 12px; color:var(--maroon); }
+  .field{ margin-bottom:12px; }
+  .field label{ display:block; font-size:12.5px; color:var(--ink-soft); font-weight:600; margin-bottom:5px; }
+  .modal-actions{ display:flex; gap:10px; margin-top:16px; }
+  .amount-row{ display:flex; gap:8px; align-items:stretch; }
+  .amount-row input{ flex:1; min-width:0; }
+  .set-default-btn{
+    flex:none; border:1px solid var(--line); background:var(--card); color:var(--indigo);
+    font-family:var(--font-body); font-size:12.5px; font-weight:600; padding:0 12px;
+    border-radius:10px; cursor:pointer; white-space:nowrap;
+  }
+  .set-default-btn:active{ background:var(--paper-alt); }
+  .default-hint{ font-size:11.5px; color:var(--ink-soft); margin-top:5px; }
+  .link-toggle{ text-align:center; font-size:13px; color:var(--indigo); font-weight:600; margin-top:6px; cursor:pointer; }
+  .bulk-box{ display:none; }
+  .bulk-box.show{ display:block; }
+  .single-box.hide{ display:none; }
+
+  /* ---------- SUMMARY ---------- */
+  .hero-stat{
+    background: linear-gradient(135deg, var(--maroon-deep), var(--maroon));
+    border-radius:18px;
+    padding:22px 18px;
+    text-align:center;
+    color:#F6E7CC;
+    margin-bottom:16px;
+    box-shadow: 0 4px 14px var(--shadow);
+  }
+  .hero-stat .label{ font-size:12.5px; color:#E6C79A; font-weight:600; }
+  .hero-stat .num{ font-family:var(--font-display); font-size:42px; color:var(--marigold); margin:4px 0; }
+  .hero-stat .sub{ font-size:12px; color:#D8BC96; }
+  .hero-stat .alltime{ font-size:11.5px; color:#C9A876; margin-top:6px; border-top:1px dashed rgba(227,169,59,0.3); padding-top:6px; }
+
+  .split-row{ display:flex; gap:10px; margin-bottom:16px; }
+  .split-card{ flex:1; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px; }
+  .split-card .stag{ font-size:12px; font-weight:700; display:flex; align-items:center; gap:6px; margin-bottom:6px; }
+  .split-card .samt{ font-size:20px; font-weight:700; }
+  .split-card .scount{ font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
+  .dot{ width:9px; height:9px; border-radius:50%; display:inline-block; }
+  .dot.cash{ background:var(--marigold); }
+  .dot.upi{ background:var(--indigo); }
+
+  .bar-wrap{ background:var(--paper-alt); border-radius:10px; overflow:hidden; height:14px; display:flex; margin-bottom:8px; }
+  .bar-cash{ background:var(--marigold); height:100%; }
+  .bar-upi{ background:var(--indigo); height:100%; }
+  .bar-legend{ display:flex; justify-content:space-between; font-size:11.5px; color:var(--ink-soft); margin-bottom:20px; }
+
+  .mini-stats{ display:flex; gap:10px; }
+  .mini{ flex:1; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; text-align:center; }
+  .mini .mnum{ font-size:18px; font-weight:700; }
+  .mini .mlab{ font-size:11px; color:var(--ink-soft); margin-top:2px; }
+
+  /* ---------- HISTORY ---------- */
+  .alltime-chip{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:12px 14px; display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;
+  }
+  .alltime-chip .atlabel{ font-size:12px; color:var(--ink-soft); font-weight:600; }
+  .alltime-chip .atnum{ font-size:19px; font-weight:700; color:var(--maroon); }
+  .event-card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px; padding:13px 14px; margin-bottom:10px;
+    display:flex; align-items:center; gap:10px; cursor:pointer;
+  }
+  .event-card.active{ border-color:var(--marigold-deep); box-shadow:0 0 0 2px rgba(227,169,59,0.25); }
+  .event-main{ flex:1; min-width:0; }
+  .event-title{ font-weight:700; font-size:14.5px; display:flex; align-items:center; gap:6px; }
+  .active-tag{ font-size:9.5px; background:var(--marigold); color:#3A2205; padding:1px 6px; border-radius:8px; font-weight:700; }
+  .event-date{ font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
+  .event-stats{ font-size:11.5px; color:var(--ink-soft); margin-top:4px; }
+  .event-total{ font-weight:700; font-size:15px; color:var(--ink); white-space:nowrap; }
+  .event-actions{ flex:none; }
+
+  /* ---------- INVOICE ---------- */
+  .invoice-paper{
+    background:#FFFDF8;
+    color:#241611;
+    border-radius:10px;
+    padding:22px 18px;
+    box-shadow:0 4px 16px var(--shadow);
+    border:1px solid #E7D8B9;
+  }
+  .inv-top{ text-align:center; margin-bottom:14px; }
+  .inv-om{ font-size:26px; }
+  .inv-title{ font-family:var(--font-display); font-size:23px; color:var(--maroon); margin:4px 0 2px; }
+  .inv-date{ font-size:12px; color:#7A6350; }
+  .inv-rule{ border:none; border-top:2px solid var(--marigold); margin:14px 0; }
+  table.inv-table{ width:100%; border-collapse:collapse; font-size:13px; }
+  table.inv-table th{ text-align:left; font-size:11px; color:#7A6350; border-bottom:1px solid #E7D8B9; padding:6px 4px; font-weight:700; }
+  table.inv-table td{ padding:7px 4px; border-bottom:1px solid #F1E7D3; }
+  table.inv-table td.r, table.inv-table th.r{ text-align:right; }
+  table.inv-table td.c, table.inv-table th.c{ text-align:center; }
+  .inv-total-row td{ font-weight:700; border-top:2px solid var(--marigold); border-bottom:none; padding-top:10px; }
+  .inv-foot{ margin-top:22px; text-align:center; color:#7A6350; font-size:12.5px; }
+  .inv-sign{ display:flex; justify-content:center; margin-top:32px; }
+  .sign-col{ text-align:center; min-width:140px; }
+  .sign-value{ font-weight:700; font-size:13.5px; color:#241611; }
+  .sign-cursive{ font-family:'Caveat','Segoe Script',cursive; font-size:30px; color:var(--maroon); line-height:1; }
+  .sign-label{ border-top:1px solid #C9B48B; margin-top:6px; padding-top:4px; font-size:11px; color:#7A6350; }
+  .inv-credit{ margin-top:18px; text-align:center; font-size:10.5px; color:#B8A184; letter-spacing:.2px; }
+  .inv-credit a{ color:#8A6A4A; text-decoration:underline; }
+  .sign-placeholder{ color:#C9B48B; opacity:.7; }
+  .empty-inv{ text-align:center; color:#9C8467; padding:30px 10px; font-size:13.5px; }
+
+  /* ---------- TAB BAR ---------- */
+  nav.tabbar{
+    position:fixed; left:0; right:0; bottom:0; z-index:30;
+    max-width:480px; margin:0 auto;
+    background:var(--paper-alt);
+    border-top:1px solid var(--line);
+    padding: 6px 8px calc(8px + env(safe-area-inset-bottom,0px));
+    display:flex;
+    box-shadow: 0 -4px 12px var(--shadow);
+  }
+  .tabbtn{
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+    background:none; border:none; padding:8px 4px; cursor:pointer;
+    color:var(--ink-soft); font-family:var(--font-body); font-size:10.5px; font-weight:600;
+  }
+  .tabbtn svg{ width:21px; height:21px; }
+  .tabbtn.active{ color:var(--vermillion); }
+
+  .fab{
+    position:fixed; right:calc(50% - 240px + 18px); bottom: calc(78px + env(safe-area-inset-bottom,0px));
+    max-width:480px;
+    background:var(--vermillion); color:#fff; border:none; width:52px; height:52px; border-radius:50%;
+    box-shadow:0 6px 16px var(--shadow); display:flex; align-items:center; justify-content:center; cursor:pointer;
+    z-index:25;
+  }
+  .fab svg{ width:24px; height:24px; }
+  .fab.hidden{ display:none; }
+  @media (max-width:516px){ .fab{ right:18px; } }
+
+  /* ---------- TOAST ---------- */
+  .toast{
+    position:fixed; left:50%; bottom:100px; transform:translate(-50%,16px);
+    background:var(--ink); color:var(--paper); padding:10px 16px; border-radius:10px;
+    font-size:13px; opacity:0; transition:.25s ease; z-index:80; max-width:82%; text-align:center;
+    pointer-events:none;
+  }
+  .toast.show{ opacity:1; transform:translate(-50%,0); }
+
+  /* ---------- PRINT ---------- */
+  @media print{
+    body *{ visibility:hidden; }
+    #invoiceTab, #invoiceTab *{ visibility:visible; }
+    #invoiceTab{ position:absolute; left:0; top:0; width:100%; padding:0; margin:0; }
+    .invoice-paper{ box-shadow:none; border:none; border-radius:0; padding:10px 4px; }
+    #printBtn, #shareBtn{ display:none; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="hdr-row">
+      <span class="hdr-emoji">💸</span>
+      <input id="titleInput" placeholder="Collection title" maxlength="40">
+      <button class="qr-btn" id="qrBtn" title="UPI QR code">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM19 14v3M14 19h3M19 19h2"/></svg>
+      </button>
+    </div>
+    <div class="hdr-sub">
+      <span id="dateLabel">—</span>
+      <span class="hdr-total-chip">₹<span id="hdrTotal">0</span> collected</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- COLLECT TAB -->
+    <section class="tab-panel active" id="collectTab">
+      <div class="round-info">
+        <div>
+          <div class="round-title" id="roundTitleLabel">Round</div>
+          <div class="round-date" id="roundDateLabel">date</div>
+        </div>
+        <div class="round-switch" id="roundSwitchLink" style="display:none;">→ latest round</div>
+      </div>
+      <div class="section-label" id="collectLabel">Persons</div>
+      <div id="entryList"></div>
+    </section>
+
+    <!-- SUMMARY TAB -->
+    <section class="tab-panel" id="summaryTab">
+      <div class="hero-stat">
+        <div class="label">This round's total</div>
+        <div class="num">₹<span id="sumGrand">0</span></div>
+        <div class="sub" id="sumCountLine">0 persons</div>
+        <div class="alltime" id="sumAllTime">All-time: ₹0 across 0 rounds</div>
+      </div>
+      <div class="split-row">
+        <div class="split-card">
+          <div class="stag" style="color:var(--marigold-deep)"><span class="dot cash"></span> Cash</div>
+          <div class="samt">₹<span id="sumCash">0</span></div>
+          <div class="scount" id="sumCashCount">0 entries</div>
+        </div>
+        <div class="split-card">
+          <div class="stag" style="color:var(--indigo)"><span class="dot upi"></span> UPI</div>
+          <div class="samt">₹<span id="sumUpi">0</span></div>
+          <div class="scount" id="sumUpiCount">0 entries</div>
+        </div>
+      </div>
+      <div class="bar-wrap">
+        <div class="bar-cash" id="barCash" style="width:0%"></div>
+        <div class="bar-upi" id="barUpi" style="width:0%"></div>
+      </div>
+      <div class="bar-legend"><span>Cash share</span><span>UPI share</span></div>
+      <div class="mini-stats">
+        <div class="mini"><div class="mnum" id="miniAvg">₹0</div><div class="mlab">Average / person</div></div>
+        <div class="mini"><div class="mnum" id="miniMax">₹0</div><div class="mlab">Highest paid</div></div>
+      </div>
+    </section>
+
+    <!-- HISTORY TAB -->
+    <section class="tab-panel" id="historyTab">
+      <div class="alltime-chip">
+        <div>
+          <div class="atlabel">All rounds combined</div>
+          <div class="atnum">₹<span id="histAllTotal">0</span></div>
+        </div>
+        <button class="btn btn-primary btn-sm" id="newRoundBtn">+ New Round</button>
+      </div>
+      <div id="eventList"></div>
+    </section>
+
+    <!-- INVOICE TAB -->
+    <section class="tab-panel" id="invoiceTab">
+      <div class="field" style="margin-bottom:14px;">
+        <label>Your name (for signature)</label>
+        <input type="text" id="signatureInput" placeholder="Type your name" maxlength="40">
+      </div>
+      <div class="section-label">Invoice preview</div>
+      <div class="invoice-paper" id="invoicePaper"></div>
+      <div class="btn-row" id="invoiceActions">
+        <button class="btn btn-whatsapp btn-block" id="shareBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M16 6l-4-4-4 4M12 2v14"/></svg>
+          Share to WhatsApp
+        </button>
+      </div>
+      <button class="btn btn-primary btn-block" id="printBtn" style="margin-top:10px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>
+        Print / Save as PDF
+      </button>
+    </section>
+  </main>
+
+  <button class="fab" id="fabAdd" title="Add person">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+  </button>
+
+  <nav class="tabbar">
+    <button class="tabbtn active" data-tab="collectTab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 20h5v-2a4 4 0 0 0-3-3.87M9 20H4v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2M13 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM19 8a2.5 2.5 0 1 0 0-5"/></svg>
+      Collect
+    </button>
+    <button class="tabbtn" data-tab="summaryTab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M8 17V10M13 17V6M18 17v-4"/></svg>
+      Summary
+    </button>
+    <button class="tabbtn" data-tab="historyTab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      History
+    </button>
+    <button class="tabbtn" data-tab="invoiceTab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3h8a1 1 0 0 1 1 1v16l-2.5-1.5L12 20l-2.5-1.5L7 20V4a1 1 0 0 1 1-1zM9 8h6M9 12h6"/></svg>
+      Invoice
+    </button>
+  </nav>
+</div>
+
+<!-- ADD STUDENT MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3>Add person</h3>
+
+    <div class="single-box" id="singleBox">
+      <div class="field">
+        <label>Person name</label>
+        <input type="text" id="nameInput" placeholder="e.g. Rahul Sharma" list="studentNames">
+      </div>
+      <div class="field">
+        <label>Amount (₹)</label>
+        <div class="amount-row">
+          <input type="number" id="amountInput" value="100" min="0" step="1">
+          <button type="button" class="set-default-btn" id="setDefaultBtn">Set default</button>
+        </div>
+        <div class="default-hint" id="defaultHint"></div>
+      </div>
+      <div class="field">
+        <label>Payment mode</label>
+        <div class="mode-toggle">
+          <div class="mode-opt sel-cash" id="modeCashOpt">💵 Cash</div>
+          <div class="mode-opt" id="modeUpiOpt">📲 UPI</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bulk-box" id="bulkBox">
+      <div class="field">
+        <label>Paste names — one per line (<span id="bulkDefaultLabel">₹100</span> default each)</label>
+        <textarea id="bulkInput" rows="6" placeholder="Rahul Sharma
+Priya Verma
+Aman Khan"></textarea>
+      </div>
+    </div>
+
+    <div class="link-toggle" id="toggleModeLink">Paste multiple names instead</div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelAdd" style="flex:1; justify-content:center;">Cancel</button>
+      <button class="btn btn-primary" id="confirmAdd" style="flex:1; justify-content:center;">Add</button>
+    </div>
+  </div>
+</div>
+<datalist id="studentNames"></datalist>
+
+<!-- NEW ROUND MODAL -->
+<div class="overlay" id="roundOverlay">
+  <div class="modal">
+    <h3>Start new collection round</h3>
+    <div class="field">
+      <label>Round name</label>
+      <input type="text" id="roundNameInput" placeholder="e.g. Day 2 Collection">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelRound" style="flex:1; justify-content:center;">Cancel</button>
+      <button class="btn btn-primary" id="confirmRound" style="flex:1; justify-content:center;">Start</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DELETE MODAL -->
+<div class="overlay" id="confirmOverlay">
+  <div class="modal">
+    <h3 id="confirmTitle">Remove?</h3>
+    <p id="confirmMsg" style="font-size:14px;color:var(--ink-soft);margin:0 0 16px;"></p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="confirmNo" style="flex:1;justify-content:center;">Cancel</button>
+      <button class="btn btn-primary" id="confirmYes" style="flex:1;justify-content:center;background:#B4382E;">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- QR MODAL -->
+<div class="overlay qr-overlay" id="qrOverlay">
+  <div class="qr-card">
+    <button class="iconbtn qr-close" id="qrCloseBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>UPI QR code</h3>
+    <div class="qr-image-wrap" id="qrImageWrap"></div>
+    <div class="btn-row" id="qrActions">
+      <button class="btn btn-ghost" id="qrChangeBtn">Change QR</button>
+      <button class="btn btn-ghost" id="qrRemoveBtn" style="color:#B4382E;">Remove</button>
+    </div>
+  </div>
+</div>
+<input type="file" accept="image/*" id="qrFileInput" style="display:none;">
+
+<script>
+(function(){
+  "use strict";
+
+  var STORAGE_KEY = "collection_sathi_v2";
+  var LEGACY_V2_KEY = "ganpati_collection_v2";
+  var LEGACY_V1_KEY = "ganpati_collection_v1";
+  var state = null;
+
+  function todayIso(){ return new Date().toISOString(); }
+
+  function freshEvent(title){
+    return { id: state.nextId++, title: title || "Collection", date: todayIso(), entries: [] };
+  }
+
+  function defaultState(){
+    state = { title:"Collection Sathi", signatureName:"", students:[], events:[], currentEventId:null, nextId:1 };
+    var ev = freshEvent("Collection");
+    state.events.push(ev);
+    state.currentEventId = ev.id;
+  }
+
+  function findOrCreateStudent(name){
+    name = (name || "").trim();
+    if(!name) name = "Unnamed";
+    var existing = state.students.find(function(s){ return s.name.trim().toLowerCase() === name.toLowerCase(); });
+    if(existing) return existing.id;
+    var s = { id: state.nextId++, name: name };
+    state.students.push(s);
+    return s.id;
+  }
+
+  function getStudentName(id){
+    var s = state.students.find(function(x){ return x.id === id; });
+    return s ? s.name : "Unknown";
+  }
+
+  function getEventById(id){ return state.events.find(function(e){ return e.id === id; }); }
+  function getCurrentEvent(){
+    return getEventById(state.currentEventId) || state.events[state.events.length-1];
+  }
+  function getLatestEvent(){ return state.events[state.events.length-1]; }
+
+  function load(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        var parsed = JSON.parse(raw);
+        if(parsed && Array.isArray(parsed.events)){
+          state = parsed;
+          if(typeof state.signatureName !== "string"){ state.signatureName = ""; }
+          if(!state.currentEventId && state.events.length){ state.currentEventId = state.events[state.events.length-1].id; }
+          if(!state.events.length){ var ev = freshEvent("Collection"); state.events.push(ev); state.currentEventId = ev.id; }
+          return;
+        }
+      }
+      // migrate from previous (Ganpati-branded) round-based format
+      var legacyV2Raw = localStorage.getItem(LEGACY_V2_KEY);
+      if(legacyV2Raw){
+        var legacyV2 = JSON.parse(legacyV2Raw);
+        if(legacyV2 && Array.isArray(legacyV2.events)){
+          state = legacyV2;
+          if(typeof state.signatureName !== "string"){ state.signatureName = ""; }
+          if(state.title === "Ganpati Bappa Collection"){ state.title = "Collection Sathi"; }
+          if(!state.currentEventId && state.events.length){ state.currentEventId = state.events[state.events.length-1].id; }
+          if(!state.events.length){ var ev3 = freshEvent("Collection"); state.events.push(ev3); state.currentEventId = ev3.id; }
+          save();
+          return;
+        }
+      }
+      // migrate from the original flat (pre-history) format
+      var legacyV1Raw = localStorage.getItem(LEGACY_V1_KEY);
+      if(legacyV1Raw){
+        var legacyV1 = JSON.parse(legacyV1Raw);
+        if(legacyV1 && Array.isArray(legacyV1.entries)){
+          defaultState();
+          state.title = (legacyV1.title && legacyV1.title !== "Ganpati Bappa Collection") ? legacyV1.title : "Collection Sathi";
+          var ev2 = getCurrentEvent();
+          ev2.date = todayIso();
+          legacyV1.entries.forEach(function(e){
+            var sid = findOrCreateStudent(e.name);
+            ev2.entries.push({ id: state.nextId++, studentId: sid, amount: Number(e.amount)||0, mode: e.mode === "upi" ? "upi" : "cash" });
+          });
+          save();
+          return;
+        }
+      }
+      defaultState();
+    }catch(e){
+      defaultState();
+    }
+  }
+  function getDefaultAmount(){
+    if(!state || !state.defaultUserSet) return 100;
+    var n = Number(state.defaultAmount);
+    return (isFinite(n) && n >= 0 && state.defaultAmount !== null && state.defaultAmount !== "") ? n : 100;
+  }
+  function save(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+  var titleInput = document.getElementById("titleInput");
+  var dateLabel = document.getElementById("dateLabel");
+  var entryList = document.getElementById("entryList");
+  var collectLabel = document.getElementById("collectLabel");
+  var hdrTotal = document.getElementById("hdrTotal");
+
+  function fmt(n){
+    n = Math.round(Number(n)||0);
+    return n.toLocaleString("en-IN");
+  }
+  function fmtDate(iso){
+    try{
+      var d = new Date(iso);
+      return d.toLocaleDateString("en-IN", { weekday:"short", day:"numeric", month:"short", year:"numeric" });
+    }catch(e){ return ""; }
+  }
+
+  function showToast(msg){
+    var t = document.createElement("div");
+    t.className = "toast";
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.classList.add("show"); });
+    setTimeout(function(){
+      t.classList.remove("show");
+      setTimeout(function(){ t.remove(); }, 300);
+    }, 2600);
+  }
+
+  var editingId = null;
+  var pendingDelete = null; // { type: "entry"|"event", id }
+
+  function computeTotals(event){
+    var cash=0, upi=0, cashCount=0, upiCount=0, max=0;
+    event.entries.forEach(function(e){
+      var amt = Number(e.amount)||0;
+      if(e.mode === "upi"){ upi += amt; upiCount++; } else { cash += amt; cashCount++; }
+      if(amt > max) max = amt;
+    });
+    var total = cash + upi;
+    var count = event.entries.length;
+    var avg = count ? total/count : 0;
+    return { cash:cash, upi:upi, cashCount:cashCount, upiCount:upiCount, total:total, count:count, avg:avg, max:max };
+  }
+
+  function computeAllTime(){
+    var total=0;
+    state.events.forEach(function(ev){ ev.entries.forEach(function(e){ total += Number(e.amount)||0; }); });
+    return { total: total, rounds: state.events.length };
+  }
+
+  function svgEdit(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>'; }
+  function svgTrash(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m2 0-.8 12.4A2 2 0 0 1 15.2 20H8.8a2 2 0 0 1-2-1.6L6 6"/></svg>'; }
+  function svgCheck(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>'; }
+  function svgX(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>'; }
+  function svgChevron(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="m9 18 6-6-6-6"/></svg>'; }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c];
+    });
+  }
+
+  function renderStudentDatalist(){
+    var dl = document.getElementById("studentNames");
+    dl.innerHTML = state.students.map(function(s){ return '<option value="'+escapeHtml(s.name)+'">'; }).join("");
+  }
+
+  function renderRoundInfo(){
+    var ev = getCurrentEvent();
+    var latest = getLatestEvent();
+    document.getElementById("roundTitleLabel").textContent = ev.title;
+    document.getElementById("roundDateLabel").textContent = fmtDate(ev.date);
+    var switchLink = document.getElementById("roundSwitchLink");
+    if(ev.id !== latest.id){
+      switchLink.style.display = "block";
+      switchLink.onclick = function(){ state.currentEventId = latest.id; save(); renderAll(); };
+    } else {
+      switchLink.style.display = "none";
+    }
+  }
+
+  function renderEntries(){
+    var ev = getCurrentEvent();
+    collectLabel.textContent = ev.entries.length ? ev.entries.length + " entr" + (ev.entries.length>1?"ies":"y") : "Persons";
+
+    if(!ev.entries.length){
+      entryList.innerHTML = '<div class="empty"><div class="big">🙏</div>No entries in this round yet.<br>Tap the + button to start collection.</div>';
+      return;
+    }
+
+    var html = "";
+    ev.entries.forEach(function(e, i){
+      var nm = getStudentName(e.studentId);
+      if(editingId === e.id){
+        html += ''+
+          '<div class="entry editing" data-id="'+e.id+'">'+
+            '<div class="edit-fields">'+
+              '<input type="text" id="editName" value="'+escapeHtml(nm)+'" placeholder="Name" list="studentNames">'+
+              '<input type="number" id="editAmount" value="'+Number(e.amount)+'" min="0" step="1">'+
+            '</div>'+
+            '<div class="mode-toggle">'+
+              '<div class="mode-opt '+(e.mode!=="upi"?"sel-cash":"")+'" id="editModeCash">💵 Cash</div>'+
+              '<div class="mode-opt '+(e.mode==="upi"?"sel-upi":"")+'" id="editModeUpi">📲 UPI</div>'+
+            '</div>'+
+            '<div class="edit-actions">'+
+              '<button class="btn btn-ghost" id="cancelEditBtn" style="flex:1;justify-content:center;">'+svgX()+' Cancel</button>'+
+              '<button class="btn btn-primary" id="saveEditBtn" style="flex:1;justify-content:center;">'+svgCheck()+' Save</button>'+
+            '</div>'+
+          '</div>';
+      } else {
+        html += ''+
+          '<div class="entry" data-id="'+e.id+'">'+
+            '<div class="idx">'+(i+1)+'</div>'+
+            '<div class="entry-main">'+
+              '<div class="entry-name">'+escapeHtml(nm)+'</div>'+
+              '<div class="entry-meta">'+
+                '<span class="amount">₹'+fmt(e.amount)+'</span>'+
+                '<span class="badge '+(e.mode==="upi"?"upi":"cash")+'">'+(e.mode==="upi"?"UPI":"CASH")+'</span>'+
+              '</div>'+
+            '</div>'+
+            '<div class="entry-actions">'+
+              '<button class="iconbtn editRowBtn" data-id="'+e.id+'">'+svgEdit()+'</button>'+
+              '<button class="iconbtn danger delRowBtn" data-id="'+e.id+'">'+svgTrash()+'</button>'+
+            '</div>'+
+          '</div>';
+      }
+    });
+    entryList.innerHTML = html;
+
+    if(editingId !== null){
+      var cashOpt = document.getElementById("editModeCash");
+      var upiOpt = document.getElementById("editModeUpi");
+      var currentMode = { val: (function(){ var en = ev.entries.find(function(x){return x.id===editingId;}); return en ? en.mode : "cash"; })() };
+      if(cashOpt) cashOpt.addEventListener("click", function(){
+        currentMode.val = "cash"; cashOpt.classList.add("sel-cash"); if(upiOpt) upiOpt.classList.remove("sel-upi");
+      });
+      if(upiOpt) upiOpt.addEventListener("click", function(){
+        currentMode.val = "upi"; upiOpt.classList.add("sel-upi"); if(cashOpt) cashOpt.classList.remove("sel-cash");
+      });
+      var saveBtn = document.getElementById("saveEditBtn");
+      var cancelBtn = document.getElementById("cancelEditBtn");
+      if(saveBtn) saveBtn.addEventListener("click", function(){
+        var nmVal = document.getElementById("editName").value.trim();
+        var amt = Number(document.getElementById("editAmount").value) || 0;
+        var en = ev.entries.find(function(x){return x.id===editingId;});
+        if(en){
+          en.studentId = findOrCreateStudent(nmVal || "Unnamed");
+          en.amount = amt;
+          en.mode = currentMode.val;
+        }
+        editingId = null;
+        save(); renderAll();
+      });
+      if(cancelBtn) cancelBtn.addEventListener("click", function(){ editingId = null; renderAll(); });
+    }
+
+    entryList.querySelectorAll(".editRowBtn").forEach(function(btn){
+      btn.addEventListener("click", function(){ editingId = Number(btn.getAttribute("data-id")); renderAll(); });
+    });
+    entryList.querySelectorAll(".delRowBtn").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var id = Number(btn.getAttribute("data-id"));
+        var en = ev.entries.find(function(x){return x.id===id;});
+        var nm = en ? getStudentName(en.studentId) : "this entry";
+        openConfirm("entry", id, 'Remove "'+nm+'" from this round? This cannot be undone.');
+      });
+    });
+  }
+
+  function renderSummary(){
+    var ev = getCurrentEvent();
+    var t = computeTotals(ev);
+    var at = computeAllTime();
+    document.getElementById("sumGrand").textContent = fmt(t.total);
+    document.getElementById("sumCash").textContent = fmt(t.cash);
+    document.getElementById("sumUpi").textContent = fmt(t.upi);
+    document.getElementById("sumCashCount").textContent = t.cashCount + " entr" + (t.cashCount===1?"y":"ies");
+    document.getElementById("sumUpiCount").textContent = t.upiCount + " entr" + (t.upiCount===1?"y":"ies");
+    document.getElementById("sumCountLine").textContent = t.count + " entr" + (t.count===1?"y":"ies") + " this round";
+    document.getElementById("sumAllTime").textContent = "All-time: ₹" + fmt(at.total) + " across " + at.rounds + " round" + (at.rounds===1?"":"s");
+    document.getElementById("miniAvg").textContent = "₹" + fmt(t.avg);
+    document.getElementById("miniMax").textContent = "₹" + fmt(t.max);
+    var cashPct = t.total ? (t.cash/t.total*100) : 0;
+    var upiPct = t.total ? (t.upi/t.total*100) : 0;
+    document.getElementById("barCash").style.width = cashPct + "%";
+    document.getElementById("barUpi").style.width = upiPct + "%";
+    hdrTotal.textContent = fmt(t.total);
+  }
+
+  function renderHistory(){
+    var at = computeAllTime();
+    document.getElementById("histAllTotal").textContent = fmt(at.total);
+    var list = document.getElementById("eventList");
+    var sorted = state.events.slice().sort(function(a,b){ return b.id - a.id; });
+    var latest = getLatestEvent();
+    var html = "";
+    sorted.forEach(function(ev){
+      var t = computeTotals(ev);
+      var isActive = ev.id === state.currentEventId;
+      html += ''+
+        '<div class="event-card '+(isActive?"active":"")+'" data-id="'+ev.id+'">'+
+          '<div class="event-main">'+
+            '<div class="event-title">'+escapeHtml(ev.title)+(isActive?' <span class="active-tag">VIEWING</span>':'')+'</div>'+
+            '<div class="event-date">'+fmtDate(ev.date)+'</div>'+
+            '<div class="event-stats">'+t.count+' entries · Cash ₹'+fmt(t.cash)+' · UPI ₹'+fmt(t.upi)+'</div>'+
+          '</div>'+
+          '<div class="event-total">₹'+fmt(t.total)+'</div>'+
+          '<div class="event-actions">'+
+            (state.events.length>1 ? '<button class="iconbtn danger delEventBtn" data-id="'+ev.id+'">'+svgTrash()+'</button>' : '')+
+          '</div>'+
+        '</div>';
+    });
+    list.innerHTML = html || '<div class="empty"><div class="big">📅</div>No rounds yet.</div>';
+
+    list.querySelectorAll(".event-card").forEach(function(card){
+      card.addEventListener("click", function(e){
+        if(e.target.closest(".delEventBtn")) return;
+        var id = Number(card.getAttribute("data-id"));
+        state.currentEventId = id;
+        editingId = null;
+        save();
+        renderAll();
+        activateTab("collectTab");
+      });
+    });
+    list.querySelectorAll(".delEventBtn").forEach(function(btn){
+      btn.addEventListener("click", function(e){
+        e.stopPropagation();
+        var id = Number(btn.getAttribute("data-id"));
+        var ev = getEventById(id);
+        openConfirm("event", id, 'Delete round "'+(ev?ev.title:"")+'" and all its entries? This cannot be undone.');
+      });
+    });
+  }
+
+  function renderInvoice(){
+    var ev = getCurrentEvent();
+    var t = computeTotals(ev);
+    var paper = document.getElementById("invoicePaper");
+    var actions = document.getElementById("invoiceActions");
+    var printBtn = document.getElementById("printBtn");
+    if(!ev.entries.length){
+      paper.innerHTML = '<div class="inv-top"><div class="inv-om">🧾</div><div class="inv-title">'+escapeHtml(state.title)+'</div><div class="inv-date">'+fmtDate(ev.date)+' · '+escapeHtml(ev.title)+'</div></div>'+
+        '<hr class="inv-rule"><div class="empty-inv">Add at least one person to generate the invoice.</div>';
+      actions.style.display = "none";
+      printBtn.style.display = "none";
+      return;
+    }
+    actions.style.display = "flex";
+    printBtn.style.display = "flex";
+    var rows = "";
+    ev.entries.forEach(function(e,i){
+      rows += '<tr><td>'+(i+1)+'</td><td>'+escapeHtml(getStudentName(e.studentId))+'</td><td class="c">'+(e.mode==="upi"?"UPI":"Cash")+'</td><td class="r">₹'+fmt(e.amount)+'</td></tr>';
+    });
+    paper.innerHTML = ''+
+      '<div class="inv-top">'+
+        '<div class="inv-om">🧾</div>'+
+        '<div class="inv-title">'+escapeHtml(state.title)+'</div>'+
+        '<div class="inv-date">'+fmtDate(ev.date)+' · '+escapeHtml(ev.title)+'</div>'+
+      '</div>'+
+      '<hr class="inv-rule">'+
+      '<table class="inv-table">'+
+        '<thead><tr><th>Sr.</th><th>Name</th><th class="c">Mode</th><th class="r">Amount</th></tr></thead>'+
+        '<tbody>'+rows+'</tbody>'+
+        '<tfoot><tr class="inv-total-row"><td colspan="3">Total ('+t.count+' entries)</td><td class="r">₹'+fmt(t.total)+'</td></tr></tfoot>'+
+      '</table>'+
+      '<div class="inv-foot">Cash: ₹'+fmt(t.cash)+' &nbsp;•&nbsp; UPI: ₹'+fmt(t.upi)+'<br>Thank you for contributing! 🙏</div>'+
+      '<div class="inv-sign">'+
+        (state.signatureName
+          ? '<div class="sign-col"><div class="sign-cursive">'+escapeHtml(state.signatureName)+'</div><div class="sign-label">Signature</div></div>'
+          : '<div class="sign-col"><div class="sign-cursive sign-placeholder">Your name</div><div class="sign-label">Signature</div></div>')+
+      '</div>'+
+      '<div class="inv-credit">Made by <a href="https://github.com/VinaySoni-IN" target="_blank" rel="noopener">Vinay Soni</a> · Built with <a href="https://claude.ai" target="_blank" rel="noopener">Claude</a></div>';
+  }
+
+  function renderAll(){
+    titleInput.value = state.title;
+    if(document.activeElement !== signatureInput){ signatureInput.value = state.signatureName || ""; }
+    renderStudentDatalist();
+    renderRoundInfo();
+    renderEntries();
+    renderSummary();
+    renderHistory();
+    renderInvoice();
+  }
+
+  // ---- header date (shows active round's date) ----
+  function refreshHeaderDate(){
+    dateLabel.textContent = fmtDate(getCurrentEvent().date);
+  }
+  var _origRenderAll = renderAll;
+  renderAll = function(){ _origRenderAll(); refreshHeaderDate(); };
+
+  // ---- title ----
+  titleInput.addEventListener("input", function(){
+    state.title = titleInput.value || "Collection";
+    save();
+    renderInvoice();
+  });
+
+  // ---- signature name ----
+  var signatureInput = document.getElementById("signatureInput");
+  signatureInput.addEventListener("input", function(){
+    state.signatureName = signatureInput.value;
+    save();
+    renderInvoice();
+  });
+
+  // ---- tabs ----
+  var fabAdd = document.getElementById("fabAdd");
+  function activateTab(tabId){
+    document.querySelectorAll(".tabbtn").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-tab")===tabId); });
+    document.querySelectorAll(".tab-panel").forEach(function(p){ p.classList.toggle("active", p.id===tabId); });
+    fabAdd.classList.toggle("hidden", tabId !== "collectTab");
+  }
+  document.querySelectorAll(".tabbtn").forEach(function(btn){
+    btn.addEventListener("click", function(){ activateTab(btn.getAttribute("data-tab")); });
+  });
+
+  // ---- add student modal ----
+  var overlay = document.getElementById("overlay");
+  var singleBox = document.getElementById("singleBox");
+  var bulkBox = document.getElementById("bulkBox");
+  var toggleModeLink = document.getElementById("toggleModeLink");
+  var isBulk = false;
+  var addMode = "cash";
+
+  var modeCashOpt = document.getElementById("modeCashOpt");
+  var modeUpiOpt = document.getElementById("modeUpiOpt");
+  modeCashOpt.addEventListener("click", function(){
+    addMode = "cash"; modeCashOpt.classList.add("sel-cash"); modeUpiOpt.classList.remove("sel-upi");
+  });
+  modeUpiOpt.addEventListener("click", function(){
+    addMode = "upi"; modeUpiOpt.classList.add("sel-upi"); modeCashOpt.classList.remove("sel-cash");
+  });
+
+  function updateDefaultUi(){
+    var d = getDefaultAmount();
+    document.getElementById("defaultHint").textContent = "Default: \u20B9" + fmt(d);
+    document.getElementById("bulkDefaultLabel").textContent = "\u20B9" + fmt(d);
+  }
+  document.getElementById("setDefaultBtn").addEventListener("click", function(){
+    var raw = document.getElementById("amountInput").value;
+    var n = Number(raw);
+    if(raw === "" || !isFinite(n) || n < 0){ showToast("Enter a valid amount first"); return; }
+    state.defaultAmount = n;
+    state.defaultUserSet = true;
+    save();
+    updateDefaultUi();
+    showToast("Default set to \u20B9" + fmt(n));
+  });
+
+  function openAddModal(){
+    document.getElementById("nameInput").value = "";
+    document.getElementById("amountInput").value = getDefaultAmount();
+    updateDefaultUi();
+    document.getElementById("bulkInput").value = "";
+    addMode = "cash";
+    modeCashOpt.classList.add("sel-cash"); modeUpiOpt.classList.remove("sel-upi");
+    isBulk = false;
+    singleBox.classList.remove("hide");
+    bulkBox.classList.remove("show");
+    toggleModeLink.textContent = "Paste multiple names instead";
+    overlay.classList.add("open");
+    setTimeout(function(){ document.getElementById("nameInput").focus(); }, 50);
+  }
+  function closeAddModal(){ overlay.classList.remove("open"); }
+
+  fabAdd.addEventListener("click", openAddModal);
+  document.getElementById("cancelAdd").addEventListener("click", closeAddModal);
+  overlay.addEventListener("click", function(e){ if(e.target === overlay) closeAddModal(); });
+
+  toggleModeLink.addEventListener("click", function(){
+    isBulk = !isBulk;
+    if(isBulk){
+      singleBox.classList.add("hide"); bulkBox.classList.add("show");
+      toggleModeLink.textContent = "Add single person instead";
+    } else {
+      singleBox.classList.remove("hide"); bulkBox.classList.remove("show");
+      toggleModeLink.textContent = "Paste multiple names instead";
+    }
+  });
+
+  document.getElementById("confirmAdd").addEventListener("click", function(){
+    var ev = getCurrentEvent();
+    if(isBulk){
+      var lines = document.getElementById("bulkInput").value.split("\n")
+        .map(function(l){ return l.trim(); }).filter(function(l){ return l.length > 0; });
+      if(!lines.length){ closeAddModal(); return; }
+      lines.forEach(function(nm){
+        var sid = findOrCreateStudent(nm);
+        ev.entries.push({ id: state.nextId++, studentId: sid, amount: getDefaultAmount(), mode: "cash" });
+      });
+    } else {
+      var nm2 = document.getElementById("nameInput").value.trim();
+      var amt2 = Number(document.getElementById("amountInput").value) || 0;
+      var sid2 = findOrCreateStudent(nm2 || "Unnamed");
+      ev.entries.push({ id: state.nextId++, studentId: sid2, amount: amt2, mode: addMode });
+    }
+    save();
+    closeAddModal();
+    renderAll();
+  });
+
+  // ---- new round modal ----
+  var roundOverlay = document.getElementById("roundOverlay");
+  document.getElementById("newRoundBtn").addEventListener("click", function(){
+    document.getElementById("roundNameInput").value = "";
+    roundOverlay.classList.add("open");
+    setTimeout(function(){ document.getElementById("roundNameInput").focus(); }, 50);
+  });
+  document.getElementById("cancelRound").addEventListener("click", function(){ roundOverlay.classList.remove("open"); });
+  roundOverlay.addEventListener("click", function(e){ if(e.target === roundOverlay) roundOverlay.classList.remove("open"); });
+  document.getElementById("confirmRound").addEventListener("click", function(){
+    var nm = document.getElementById("roundNameInput").value.trim();
+    var ev = freshEvent(nm || ("Round " + (state.events.length+1)));
+    state.events.push(ev);
+    state.currentEventId = ev.id;
+    editingId = null;
+    save();
+    roundOverlay.classList.remove("open");
+    renderAll();
+    activateTab("collectTab");
+  });
+
+  // ---- confirm delete modal (entries or rounds) ----
+  var confirmOverlay = document.getElementById("confirmOverlay");
+  function openConfirm(type, id, msg){
+    pendingDelete = { type: type, id: id };
+    var titles = { event: "Delete round?", qr: "Remove QR?" };
+    document.getElementById("confirmTitle").textContent = titles[type] || "Remove person?";
+    document.getElementById("confirmMsg").textContent = msg;
+    confirmOverlay.classList.add("open");
+  }
+  function closeConfirm(){ confirmOverlay.classList.remove("open"); pendingDelete = null; }
+  document.getElementById("confirmNo").addEventListener("click", closeConfirm);
+  confirmOverlay.addEventListener("click", function(e){ if(e.target === confirmOverlay) closeConfirm(); });
+  document.getElementById("confirmYes").addEventListener("click", function(){
+    if(pendingDelete){
+      if(pendingDelete.type === "entry"){
+        var ev = getCurrentEvent();
+        ev.entries = ev.entries.filter(function(x){ return x.id !== pendingDelete.id; });
+      } else if(pendingDelete.type === "event"){
+        state.events = state.events.filter(function(x){ return x.id !== pendingDelete.id; });
+        if(!state.events.length){ var fresh = freshEvent("Collection"); state.events.push(fresh); }
+        if(state.currentEventId === pendingDelete.id){ state.currentEventId = getLatestEvent().id; }
+      } else if(pendingDelete.type === "qr"){
+        state.qrImage = null;
+        renderQrCard();
+      }
+      save();
+    }
+    closeConfirm();
+    renderAll();
+  });
+
+  // ---- UPI QR code (uploaded, cached in state, persists on every reload) ----
+  var qrBtn = document.getElementById("qrBtn");
+  var qrOverlay = document.getElementById("qrOverlay");
+  var qrFileInput = document.getElementById("qrFileInput");
+
+  function renderQrCard(){
+    var wrap = document.getElementById("qrImageWrap");
+    var removeBtn = document.getElementById("qrRemoveBtn");
+    if(state.qrImage){
+      wrap.innerHTML = '<img src="'+state.qrImage+'" alt="UPI QR code">';
+      document.getElementById("qrChangeBtn").textContent = "Change QR";
+      removeBtn.style.display = "inline-flex";
+    } else {
+      wrap.innerHTML = '<div class="qr-empty">No QR uploaded yet.<br>Tap below to add your UPI QR code — it stays saved on this device.</div>';
+      document.getElementById("qrChangeBtn").textContent = "Upload QR";
+      removeBtn.style.display = "none";
+    }
+  }
+
+  qrBtn.addEventListener("click", function(){
+    renderQrCard();
+    qrOverlay.classList.add("open");
+  });
+  document.getElementById("qrCloseBtn").addEventListener("click", function(){ qrOverlay.classList.remove("open"); });
+  qrOverlay.addEventListener("click", function(e){ if(e.target === qrOverlay) qrOverlay.classList.remove("open"); });
+
+  document.getElementById("qrChangeBtn").addEventListener("click", function(){ qrFileInput.click(); });
+  document.getElementById("qrRemoveBtn").addEventListener("click", function(){
+    openConfirm("qr", null, "Remove your saved UPI QR code? You'll need to upload it again next time.");
+  });
+
+  qrFileInput.addEventListener("change", function(){
+    var file = qrFileInput.files && qrFileInput.files[0];
+    qrFileInput.value = "";
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e){
+      var img = new Image();
+      img.onload = function(){
+        var maxDim = 480;
+        var w = img.width, h = img.height;
+        var scale = Math.min(1, maxDim / Math.max(w, h));
+        var cw = Math.max(1, Math.round(w * scale));
+        var ch = Math.max(1, Math.round(h * scale));
+        var canvas = document.createElement("canvas");
+        canvas.width = cw; canvas.height = ch;
+        var ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, cw, ch);
+        ctx.drawImage(img, 0, 0, cw, ch);
+        try{
+          state.qrImage = canvas.toDataURL("image/jpeg", 0.9);
+          save();
+          renderQrCard();
+          showToast("QR saved — it'll stay here on reload.");
+        }catch(err){
+          showToast("QR image save nahi ho payi, dubara try karo.");
+        }
+      };
+      img.onerror = function(){ showToast("Ye image nahi khul payi, doosri try karo."); };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // ---- print ----
+  document.getElementById("printBtn").addEventListener("click", function(){ window.print(); });
+
+  // ---- share to whatsapp (as image) ----
+  document.getElementById("shareBtn").addEventListener("click", function(){
+    var target = document.getElementById("invoicePaper");
+    if(typeof html2canvas === "undefined"){
+      showToast("Image library load nahi hui — internet check karke dubara try karo.");
+      return;
+    }
+    showToast("Invoice image taiyar ho rahi hai...");
+    html2canvas(target, { backgroundColor: "#FFFDF8", scale: 2 }).then(function(canvas){
+      canvas.toBlob(function(blob){
+        if(!blob){ showToast("Image nahi ban payi, dubara try karo."); return; }
+        var ev = getCurrentEvent();
+        var t = computeTotals(ev);
+        var file;
+        try{ file = new File([blob], "invoice.png", { type: "image/png" }); }catch(e){ file = null; }
+        if(file && navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share){
+          navigator.share({
+            files: [file],
+            title: state.title,
+            text: state.title + " — ₹" + fmt(t.total) + " collected"
+          }).catch(function(){ /* user cancelled */ });
+        } else {
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement("a");
+          a.href = url; a.download = "invoice.png";
+          document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+          showToast("Sharing yahan supported nahi — image download ho gayi, WhatsApp mein manually attach kar do.");
+        }
+      }, "image/png");
+    }).catch(function(){
+      showToast("Invoice image banane mein error aayi.");
+    });
+  });
+
+  // ---- init ----
+  load();
+  renderAll();
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+      navigator.serviceWorker.register("sw.js").catch(function(){ /* ignore if missing */ });
+    });
+  }
+})();
+</script>
+</body>
+</html>
