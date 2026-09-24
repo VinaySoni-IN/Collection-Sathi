@@ -35,6 +35,7 @@
     --line: rgba(46,27,20,0.14);
     --shadow: rgba(46,27,20,0.18);
     --good:#3F6B3A;
+    --app-max-width:720px;
     --font-display:'Yatra One','Noto Sans Devanagari',serif;
     --font-body:'Work Sans','Segoe UI',system-ui,sans-serif;
     color-scheme: light;
@@ -43,20 +44,24 @@
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
-  html,body{height:100%;}
+  html,body{height:100%; width:100%;}
   html{ scroll-padding-top: env(safe-area-inset-top, 0px); }
   *{box-sizing:border-box;}
   body{
     margin:0;
+    width:100%;
+    min-width:0;
+    overflow-x:hidden;
     background:var(--paper);
     color:var(--ink);
     font-family:var(--font-body);
     -webkit-tap-highlight-color: transparent;
   }
   .app{
-    max-width:480px;
+    width:100%;
+    max-width:var(--app-max-width);
     margin:0 auto;
-    min-height:100%;
+    min-height:100dvh;
     display:flex;
     flex-direction:column;
     background:var(--paper);
@@ -243,7 +248,7 @@
   .overlay.open{ display:flex; }
   .modal{
     background:var(--card);
-    width:100%; max-width:480px;
+    width:100%; max-width:var(--app-max-width);
     border-radius:20px 20px 0 0;
     padding: 18px 18px calc(18px + env(safe-area-inset-bottom,0px));
     box-shadow: 0 -8px 24px var(--shadow);
@@ -358,7 +363,7 @@
   /* ---------- TAB BAR ---------- */
   nav.tabbar{
     position:fixed; left:0; right:0; bottom:0; z-index:30;
-    max-width:480px; margin:0 auto;
+    width:100%; max-width:var(--app-max-width); margin:0 auto;
     background:var(--paper-alt);
     border-top:1px solid var(--line);
     padding: 6px 8px calc(8px + env(safe-area-inset-bottom,0px));
@@ -374,15 +379,15 @@
   .tabbtn.active{ color:var(--vermillion); }
 
   .fab{
-    position:fixed; right:calc(50% - 240px + 18px); bottom: calc(78px + env(safe-area-inset-bottom,0px));
-    max-width:480px;
+    position:fixed;
+    right:max(18px, calc((100vw - var(--app-max-width)) / 2 + 18px));
+    bottom:calc(78px + env(safe-area-inset-bottom,0px));
     background:var(--vermillion); color:#fff; border:none; width:52px; height:52px; border-radius:50%;
     box-shadow:0 6px 16px var(--shadow); display:flex; align-items:center; justify-content:center; cursor:pointer;
     z-index:25;
   }
   .fab svg{ width:24px; height:24px; }
   .fab.hidden{ display:none; }
-  @media (max-width:516px){ .fab{ right:18px; } }
 
   /* ---------- TOAST ---------- */
   .toast{
@@ -392,6 +397,32 @@
     pointer-events:none;
   }
   .toast.show{ opacity:1; transform:translate(-50%,0); }
+
+  /* ---------- RESPONSIVE LAYOUT ---------- */
+  /* The UI expands to the real viewport on phones/tablets and only
+     constrains itself on genuinely wide screens. Header, content,
+     bottom navigation and FAB all use the same width model. */
+  @media (max-width:720px){
+    .app{ max-width:none; }
+    nav.tabbar{ max-width:none; }
+    .modal{ max-width:none; }
+    main{ padding-left:clamp(12px, 4vw, 20px); padding-right:clamp(12px, 4vw, 20px); }
+  }
+
+  @media (min-width:721px){
+    body{ background:var(--paper-alt); }
+    .app{
+      box-shadow:0 0 28px rgba(46,27,20,.10);
+      min-height:100dvh;
+    }
+  }
+
+  @media (orientation:landscape) and (max-height:600px){
+    main{ padding-bottom:82px; }
+    nav.tabbar{ padding-top:3px; padding-bottom:calc(4px + env(safe-area-inset-bottom,0px)); }
+    .tabbtn{ padding-top:5px; padding-bottom:5px; }
+    .fab{ bottom:calc(64px + env(safe-area-inset-bottom,0px)); }
+  }
 
   /* ---------- PRINT ---------- */
   @media print{
