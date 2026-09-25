@@ -8,6 +8,76 @@ It is designed for practical collection workflows such as **chanda, festival fun
 
 ---
 
+# Collection Sathi
+
+<p align="center">
+  <img src="Banner.png" alt="Collection Sathi Banner" width="100%">
+</p>
+
+<p align="center">
+  <strong>Simple, local collection management.</strong><br>
+  Record collections, verify UPI payments, preserve payment proofs, and generate clean reports.
+</p>
+
+<p align="center">
+  <a href="https://github.com/VinaySoni-IN/Collection-Sathi/releases/latest">
+    <img src="https://img.shields.io/badge/Download%20APK-Latest%20Release-6B1420?style=for-the-badge&logo=android&logoColor=white" alt="Download APK">
+  </a>
+  &nbsp;
+  <a href="https://vinaysoni-in.github.io/Collection-Sathi/">
+    <img src="https://img.shields.io/badge/Open%20Web%20App-Live-9A1B2B?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Open Web App">
+  </a>
+  &nbsp;
+  <a href="">
+    <img src="https://img.shields.io/badge/F--Droid-Coming%20Soon-333333?style=for-the-badge&logo=f-droid&logoColor=white" alt="F-Droid">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/VinaySoni-IN/Collection-Sathi/releases/latest"><strong>📱 Download APK</strong></a>
+  &nbsp; • &nbsp;
+  <a href="https://vinaysoni-in.github.io/Collection-Sathi/"><strong>🌐 Open Web App</strong></a>
+  &nbsp; • &nbsp;
+  <a href=""><strong>🤖 Get it on F-Droid</strong></a>
+</p>
+
+<p align="center">
+  <sub>Cash • UPI • Verification • Payment Proof • History • Reports</sub>
+</p>
+
+---
+
+## 🚀 Quick Start
+
+| Platform | Action |
+|---|---|
+| 📱 **Android** | <a href="https://github.com/VinaySoni-IN/Collection-Sathi/releases/latest"><strong>Download the latest APK</strong></a> |
+| 🌐 **Web** | <a href="https://vinaysoni-in.github.io/Collection-Sathi/"><strong>Open Collection Sathi</strong></a> |
+| 🤖 **F-Droid** | <a href=""><strong>Coming Soon</strong></a> |
+
+### Download from GitHub Releases
+
+The Android application is distributed through GitHub Releases.
+
+**Latest release:**  
+<a href="https://github.com/VinaySoni-IN/Collection-Sathi/releases/latest">Download Collection Sathi APK →</a>
+
+### Open without installing
+
+You can use the same application directly in a modern browser:
+
+<a href="https://vinaysoni-in.github.io/Collection-Sathi/">
+  <strong>🌐 Launch Collection Sathi Web App</strong>
+</a>
+
+### F-Droid
+
+F-Droid distribution is reserved as a future distribution channel.
+
+<a href=""><strong>🤖 F-Droid — Coming Soon</strong></a>
+
+> **Note:** The F-Droid button intentionally has a placeholder destination until an official F-Droid package/repository URL is available.
+
 ## ✨ Features
 
 | Feature | Description |
@@ -846,550 +916,3 @@ QR handling also uses:
 
 ```text
 FileReader
-Image
-Canvas
-toDataURL()
-localStorage
-```
-
----
-
-## UPI proof functions
-
-| Function | Purpose |
-|---|---|
-| `getProofDb()` | Opens/initializes the IndexedDB proof archive |
-| `makeProofId()` | Generates a unique proof identifier |
-| `saveProofImage(entryId, blob, method)` | Stores a payment-proof image |
-| `getProofImage(proofId)` | Retrieves a stored proof image |
-| `verificationLabel(e)` | Returns the verification label |
-| `findEntryById(id)` | Finds an entry across all rounds |
-| `renderVerifyModal()` | Updates the UPI verification dialog |
-| `openVerify(id)` | Opens verification for a UPI entry |
-| `closeVerify()` | Closes the verification dialog |
-| `handleProofFile(file)` | Saves an uploaded/captured proof and verifies the transaction |
-
----
-
-# 🧠 Verification Data Flow
-
-```text
-                     UPI ENTRY
-                         │
-                         ▼
-                Open Verification
-                         │
-             ┌───────────┼───────────┐
-             │           │           │
-             ▼           ▼           ▼
-         Upload       Camera      Self Verify
-          Image        Image
-             │           │           │
-             └──────┬────┘           │
-                    ▼                ▼
-               Image Blob       verification
-                    │             method:self
-                    ▼
-                 IndexedDB
-                    │
-                    ▼
-                 proofId
-                    │
-                    ▼
-          Entry.verification
-                    │
-                    ▼
-              ✓ Verified UPI
-```
-
----
-
-# 🗂️ Project Structure
-
-The current application is intentionally lightweight.
-
-```text
-Collection-Sathi/
-│
-├── index.html
-├── manifest.json
-├── sw.js
-├── icon-192.png
-├── icon-512.png
-└── README.md
-```
-
-> `index.html` currently contains the application's HTML, CSS, and JavaScript in a single self-contained file.
-
----
-
-# 🌐 Web / PWA Architecture
-
-Collection Sathi is a web application and can also be packaged for Android.
-
-```text
-                    GitHub Pages
-                         │
-                         ▼
-              Collection-Sathi Web App
-                         │
-             ┌───────────┴───────────┐
-             │                       │
-          Browser                Android TWA
-             │                       │
-             └───────────┬───────────┘
-                         ▼
-                  Same Web Application
-```
-
-The current Android package is a **Trusted Web Activity (TWA) wrapper**, so the main application code is served from the web project rather than bundled as a normal Android WebView asset package.
-
-Current web application URL:
-
-**https://vinaysoni-in.github.io/Collection-Sathi/**
-
----
-
-# 📱 Android APK
-
-The Android package uses:
-
-```text
-Trusted Web Activity
-        │
-        ▼
-Collection-Sathi GitHub Pages
-        │
-        ▼
-index.html
-```
-
-This architecture means normal HTML/CSS/JavaScript updates can be deployed to the same web location without necessarily rebuilding the Android wrapper.
-
-### Important
-
-Keep the deployed application URL compatible with the existing TWA configuration.
-
-Avoid casually changing:
-
-```text
-Application URL
-Package identity
-Digital Asset Links
-Manifest configuration
-Storage keys
-```
-
-unless the Android wrapper is intentionally being updated.
-
----
-
-# 💾 Persistence Rules
-
-The application currently uses:
-
-```text
-localStorage
-    ↓
-Main collection state
-
-IndexedDB
-    ↓
-UPI payment proof images
-```
-
-### Main storage key
-
-```text
-collection_sathi_v2
-```
-
-### Proof database
-
-```text
-collection_sathi_proofs_v1
-```
-
-### Important compatibility rule
-
-Do **not** rename the main storage key unless a migration system is also implemented.
-
-Changing:
-
-```js
-collection_sathi_v2
-```
-
-to another key would make existing locally stored data appear unavailable to the updated application.
-
----
-
-# 🔒 Privacy Model
-
-Collection Sathi is designed around local device storage.
-
-```text
-User Data
-   │
-   ├── Collection records → localStorage
-   │
-   ├── QR image           → localStorage
-   │
-   └── Proof images       → IndexedDB
-```
-
-The source code currently does not implement a remote collection database or user account system.
-
-### Storage limitations
-
-Local storage is not the same as cloud backup.
-
-Data may be lost if the user:
-
-- clears site/app storage,
-- clears browser data,
-- uninstalls an application that owns the storage,
-- uses a browser/storage reset,
-- or otherwise removes the site's local data.
-
-Users should keep an independent backup for important financial records.
-
----
-
-# 🌍 External Dependencies
-
-The application currently references:
-
-### Google Fonts
-
-```text
-Yatra One
-Caveat
-Work Sans
-```
-
-### html2canvas
-
-```text
-html2canvas 1.4.1
-```
-
-It is used for invoice image generation.
-
-The normal collection/storage functionality is implemented in the application itself, while these external resources support typography and invoice image sharing.
-
----
-
-# 🧪 Recommended Testing Checklist
-
-Before publishing a major update, test:
-
-```text
-[ ] App opens
-[ ] Existing collection data loads
-[ ] Existing rounds load
-[ ] Existing entries load
-[ ] Cash entry works
-[ ] UPI entry works
-[ ] UPI verification works
-[ ] Upload proof works
-[ ] Camera proof works
-[ ] Self verification works
-[ ] Proof survives reload
-[ ] QR survives reload
-[ ] Editing amount clears old verification
-[ ] Editing person clears old verification
-[ ] Changing UPI → Cash clears verification
-[ ] New round works
-[ ] Round switching works
-[ ] Round deletion works
-[ ] Entry deletion works
-[ ] Summary totals are correct
-[ ] History totals are correct
-[ ] Invoice generation works
-[ ] Print / PDF works
-[ ] Invoice image sharing works
-[ ] Mobile layout works
-[ ] Android TWA opens the updated site
-[ ] Existing local data remains accessible
-```
-
----
-
-# 🚀 Deployment
-
-Collection Sathi can be deployed as a static website.
-
-A typical GitHub Pages deployment is:
-
-```text
-Repository
-    │
-    ├── index.html
-    ├── manifest.json
-    ├── sw.js
-    └── assets
-         │
-         ▼
-     GitHub Pages
-         │
-         ▼
-https://<username>.github.io/<repository>/
-```
-
-For the current project, the deployed path is:
-
-```text
-/Collection-Sathi/
-```
-
-After changing `index.html`, verify the live GitHub Pages version before distributing an APK update.
-
----
-
-# 🛠️ Development Workflow
-
-```text
-1. Edit index.html
-       │
-       ▼
-2. Test locally
-       │
-       ▼
-3. Test storage compatibility
-       │
-       ▼
-4. Test UPI verification
-       │
-       ▼
-5. Test proof persistence
-       │
-       ▼
-6. Commit changes
-       │
-       ▼
-7. Push to GitHub
-       │
-       ▼
-8. Verify GitHub Pages
-       │
-       ▼
-9. Test Android TWA
-```
-
----
-
-# ⚠️ Important Development Rules
-
-### Do not casually change the storage key
-
-```js
-var STORAGE_KEY = "collection_sathi_v2";
-```
-
-### Do not remove the proof database
-
-```js
-collection_sathi_proofs_v1
-```
-
-### Do not change the TWA URL without updating the Android configuration
-
-```text
-https://vinaysoni-in.github.io/Collection-Sathi/
-```
-
-### Do not treat local storage as a backup
-
-Important collection records should be backed up independently.
-
-### Test destructive changes with real-world-like sample data
-
-Use several:
-
-```text
-Cash entries
-UPI entries
-Verified UPI entries
-Proof images
-Multiple rounds
-```
-
-before releasing a structural storage change.
-
----
-
-# 🧩 Technology Stack
-
-```text
-┌──────────────────────────────────────┐
-│             Collection Sathi         │
-├──────────────────────────────────────┤
-│ HTML5                                │
-│ CSS3                                 │
-│ Vanilla JavaScript                   │
-│ localStorage                         │
-│ IndexedDB                            │
-│ FileReader API                       │
-│ Canvas API                           │
-│ Web Share API                        │
-│ Browser Print API                    │
-│ Service Worker                       │
-│ Web App Manifest                     │
-│ html2canvas                          │
-│ GitHub Pages                         │
-│ Trusted Web Activity (Android)       │
-└──────────────────────────────────────┘
-```
-
-No frontend framework is required.
-
-```text
-No React
-No Vue
-No Angular
-No Node.js runtime required for the client
-```
-
-The current app is intentionally built as a compact client-side application.
-
----
-
-# 📜 License
-
-The current project source provided for this README does **not specify a license file or explicit open-source license text**.
-
-If this repository is intended to be publicly reusable, add a license such as **MIT** to the repository and update this section accordingly.
-
-Until a license is explicitly added, public visibility of a repository should not be interpreted as granting broad reuse rights.
-
----
-
-# 🤝 Contributing
-
-Contributions are welcome.
-
-A useful contribution should:
-
-1. Keep existing stored data compatible.
-2. Avoid breaking old collection rounds.
-3. Preserve UPI verification behavior.
-4. Preserve proof-image references.
-5. Test mobile layouts.
-6. Test the Android TWA after major web changes.
-7. Keep the application dependency-light.
-
-Suggested workflow:
-
-```bash
-git clone <repository-url>
-cd Collection-Sathi
-
-# edit files
-
-git add .
-git commit -m "Improve collection feature"
-git push
-```
-
----
-
-# 🐛 Bug Reports
-
-When reporting a bug, include:
-
-```text
-Device:
-Android / Browser:
-App version:
-Browser version:
-What happened:
-Expected behavior:
-Steps to reproduce:
-Console error, if available:
-Screenshot, if useful:
-```
-
-For data/storage problems, also mention whether:
-
-```text
-Browser data was cleared
-App was reinstalled
-APK was updated
-index.html was updated
-```
-
----
-
-# 🗺️ Roadmap Ideas
-
-Potential future improvements:
-
-```text
-[ ] Export / Import backup
-[ ] JSON backup
-[ ] CSV export
-[ ] PDF export improvements
-[ ] Search entries
-[ ] Filter Cash / UPI
-[ ] Verification filter
-[ ] Proof archive viewer
-[ ] Proof deletion management
-[ ] Collection analytics
-[ ] Dark mode
-[ ] Optional cloud backup
-[ ] Optional encrypted backup
-[ ] Better offline caching
-[ ] Data migration system
-[ ] Automated storage integrity checks
-```
-
-These are roadmap ideas, not necessarily implemented in the current version.
-
----
-
-# 👨‍💻 Author
-
-**Vinay Soni**
-
-GitHub:
-
-**https://github.com/VinaySoni-IN**
-
-Project:
-
-**Collection Sathi**
-
----
-
-# ❤️ Project Philosophy
-
-Collection Sathi is built around a simple idea:
-
-```text
-COLLECT
-   ↓
-RECORD
-   ↓
-VERIFY
-   ↓
-STORE
-   ↓
-SUMMARIZE
-   ↓
-PRINT / SHARE
-```
-
-A collection record should be easy to enter, easy to verify, easy to review, and easy to turn into a usable record.
-
----
-
-<div align="center">
-
-### 🪔 Collection Sathi
-
-**A simple digital companion for collection records.**
-
-Made with ❤️ by **Vinay Soni**
-
-</div>
