@@ -47,6 +47,16 @@ It is designed for practical collection workflows such as **chanda, festival fun
 
 ---
 
+## 📱 Screenshot Gallery
+
+| Screenshot 1 | Screenshot 2 | Screenshot 3 |
+|--------------|--------------|--------------|
+| ![Screenshot 1](screenshots/screen1.png) | ![Screenshot 2](screenshots/screen2.png) | ![Screenshot 3](screenshots/screen3.png) |
+| Screenshot 4 | Screenshot 5 | Screenshot 6 |
+| ![Screenshot 4](screenshots/screen4.png) | ![Screenshot 5](screenshots/screen5.png) | ![Screenshot 6](screenshots/screen6.png) |
+
+---
+
 ## 🚀 Quick Start
 
 | Platform | Action |
