@@ -1,84 +1,347 @@
-<p align="center">
-  <img src="icon-512.png" alt="Collection Sathi icon" width="96">
+<div align="center">
+
+<img src="icon-512.png" alt="Collection Sathi icon" width="96">
+
+<h1>Collection Sathi</h1>
+
+<p>
+<sub>Simple, local-first collection tracking — Cash + UPI, history, invoices, and more.</sub>
 </p>
 
-<h1 align="center">Collection Sathi</h1>
-
-<p align="center">
-  <sub>Simple, local-first collection tracking — Cash + UPI, history, invoices, and more.</sub>
-</p>
-
-<p align="center">
-## 📱 Screenshot Gallery
-
-| Screenshot 1 | Screenshot 2 | Screenshot 3 |
-|--------------|--------------|--------------|
-| ![Screenshot 1](screenshots/screen1.png) | ![Screenshot 2](screenshots/screen2.png) | ![Screenshot 3](screenshots/screen3.png) |
-| Screenshot 4 | Screenshot 5 | Screenshot 6 |
-| ![Screenshot 4](screenshots/screen4.png) | ![Screenshot 5](screenshots/screen5.png) | ![Screenshot 6](screenshots/screen6.png) |
-</p>
----
-
-
-## 🚀 Quick Start
-
-| Platform | Action |
-|---|---|
-| 📱 **Android** | <a href="https://github.com/VinaySoni-IN/Collection-Sathi/releases/latest"><strong>Download the latest APK</strong></a> |
-| 🌐 **Web** | <a href="https://vinaysoni-in.github.io/Collection-Sathi/"><strong>Open Collection Sathi</strong></a> |
-| 🤖 **F-Droid** | <a href=""><strong>Coming Soon</strong></a> |
-
-### Download from GitHub Releases
-
-The Android application is distributed through GitHub Releases.
-
-**Latest release:**  
-<a href="https://github.com/VinaySoni-IN/Collection-Sathi/releases/latest">Download Collection Sathi APK →</a>
-
-### Open without installing
-
-You can use the same application directly in a modern browser:
-
-<a href="https://vinaysoni-in.github.io/Collection-Sathi/">
-  <strong>🌐 Launch Collection Sathi Web App</strong>
+<p>
+<a href="https://github.com/VinaySoni-IN/Collection-Sathi/releases/latest">
+<strong>📱 Download Android APK</strong>
 </a>
+&nbsp;&nbsp;•&nbsp;&nbsp;
+<a href="https://vinaysoni-in.github.io/Collection-Sathi/">
+<strong>🌐 Open Web App</strong>
+</a>
+&nbsp;&nbsp;•&nbsp;&nbsp;
+<strong>🤖 F-Droid — Coming Soon</strong>
+</p>
 
-### F-Droid
+</div>
 
+<hr>
+
+<!-- ====================================================== -->
+<!-- TWO COLUMN MAIN LAYOUT                                  -->
+<!-- ====================================================== -->
+
+<table width="100%">
+<tr>
+
+<!-- ======================= LEFT ========================== -->
+
+<td width="50%" valign="top">
+
+<h2>📱 Screenshot Gallery</h2>
+
+<table width="100%">
+<tr>
+<td width="33%">
+<img src="screenshots/screen1.png" alt="Screenshot 1" width="100%">
+</td>
+<td width="33%">
+<img src="screenshots/screen2.png" alt="Screenshot 2" width="100%">
+</td>
+<td width="33%">
+<img src="screenshots/screen3.png" alt="Screenshot 3" width="100%">
+</td>
+</tr>
+
+<tr>
+<td>
+<img src="screenshots/screen4.png" alt="Screenshot 4" width="100%">
+</td>
+<td>
+<img src="screenshots/screen5.png" alt="Screenshot 5" width="100%">
+</td>
+<td>
+<img src="screenshots/screen6.png" alt="Screenshot 6" width="100%">
+</td>
+</tr>
+</table>
+
+<h2>🚀 Quick Start</h2>
+
+<table width="100%">
+<tr>
+<th>Platform</th>
+<th>Action</th>
+</tr>
+<tr>
+<td>📱 <strong>Android</strong></td>
+<td>
+<a href="https://github.com/VinaySoni-IN/Collection-Sathi/releases/latest">
+Download latest APK
+</a>
+</td>
+</tr>
+<tr>
+<td>🌐 <strong>Web</strong></td>
+<td>
+<a href="https://vinaysoni-in.github.io/Collection-Sathi/">
+Open Collection Sathi
+</a>
+</td>
+</tr>
+<tr>
+<td>🤖 <strong>F-Droid</strong></td>
+<td>Coming Soon</td>
+</tr>
+</table>
+
+<h3>Download from GitHub Releases</h3>
+
+<p>
+The Android application is distributed through GitHub Releases.
+</p>
+
+<p>
+<strong>Latest release:</strong><br>
+<a href="https://github.com/VinaySoni-IN/Collection-Sathi/releases/latest">
+Download Collection Sathi APK →
+</a>
+</p>
+
+<h3>Open without installing</h3>
+
+<p>
+You can use the same application directly in a modern browser:
+</p>
+
+<p>
+<a href="https://vinaysoni-in.github.io/Collection-Sathi/">
+<strong>🌐 Launch Collection Sathi Web App</strong>
+</a>
+</p>
+
+<h3>F-Droid</h3>
+
+<p>
 F-Droid distribution is reserved as a future distribution channel.
+</p>
 
-<a href=""><strong>🤖 F-Droid — Coming Soon</strong></a>
+<blockquote>
+<strong>Note:</strong> The F-Droid button intentionally has a placeholder
+destination until an official F-Droid package/repository URL is available.
+</blockquote>
 
-> **Note:** The F-Droid button intentionally has a placeholder destination until an official F-Droid package/repository URL is available.
+<h2>✨ Features</h2>
 
-## ✨ Features
+<table width="100%">
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
 
-| Feature | Description |
-|---|---|
-| 👥 Person Management | Create and reuse person records by name |
-| 💵 Cash Collection | Record cash payments with amount |
-| 📲 UPI Collection | Record UPI payments separately from cash |
-| ✅ UPI Verification | Mark UPI payments as verified manually or with proof |
-| 📷 Payment Proof | Upload an image or capture one using the device camera |
-| 🗃️ Proof Archive | UPI proof images are stored in browser IndexedDB |
-| 🧾 Invoice | Generate a clean round-wise collection invoice |
-| 🖨️ Print / PDF | Print the invoice or save it as PDF using the browser print dialog |
-| 📤 Share Invoice | Generate an invoice image and use the device share sheet when supported |
-| 📱 UPI QR | Save a collection UPI QR image locally on the device |
-| 🔄 Multiple Rounds | Create and switch between independent collection rounds |
-| 📊 Summary | View total, Cash, UPI, counts, average, and maximum collection |
-| 📚 History | Browse all collection rounds and their totals |
-| ✍️ Signature | Add a signature/name to generated invoices |
-| 💾 Local Storage | Main collection data is stored locally on the device |
-| 📴 Local-first | No account or server-side collection database is required |
-| 📱 Responsive UI | Designed primarily for phones and small screens |
-| 🎨 Themed UI | Mobile-first Indian/community collection aesthetic |
+<tr><td>👥 Person Management</td><td>Create and reuse person records by name</td></tr>
+<tr><td>💵 Cash Collection</td><td>Record cash payments with amount</td></tr>
+<tr><td>📲 UPI Collection</td><td>Record UPI payments separately from cash</td></tr>
+<tr><td>✅ UPI Verification</td><td>Mark UPI payments as verified manually or with proof</td></tr>
+<tr><td>📷 Payment Proof</td><td>Upload an image or capture one using the device camera</td></tr>
+<tr><td>🗃️ Proof Archive</td><td>UPI proof images are stored in browser IndexedDB</td></tr>
+<tr><td>🧾 Invoice</td><td>Generate a clean round-wise collection invoice</td></tr>
+<tr><td>🖨️ Print / PDF</td><td>Print the invoice or save it as PDF using the browser print dialog</td></tr>
+<tr><td>📤 Share Invoice</td><td>Generate an invoice image and use the device share sheet when supported</td></tr>
+<tr><td>📱 UPI QR</td><td>Save a collection UPI QR image locally on the device</td></tr>
+<tr><td>🔄 Multiple Rounds</td><td>Create and switch between independent collection rounds</td></tr>
+<tr><td>📊 Summary</td><td>View total, Cash, UPI, counts, average, and maximum collection</td></tr>
+<tr><td>📚 History</td><td>Browse all collection rounds and their totals</td></tr>
+<tr><td>✍️ Signature</td><td>Add a signature/name to generated invoices</td></tr>
+<tr><td>💾 Local Storage</td><td>Main collection data is stored locally on the device</td></tr>
+<tr><td>📴 Local-first</td><td>No account or server-side collection database is required</td></tr>
+<tr><td>📱 Responsive UI</td><td>Designed primarily for phones and small screens</td></tr>
+<tr><td>🎨 Themed UI</td><td>Mobile-first Indian/community collection aesthetic</td></tr>
 
----
+</table>
 
-## 🖼️ Application Structure
+<h2>🧭 Navigation</h2>
 
-```text
+<table width="100%">
+<tr>
+<td align="center"><strong>👥 COLLECT</strong><br>Add/edit payments<br>Verify UPI</td>
+<td align="center"><strong>📊 SUMMARY</strong><br>Totals<br>Cash/UPI</td>
+</tr>
+<tr>
+<td align="center"><strong>🕒 HISTORY</strong><br>All rounds<br>Switch rounds</td>
+<td align="center"><strong>🧾 INVOICE</strong><br>Receipt<br>Print/PDF/Share</td>
+</tr>
+</table>
+
+<h2>👥 1. Collect Tab</h2>
+
+<p>
+The <strong>Collect</strong> tab is the main working screen.
+</p>
+
+<h3>Add a person</h3>
+
+<p>A collection entry contains:</p>
+
+<pre>
+Person Name
+Amount
+Payment Mode
+</pre>
+
+<p>Payment modes:</p>
+
+<pre>
+💵 Cash
+📲 UPI
+</pre>
+
+<h3>Single-person entry</h3>
+
+<pre>
+┌──────────────────────────────┐
+│ Add person                   │
+├──────────────────────────────┤
+│ Person name                  │
+│ [ Rahul Sharma            ]  │
+│                              │
+│ Amount (₹)                   │
+│ [ 100 ] [ Set default ]      │
+│ Default: ₹100                │
+│                              │
+│ [ 💵 Cash ] [ 📲 UPI ]       │
+│                              │
+│ [ Cancel ]        [ Add ]    │
+└──────────────────────────────┘
+</pre>
+
+<h3>Bulk entry</h3>
+
+<p>Multiple names can be pasted one per line:</p>
+
+<pre>
+Rahul Sharma
+Priya Verma
+Aman Khan
+Sameer
+</pre>
+
+<p>
+Each pasted name is converted into a collection entry using the current default amount.
+</p>
+
+<h2>💵 2. Cash Collection</h2>
+
+<pre>
+┌────────────────────────────────────┐
+│ ① Rahul Sharma                     │
+│   ₹100   CASH             ✎  🗑     │
+└────────────────────────────────────┘
+</pre>
+
+<p>Cash entries do not require UPI verification.</p>
+
+<h2>📲 3. UPI Collection</h2>
+
+<pre>
+┌────────────────────────────────────┐
+│ ② Priya Verma                      │
+│   ₹500   ✓ Verified UPI    ✓  ✎ 🗑 │
+└────────────────────────────────────┘
+</pre>
+
+<p>An unverified UPI entry is displayed as:</p>
+
+<pre>⚠ Not Verified UPI</pre>
+
+<p>A verified entry is displayed as:</p>
+
+<pre>✓ Verified UPI</pre>
+
+<h2>✅ 4. UPI Verification</h2>
+
+<pre>
+┌─────────────────────────────────────┐
+│          UPI Verification            │
+├─────────────────────────────────────┤
+│                                     │
+│        ⚠ Not Verified UPI           │
+│  Payment proof has not been         │
+│  verified yet.                      │
+│                                     │
+│  [ 📁 Upload Image ]                │
+│  [ 📷 Take Image   ]                │
+│  [ ✓ Self Verified ]                │
+│                                     │
+│  [ Close ]                          │
+└─────────────────────────────────────┘
+</pre>
+
+<h3>Verification methods</h3>
+
+<h4>1. Upload Image</h4>
+
+<p>Select an existing payment screenshot/photo.</p>
+
+<pre>Device → Image → IndexedDB → Proof Archive</pre>
+
+<h4>2. Take Image</h4>
+
+<p>Uses the device camera through:</p>
+
+<pre>&lt;input type="file" accept="image/*" capture="environment"&gt;</pre>
+
+<h4>3. Self Verified</h4>
+
+<p>
+Marks the transaction as manually verified without attaching an image.
+</p>
+
+<h2>🗃️ 5. Payment Proof Archive</h2>
+
+<p>
+Payment-proof images use <strong>IndexedDB</strong>, separate from the main collection state.
+</p>
+
+<pre>
+IndexedDB
+└── collection_sathi_proofs_v1
+    └── proofs
+        ├── proof_xxxxx
+        │   ├── id
+        │   ├── entryId
+        │   ├── blob
+        │   ├── method
+        │   └── createdAt
+        ├── proof_xxxxx
+        └── ...
+</pre>
+
+<pre>
+verification: {
+    status: "verified",
+    method: "image",
+    proofId: "...",
+    verifiedAt: "..."
+}
+</pre>
+
+<p>
+The actual image Blob is stored in IndexedDB.
+</p>
+
+<blockquote>
+<strong>Privacy note:</strong> this is device-local storage, not cloud backup.
+Clearing browser/app data, uninstalling the app, or an equivalent storage
+reset can remove locally stored data.
+</blockquote>
+
+</td>
+
+<!-- ======================= RIGHT ========================= -->
+
+<td width="50%" valign="top">
+
+<h2>🖼️ Application Structure</h2>
+
+<pre>
 ┌───────────────────────────────────────────────┐
 │              🪔 COLLECTION SATHI              │
 │       Round • Date • Current Total • QR       │
@@ -97,212 +360,11 @@ F-Droid distribution is reserved as a future distribution channel.
 ├───────────────────────────────────────────────┤
 │  👥 Collect │ 📊 Summary │ 🕒 History │ 🧾 Invoice │
 └───────────────────────────────────────────────┘
-```
+</pre>
 
----
+<h2>🔐 6. Data Storage Architecture</h2>
 
-# 🧭 Navigation
-
-Collection Sathi is organized into four primary tabs.
-
-```text
-┌────────────┬────────────┬────────────┬────────────┐
-│  COLLECT   │  SUMMARY   │  HISTORY   │  INVOICE   │
-├────────────┼────────────┼────────────┼────────────┤
-│ Add/edit   │ Totals     │ All rounds │ Receipt    │
-│ payments   │ Cash/UPI   │ Round list │ Print/PDF  │
-│ Verify UPI │ Statistics │ Switch     │ Share      │
-└────────────┴────────────┴────────────┴────────────┘
-```
-
----
-
-## 👥 1. Collect Tab
-
-The **Collect** tab is the main working screen.
-
-### Add a person
-
-A collection entry contains:
-
-```text
-Person Name
-Amount
-Payment Mode
-```
-
-Payment modes:
-
-```text
-💵 Cash
-📲 UPI
-```
-
-### Single-person entry
-
-```text
-┌──────────────────────────────┐
-│ Add person                   │
-├──────────────────────────────┤
-│ Person name                  │
-│ [ Rahul Sharma            ]  │
-│                              │
-│ Amount (₹)                   │
-│ [ 100 ] [ Set default ]      │
-│ Default: ₹100                │
-│                              │
-│ [ 💵 Cash ] [ 📲 UPI ]       │
-│                              │
-│ [ Cancel ]        [ Add ]    │
-└──────────────────────────────┘
-```
-
-### Bulk entry
-
-Multiple names can be pasted one per line:
-
-```text
-Rahul Sharma
-Priya Verma
-Aman Khan
-Sameer
-```
-
-Each pasted name is converted into a collection entry using the current default amount.
-
----
-
-# 💵 2. Cash Collection
-
-Cash entries are displayed with a dedicated Cash badge.
-
-```text
-┌────────────────────────────────────┐
-│ ① Rahul Sharma                     │
-│   ₹100   CASH             ✎  🗑     │
-└────────────────────────────────────┘
-```
-
-Cash entries do not require UPI verification.
-
----
-
-# 📲 3. UPI Collection
-
-UPI entries are visually separated from Cash entries.
-
-```text
-┌────────────────────────────────────┐
-│ ② Priya Verma                      │
-│   ₹500   ✓ Verified UPI    ✓  ✎ 🗑 │
-└────────────────────────────────────┘
-```
-
-An unverified UPI entry is displayed as:
-
-```text
-⚠ Not Verified UPI
-```
-
-A verified entry is displayed as:
-
-```text
-✓ Verified UPI
-```
-
----
-
-# ✅ 4. UPI Verification
-
-Every UPI transaction can be opened through its verification button.
-
-```text
-┌─────────────────────────────────────┐
-│          UPI Verification            │
-├─────────────────────────────────────┤
-│                                     │
-│        ⚠ Not Verified UPI           │
-│  Payment proof has not been         │
-│  verified yet.                      │
-│                                     │
-│  [ 📁 Upload Image ]                │
-│  [ 📷 Take Image   ]                │
-│  [ ✓ Self Verified ]                │
-│                                     │
-│  [ Close ]                          │
-└─────────────────────────────────────┘
-```
-
-### Verification methods
-
-#### 1. Upload Image
-
-Select an existing payment screenshot/photo.
-
-```text
-Device → Image → IndexedDB → Proof Archive
-```
-
-#### 2. Take Image
-
-Uses the device camera through:
-
-```html
-<input type="file" accept="image/*" capture="environment">
-```
-
-#### 3. Self Verified
-
-Marks the transaction as manually verified without attaching an image.
-
----
-
-# 🗃️ 5. Payment Proof Archive
-
-Payment-proof images use **IndexedDB**, separate from the main collection state.
-
-```text
-IndexedDB
-└── collection_sathi_proofs_v1
-    └── proofs
-        ├── proof_xxxxx
-        │   ├── id
-        │   ├── entryId
-        │   ├── blob
-        │   ├── method
-        │   └── createdAt
-        ├── proof_xxxxx
-        └── ...
-```
-
-The transaction stores a reference:
-
-```js
-verification: {
-    status: "verified",
-    method: "image",
-    proofId: "...",
-    verifiedAt: "..."
-}
-```
-
-The actual image Blob is stored in IndexedDB.
-
-### Important storage behavior
-
-Proof images are **not automatically deleted by the application**.
-
-They remain associated with their proof record until browser/app storage is cleared or the application itself explicitly removes them.
-
-> **Privacy note:** this is device-local storage, not cloud backup. Clearing browser/app data, uninstalling the app, or an equivalent storage reset can remove locally stored data.
-
----
-
-# 🔐 6. Data Storage Architecture
-
-Collection Sathi uses two browser storage systems.
-
-```text
+<pre>
                     COLLECTION SATHI
                            │
               ┌────────────┴────────────┐
@@ -314,37 +376,31 @@ Collection Sathi uses two browser storage systems.
               │                       Blob
               │                         │
        collection_sathi_v2      collection_sathi_proofs_v1
-```
+</pre>
 
-### Main application storage
+<h3>Main application storage</h3>
 
-```js
+<pre>
 var STORAGE_KEY = "collection_sathi_v2";
-```
+</pre>
 
-The complete application state is serialized into JSON:
-
-```js
+<pre>
 localStorage.setItem(
     STORAGE_KEY,
     JSON.stringify(state)
 );
-```
+</pre>
 
-### Proof image storage
+<h3>Proof image storage</h3>
 
-```js
+<pre>
 var PROOF_DB_NAME = "collection_sathi_proofs_v1";
 var PROOF_STORE = "proofs";
-```
+</pre>
 
----
+<h2>🧱 7. Application Data Model</h2>
 
-# 🧱 7. Application Data Model
-
-The main state follows this structure:
-
-```js
+<pre>
 {
     title: "Collection Sathi",
 
@@ -358,81 +414,47 @@ The main state follows this structure:
 
     nextId: 1
 }
-```
+</pre>
 
-A collection person:
-
-```js
+<pre>
 {
     id: 1,
     name: "Rahul Sharma"
 }
-```
+</pre>
 
-A collection round:
-
-```js
+<pre>
 {
     id: 2,
     title: "Day 2 Collection",
     date: "...",
     entries: []
 }
-```
+</pre>
 
-A collection entry:
-
-```js
+<pre>
 {
     id: 3,
     personId: 1,
     amount: 100,
     mode: "cash"
 }
-```
+</pre>
 
-A verified UPI entry may contain:
+<h2>🔄 8. Collection Round System</h2>
 
-```js
-verification: {
-    status: "verified",
-    method: "image",
-    proofId: "proof_xxxxx",
-    verifiedAt: "..."
-}
-```
+<p>A <strong>round</strong> represents an independent collection session.</p>
 
-or:
-
-```js
-verification: {
-    status: "verified",
-    method: "self",
-    proofId: null,
-    verifiedAt: "..."
-}
-```
-
----
-
-# 🔄 8. Collection Round System
-
-A **round** represents an independent collection session.
-
-Examples:
-
-```text
+<pre>
 Collection
 Day 2 Collection
 Day 3 Collection
 Festival Collection
 Class Collection
 Event Collection
-```
+</pre>
 
-Each round has its own entries.
-
-```text
+<pre>
 Events
 │
 ├── Round 1
@@ -446,17 +468,15 @@ Events
 │
 └── Round 3
     └── ...
-```
+</pre>
 
-The application can switch the active round from **History**.
+<p>
+The application can switch the active round from <strong>History</strong>.
+</p>
 
----
+<h2>📊 9. Summary Tab</h2>
 
-# 📊 9. Summary Tab
-
-The Summary tab calculates statistics for the currently selected round.
-
-```text
+<pre>
 ┌──────────────────────────────────┐
 │        TOTAL COLLECTION          │
 │            ₹800                  │
@@ -471,29 +491,25 @@ The Summary tab calculates statistics for the currently selected round.
 │ Average          Maximum         │
 │ ₹267             ₹500            │
 └──────────────────────────────────┘
-```
+</pre>
 
-### Calculated values
+<ul>
+<li>Total collection</li>
+<li>Cash total</li>
+<li>UPI total</li>
+<li>Cash entry count</li>
+<li>UPI entry count</li>
+<li>Total entry count</li>
+<li>Average collection</li>
+<li>Maximum single collection</li>
+<li>Cash/UPI percentage bar</li>
+<li>All-time total</li>
+<li>Total number of rounds</li>
+</ul>
 
-- Total collection
-- Cash total
-- UPI total
-- Cash entry count
-- UPI entry count
-- Total entry count
-- Average collection
-- Maximum single collection
-- Cash/UPI percentage bar
-- All-time total
-- Total number of rounds
+<h2>📚 10. History Tab</h2>
 
----
-
-# 📚 10. History Tab
-
-History displays all collection rounds.
-
-```text
+<pre>
 ┌────────────────────────────────────┐
 │ ALL-TIME COLLECTION       ₹2,500   │
 ├────────────────────────────────────┤
@@ -509,90 +525,49 @@ History displays all collection rounds.
 │ Mon, 22 Sep 2026                   │
 │ 5 entries · Cash ₹500 · UPI ₹400  │
 └────────────────────────────────────┘
-```
+</pre>
 
-Selecting a round makes it the active round.
+<p>Selecting a round makes it the active round.</p>
 
----
+<h2>🧾 11. Invoice System</h2>
 
-# 🧾 11. Invoice System
+<p>The Invoice tab generates a round-specific printable document.</p>
 
-The Invoice tab generates a round-specific printable document.
+<ul>
+<li>Collection title</li>
+<li>Round title</li>
+<li>Date</li>
+<li>Serial number</li>
+<li>Person name</li>
+<li>Payment mode</li>
+<li>UPI verification status</li>
+<li>Amount</li>
+<li>Total</li>
+<li>Cash total</li>
+<li>UPI total</li>
+<li>Signature</li>
+<li>Project credit</li>
+</ul>
 
-It includes:
+<h2>🖨️ 12. Print / Save as PDF</h2>
 
-```text
-Collection title
-Round title
-Date
-Serial number
-Person name
-Payment mode
-UPI verification status
-Amount
-Total
-Cash total
-UPI total
-Signature
-Project credit
-```
+<pre>window.print();</pre>
 
-Example:
-
-```text
-             🧾
-       Collection Sathi
-     Day 2 Collection
-     24 Sep 2026
-
-────────────────────────────────────────
-
-Sr.   Name          Mode   Verification   Amount
-
-1     Rahul         Cash        —          ₹100
-2     Priya         UPI       ✓ Verified   ₹500
-3     Aman          UPI       ⚠ Not        ₹200
-
-────────────────────────────────────────
-
-Total (3 entries)                       ₹800
-
-Cash: ₹100  •  UPI: ₹700
-
-          Thank you for contributing! 🙏
-
-             Vinay Soni
-              Signature
-```
-
----
-
-# 🖨️ 12. Print / Save as PDF
-
-The application uses the browser's native print system:
-
-```js
-window.print();
-```
-
-This allows the user to:
-
-```text
+<pre>
 Print
    │
    ├── Physical printer
    └── Save as PDF
-```
+</pre>
 
-The application also includes print-specific CSS so the invoice can be printed without the normal mobile navigation.
+<p>
+The application also includes print-specific CSS so the invoice can be
+printed without the normal mobile navigation.
+</p>
 
----
+<h2>📤 13. Invoice Image Sharing</h2>
 
-# 📤 13. Invoice Image Sharing
-
-The application uses `html2canvas` to convert the invoice into an image.
-
-```text
+<pre>
 Invoice DOM
      │
      ▼
@@ -607,37 +582,33 @@ PNG Blob
      ├── Native Share Sheet
      │
      └── Download invoice.png
-```
+</pre>
 
-When supported, the app uses:
-
-```js
+<pre>
 navigator.share({
     files: [file],
     title: state.title,
     text: ...
 });
-```
+</pre>
 
+<p>
 If file sharing is unavailable, the image is downloaded instead.
+</p>
 
----
+<h2>🔳 14. UPI QR Code</h2>
 
-# 🔳 14. UPI QR Code
+<ol>
+<li>Reads the selected image.</li>
+<li>Loads it into an image object.</li>
+<li>Resizes it to a maximum dimension.</li>
+<li>Draws it onto a canvas.</li>
+<li>Converts it to JPEG data.</li>
+<li>Stores it in the main application state.</li>
+<li>Saves the state to localStorage.</li>
+</ol>
 
-A UPI QR image can be uploaded from the device.
-
-The application:
-
-1. Reads the selected image.
-2. Loads it into an image object.
-3. Resizes it to a maximum dimension.
-4. Draws it onto a canvas.
-5. Converts it to JPEG data.
-6. Stores it in the main application state.
-7. Saves the state to localStorage.
-
-```text
+<pre>
 UPI QR Image
      │
      ▼
@@ -657,25 +628,19 @@ state.qrImage
      │
      ▼
 localStorage
-```
+</pre>
 
-The QR can later be:
+<p>QR actions:</p>
 
-```text
+<pre>
 View
 Change
 Remove
-```
+</pre>
 
----
+<h2>👤 15. Person Reuse</h2>
 
-# 👤 15. Person Reuse
-
-Collection Sathi maintains a person list separately from collection entries.
-
-When a name is entered:
-
-```text
+<pre>
 "Rahul Sharma"
       │
       ▼
@@ -687,80 +652,53 @@ Exists    New
  │         │
 Reuse     Create
 ID        Person ID
-```
+</pre>
 
+<p>
 Name comparison is case-insensitive after trimming.
+</p>
 
-This prevents unnecessary duplicate person records for the same entered name.
+<h2>💰 16. Default Amount</h2>
 
----
+<pre>Default = ₹100</pre>
 
-# 💰 16. Default Amount
-
-A default amount can be configured from the Add Person modal.
-
-Example:
-
-```text
-Default = ₹100
-```
-
-Bulk entries then automatically use:
-
-```text
+<pre>
 Rahul       ₹100
 Priya       ₹100
 Aman        ₹100
 Sameer      ₹100
-```
+</pre>
 
+<p>
 The default amount is saved in the local application state.
+</p>
 
----
+<h2>✏️ 17. Editing Entries</h2>
 
-# ✏️ 17. Editing Entries
+<p>Editable fields:</p>
 
-Existing entries can be edited.
-
-Editable fields:
-
-```text
+<pre>
 Person name
 Amount
 Payment mode
-```
+</pre>
 
-### Verification safety
-
-If an existing transaction changes its:
-
-```text
-Person
-Amount
-Payment mode
-```
-
+<p>
+If an existing transaction changes its person, amount, or payment mode,
 the previous verification is cleared.
+</p>
 
-This prevents a verification record from silently remaining attached to a materially changed transaction.
+<h2>🗑️ 18. Delete System</h2>
 
----
+<p>Supported deletion:</p>
 
-# 🗑️ 18. Delete System
-
-The application provides confirmation dialogs before destructive operations.
-
-Supported deletion:
-
-```text
+<pre>
 Entry
 Round
 Saved QR
-```
+</pre>
 
-Example:
-
-```text
+<pre>
 ┌──────────────────────────────┐
 │ Delete round?                │
 ├──────────────────────────────┤
@@ -769,154 +707,159 @@ Example:
 │                              │
 │ [ Cancel ]       [ Delete ]  │
 └──────────────────────────────┘
-```
+</pre>
 
----
+<h2>🛡️ 19. HTML Safety</h2>
 
-# 🛡️ 19. HTML Safety
+<p>
+User-entered names and titles are escaped before being inserted into
+generated HTML.
+</p>
 
-User-entered names and titles are escaped before being inserted into generated HTML.
+<pre>escapeHtml()</pre>
 
-The application uses:
-
-```js
-escapeHtml()
-```
-
-to escape:
-
-```text
+<pre>
 &
-<
->
+&lt;
+&gt;
 "
 '
-```
+</pre>
 
+<p>
 This reduces the risk of user-entered HTML being interpreted as markup.
+</p>
 
----
+</td>
 
-# ⚙️ Function Reference
+</tr>
+</table>
 
-The application is implemented as a self-contained HTML/CSS/JavaScript application.
+<hr>
 
-## Core state functions
+<!-- ====================================================== -->
+<!-- SECOND TWO COLUMN SECTION                              -->
+<!-- ====================================================== -->
 
-| Function | Purpose |
-|---|---|
-| `todayIso()` | Returns the current ISO timestamp |
-| `freshEvent(title)` | Creates a new collection round |
-| `defaultState()` | Initializes a fresh application state |
-| `findOrCreatePerson(name)` | Finds an existing person or creates one |
-| `getPersonName(id)` | Resolves a person ID to a name |
-| `getEventById(id)` | Finds a round by ID |
-| `getCurrentEvent()` | Returns the active round |
-| `getLatestEvent()` | Returns the newest round |
-| `load()` | Loads and validates saved application state |
-| `getDefaultAmount()` | Returns the configured default amount |
-| `save()` | Persists application state to localStorage |
+<table width="100%">
+<tr>
 
----
+<td width="50%" valign="top">
 
-## Formatting and UI functions
+<h2>⚙️ Function Reference</h2>
 
-| Function | Purpose |
-|---|---|
-| `fmt(n)` | Formats numeric amounts using Indian numbering |
-| `fmtDate(iso)` | Formats dates for display |
-| `showToast(msg)` | Displays a temporary notification |
-| `escapeHtml(s)` | Escapes user-provided HTML-sensitive characters |
-| `svgEdit()` | Returns edit icon SVG |
-| `svgTrash()` | Returns delete icon SVG |
-| `svgCheck()` | Returns check icon SVG |
-| `svgX()` | Returns close/cancel icon SVG |
-| `svgChevron()` | Returns chevron icon SVG |
+<h3>Core state functions</h3>
 
----
+<table width="100%">
+<tr><th>Function</th><th>Purpose</th></tr>
+<tr><td><code>todayIso()</code></td><td>Returns the current ISO timestamp</td></tr>
+<tr><td><code>freshEvent(title)</code></td><td>Creates a new collection round</td></tr>
+<tr><td><code>defaultState()</code></td><td>Initializes a fresh application state</td></tr>
+<tr><td><code>findOrCreatePerson(name)</code></td><td>Finds an existing person or creates one</td></tr>
+<tr><td><code>getPersonName(id)</code></td><td>Resolves a person ID to a name</td></tr>
+<tr><td><code>getEventById(id)</code></td><td>Finds a round by ID</td></tr>
+<tr><td><code>getCurrentEvent()</code></td><td>Returns the active round</td></tr>
+<tr><td><code>getLatestEvent()</code></td><td>Returns the newest round</td></tr>
+<tr><td><code>load()</code></td><td>Loads and validates saved application state</td></tr>
+<tr><td><code>getDefaultAmount()</code></td><td>Returns the configured default amount</td></tr>
+<tr><td><code>save()</code></td><td>Persists application state to localStorage</td></tr>
+</table>
 
-## Calculation functions
+<h3>Formatting and UI functions</h3>
 
-| Function | Purpose |
-|---|---|
-| `computeTotals(event)` | Calculates Cash, UPI, total, counts, average, and maximum |
-| `computeAllTime()` | Calculates total collection across all rounds |
+<table width="100%">
+<tr><th>Function</th><th>Purpose</th></tr>
+<tr><td><code>fmt(n)</code></td><td>Formats numeric amounts using Indian numbering</td></tr>
+<tr><td><code>fmtDate(iso)</code></td><td>Formats dates for display</td></tr>
+<tr><td><code>showToast(msg)</code></td><td>Displays a temporary notification</td></tr>
+<tr><td><code>escapeHtml(s)</code></td><td>Escapes user-provided HTML-sensitive characters</td></tr>
+<tr><td><code>svgEdit()</code></td><td>Returns edit icon SVG</td></tr>
+<tr><td><code>svgTrash()</code></td><td>Returns delete icon SVG</td></tr>
+<tr><td><code>svgCheck()</code></td><td>Returns check icon SVG</td></tr>
+<tr><td><code>svgX()</code></td><td>Returns close/cancel icon SVG</td></tr>
+<tr><td><code>svgChevron()</code></td><td>Returns chevron icon SVG</td></tr>
+</table>
 
----
+<h3>Calculation functions</h3>
 
-## Rendering functions
+<table width="100%">
+<tr><th>Function</th><th>Purpose</th></tr>
+<tr><td><code>computeTotals(event)</code></td><td>Calculates Cash, UPI, total, counts, average, and maximum</td></tr>
+<tr><td><code>computeAllTime()</code></td><td>Calculates total collection across all rounds</td></tr>
+</table>
 
-| Function | Purpose |
-|---|---|
-| `renderPersonDatalist()` | Updates the person autocomplete list |
-| `renderRoundInfo()` | Updates active round information |
-| `renderEntries()` | Renders current-round collection entries |
-| `renderSummary()` | Renders collection statistics |
-| `renderHistory()` | Renders round history |
-| `renderInvoice()` | Generates the current invoice |
-| `renderAll()` | Refreshes all major application views |
-| `refreshHeaderDate()` | Updates the header date |
-| `activateTab(tabId)` | Switches between Collect, Summary, History, and Invoice |
+<h3>Rendering functions</h3>
 
----
+<table width="100%">
+<tr><th>Function</th><th>Purpose</th></tr>
+<tr><td><code>renderPersonDatalist()</code></td><td>Updates the person autocomplete list</td></tr>
+<tr><td><code>renderRoundInfo()</code></td><td>Updates active round information</td></tr>
+<tr><td><code>renderEntries()</code></td><td>Renders current-round collection entries</td></tr>
+<tr><td><code>renderSummary()</code></td><td>Renders collection statistics</td></tr>
+<tr><td><code>renderHistory()</code></td><td>Renders round history</td></tr>
+<tr><td><code>renderInvoice()</code></td><td>Generates the current invoice</td></tr>
+<tr><td><code>renderAll()</code></td><td>Refreshes all major application views</td></tr>
+<tr><td><code>refreshHeaderDate()</code></td><td>Updates the header date</td></tr>
+<tr><td><code>activateTab(tabId)</code></td><td>Switches between Collect, Summary, History, and Invoice</td></tr>
+</table>
 
-## Add / collection functions
+<h3>Add / collection functions</h3>
 
-| Function | Purpose |
-|---|---|
-| `updateDefaultUi()` | Updates default amount labels |
-| `openAddModal()` | Opens the add-person dialog |
-| `closeAddModal()` | Closes the add-person dialog |
+<table width="100%">
+<tr><th>Function</th><th>Purpose</th></tr>
+<tr><td><code>updateDefaultUi()</code></td><td>Updates default amount labels</td></tr>
+<tr><td><code>openAddModal()</code></td><td>Opens the add-person dialog</td></tr>
+<tr><td><code>closeAddModal()</code></td><td>Closes the add-person dialog</td></tr>
+</table>
 
----
+<h3>Round and confirmation functions</h3>
 
-## Round and confirmation functions
+<table width="100%">
+<tr><th>Function</th><th>Purpose</th></tr>
+<tr><td><code>openConfirm(type, id, msg)</code></td><td>Opens a destructive-action confirmation</td></tr>
+<tr><td><code>closeConfirm()</code></td><td>Closes the confirmation dialog</td></tr>
+</table>
 
-| Function | Purpose |
-|---|---|
-| `openConfirm(type, id, msg)` | Opens a destructive-action confirmation |
-| `closeConfirm()` | Closes the confirmation dialog |
+<h3>UPI QR functions</h3>
 
----
+<table width="100%">
+<tr><th>Function</th><th>Purpose</th></tr>
+<tr><td><code>renderQrCard()</code></td><td>Displays the saved QR or empty state</td></tr>
+</table>
 
-## UPI QR functions
+<p>QR handling also uses:</p>
 
-| Function | Purpose |
-|---|---|
-| `renderQrCard()` | Displays the saved QR or empty state |
-
-QR handling also uses:
-
-```text
+<pre>
 FileReader
 Image
 Canvas
 toDataURL()
 localStorage
-```
+</pre>
 
----
+</td>
 
-## UPI proof functions
+<td width="50%" valign="top">
 
-| Function | Purpose |
-|---|---|
-| `getProofDb()` | Opens/initializes the IndexedDB proof archive |
-| `makeProofId()` | Generates a unique proof identifier |
-| `saveProofImage(entryId, blob, method)` | Stores a payment-proof image |
-| `getProofImage(proofId)` | Retrieves a stored proof image |
-| `verificationLabel(e)` | Returns the verification label |
-| `findEntryById(id)` | Finds an entry across all rounds |
-| `renderVerifyModal()` | Updates the UPI verification dialog |
-| `openVerify(id)` | Opens verification for a UPI entry |
-| `closeVerify()` | Closes the verification dialog |
-| `handleProofFile(file)` | Saves an uploaded/captured proof and verifies the transaction |
+<h3>UPI proof functions</h3>
 
----
+<table width="100%">
+<tr><th>Function</th><th>Purpose</th></tr>
+<tr><td><code>getProofDb()</code></td><td>Opens/initializes the IndexedDB proof archive</td></tr>
+<tr><td><code>makeProofId()</code></td><td>Generates a unique proof identifier</td></tr>
+<tr><td><code>saveProofImage(entryId, blob, method)</code></td><td>Stores a payment-proof image</td></tr>
+<tr><td><code>getProofImage(proofId)</code></td><td>Retrieves a stored proof image</td></tr>
+<tr><td><code>verificationLabel(e)</code></td><td>Returns the verification label</td></tr>
+<tr><td><code>findEntryById(id)</code></td><td>Finds an entry across all rounds</td></tr>
+<tr><td><code>renderVerifyModal()</code></td><td>Updates the UPI verification dialog</td></tr>
+<tr><td><code>openVerify(id)</code></td><td>Opens verification for a UPI entry</td></tr>
+<tr><td><code>closeVerify()</code></td><td>Closes the verification dialog</td></tr>
+<tr><td><code>handleProofFile(file)</code></td><td>Saves an uploaded/captured proof and verifies the transaction</td></tr>
+</table>
 
-# 🧠 Verification Data Flow
+<h2>🧠 Verification Data Flow</h2>
 
-```text
+<pre>
                      UPI ENTRY
                          │
                          ▼
@@ -943,15 +886,11 @@ localStorage
                     │
                     ▼
               ✓ Verified UPI
-```
+</pre>
 
----
+<h2>🗂️ Project Structure</h2>
 
-# 🗂️ Project Structure
-
-The current application is intentionally lightweight.
-
-```text
+<pre>
 Collection-Sathi/
 │
 ├── index.html
@@ -960,17 +899,16 @@ Collection-Sathi/
 ├── icon-192.png
 ├── icon-512.png
 └── README.md
-```
+</pre>
 
-> `index.html` currently contains the application's HTML, CSS, and JavaScript in a single self-contained file.
+<p>
+<code>index.html</code> currently contains the application's HTML, CSS,
+and JavaScript in a single self-contained file.
+</p>
 
----
+<h2>🌐 Web / PWA Architecture</h2>
 
-# 🌐 Web / PWA Architecture
-
-Collection Sathi is a web application and can also be packaged for Android.
-
-```text
+<pre>
                     GitHub Pages
                          │
                          ▼
@@ -983,21 +921,25 @@ Collection Sathi is a web application and can also be packaged for Android.
              └───────────┬───────────┘
                          ▼
                   Same Web Application
-```
+</pre>
 
-The current Android package is a **Trusted Web Activity (TWA) wrapper**, so the main application code is served from the web project rather than bundled as a normal Android WebView asset package.
+<p>
+The current Android package is a <strong>Trusted Web Activity (TWA) wrapper</strong>,
+so the main application code is served from the web project rather than bundled
+as a normal Android WebView asset package.
+</p>
 
+<p>
 Current web application URL:
+</p>
 
-**https://vinaysoni-in.github.io/Collection-Sathi/**
+<p>
+<strong>https://vinaysoni-in.github.io/Collection-Sathi/</strong>
+</p>
 
----
+<h2>📱 Android APK</h2>
 
-# 📱 Android APK
-
-The Android package uses:
-
-```text
+<pre>
 Trusted Web Activity
         │
         ▼
@@ -1005,33 +947,30 @@ Collection-Sathi GitHub Pages
         │
         ▼
 index.html
-```
+</pre>
 
-This architecture means normal HTML/CSS/JavaScript updates can be deployed to the same web location without necessarily rebuilding the Android wrapper.
+<p>
+This architecture means normal HTML/CSS/JavaScript updates can be deployed
+to the same web location without necessarily rebuilding the Android wrapper.
+</p>
 
-### Important
+<h3>Important</h3>
 
+<p>
 Keep the deployed application URL compatible with the existing TWA configuration.
+</p>
 
-Avoid casually changing:
-
-```text
+<pre>
 Application URL
 Package identity
 Digital Asset Links
 Manifest configuration
 Storage keys
-```
+</pre>
 
-unless the Android wrapper is intentionally being updated.
+<h2>💾 Persistence Rules</h2>
 
----
-
-# 💾 Persistence Rules
-
-The application currently uses:
-
-```text
+<pre>
 localStorage
     ↓
 Main collection state
@@ -1039,39 +978,24 @@ Main collection state
 IndexedDB
     ↓
 UPI payment proof images
-```
+</pre>
 
-### Main storage key
+<p><strong>Main storage key</strong></p>
 
-```text
-collection_sathi_v2
-```
+<pre>collection_sathi_v2</pre>
 
-### Proof database
+<p><strong>Proof database</strong></p>
 
-```text
-collection_sathi_proofs_v1
-```
+<pre>collection_sathi_proofs_v1</pre>
 
-### Important compatibility rule
+<blockquote>
+<strong>Important compatibility rule:</strong>
+Do not rename the main storage key unless a migration system is also implemented.
+</blockquote>
 
-Do **not** rename the main storage key unless a migration system is also implemented.
+<h2>🔒 Privacy Model</h2>
 
-Changing:
-
-```js
-collection_sathi_v2
-```
-
-to another key would make existing locally stored data appear unavailable to the updated application.
-
----
-
-# 🔒 Privacy Model
-
-Collection Sathi is designed around local device storage.
-
-```text
+<pre>
 User Data
    │
    ├── Collection records → localStorage
@@ -1079,55 +1003,48 @@ User Data
    ├── QR image           → localStorage
    │
    └── Proof images       → IndexedDB
-```
+</pre>
 
-The source code currently does not implement a remote collection database or user account system.
+<p>
+The source code currently does not implement a remote collection database
+or user account system.
+</p>
 
-### Storage limitations
+<h3>Storage limitations</h3>
 
-Local storage is not the same as cloud backup.
+<ul>
+<li>clears site/app storage</li>
+<li>clears browser data</li>
+<li>uninstalls an application that owns the storage</li>
+<li>uses a browser/storage reset</li>
+<li>otherwise removes the site's local data</li>
+</ul>
 
-Data may be lost if the user:
-
-- clears site/app storage,
-- clears browser data,
-- uninstalls an application that owns the storage,
-- uses a browser/storage reset,
-- or otherwise removes the site's local data.
-
+<p>
 Users should keep an independent backup for important financial records.
+</p>
 
----
+<h2>🌍 External Dependencies</h2>
 
-# 🌍 External Dependencies
+<h3>Google Fonts</h3>
 
-The application currently references:
-
-### Google Fonts
-
-```text
+<pre>
 Yatra One
 Caveat
 Work Sans
-```
+</pre>
 
-### html2canvas
+<h3>html2canvas</h3>
 
-```text
-html2canvas 1.4.1
-```
+<pre>html2canvas 1.4.1</pre>
 
+<p>
 It is used for invoice image generation.
+</p>
 
-The normal collection/storage functionality is implemented in the application itself, while these external resources support typography and invoice image sharing.
+<h2>🧪 Recommended Testing Checklist</h2>
 
----
-
-# 🧪 Recommended Testing Checklist
-
-Before publishing a major update, test:
-
-```text
+<pre>
 [ ] App opens
 [ ] Existing collection data loads
 [ ] Existing rounds load
@@ -1155,17 +1072,22 @@ Before publishing a major update, test:
 [ ] Mobile layout works
 [ ] Android TWA opens the updated site
 [ ] Existing local data remains accessible
-```
+</pre>
 
----
+</td>
+</tr>
+</table>
 
-# 🚀 Deployment
+<hr>
 
-Collection Sathi can be deployed as a static website.
+<table width="100%">
+<tr>
 
-A typical GitHub Pages deployment is:
+<td width="50%" valign="top">
 
-```text
+<h2>🚀 Deployment</h2>
+
+<pre>
 Repository
     │
     ├── index.html
@@ -1177,22 +1099,21 @@ Repository
      GitHub Pages
          │
          ▼
-https://<username>.github.io/<repository>/
-```
+https://&lt;username&gt;.github.io/&lt;repository&gt;/
+</pre>
 
-For the current project, the deployed path is:
+<p>For the current project:</p>
 
-```text
-/Collection-Sathi/
-```
+<pre>/Collection-Sathi/</pre>
 
-After changing `index.html`, verify the live GitHub Pages version before distributing an APK update.
+<p>
+After changing <code>index.html</code>, verify the live GitHub Pages
+version before distributing an APK update.
+</p>
 
----
+<h2>🛠️ Development Workflow</h2>
 
-# 🛠️ Development Workflow
-
-```text
+<pre>
 1. Edit index.html
        │
        ▼
@@ -1218,114 +1139,105 @@ After changing `index.html`, verify the live GitHub Pages version before distrib
        │
        ▼
 9. Test Android TWA
-```
+</pre>
 
----
+<h2>⚠️ Important Development Rules</h2>
 
-# ⚠️ Important Development Rules
+<h3>Do not casually change the storage key</h3>
 
-### Do not casually change the storage key
+<pre>var STORAGE_KEY = "collection_sathi_v2";</pre>
 
-```js
-var STORAGE_KEY = "collection_sathi_v2";
-```
+<h3>Do not remove the proof database</h3>
 
-### Do not remove the proof database
+<pre>collection_sathi_proofs_v1</pre>
 
-```js
-collection_sathi_proofs_v1
-```
+<h3>Do not change the TWA URL without updating Android configuration</h3>
 
-### Do not change the TWA URL without updating the Android configuration
-
-```text
+<pre>
 https://vinaysoni-in.github.io/Collection-Sathi/
-```
+</pre>
 
-### Do not treat local storage as a backup
+<h3>Do not treat local storage as a backup</h3>
 
+<p>
 Important collection records should be backed up independently.
+</p>
 
-### Test destructive changes with real-world-like sample data
+<h3>Test destructive changes with real-world-like sample data</h3>
 
-Use several:
-
-```text
+<pre>
 Cash entries
 UPI entries
 Verified UPI entries
 Proof images
 Multiple rounds
-```
+</pre>
 
-before releasing a structural storage change.
+<h2>🧩 Technology Stack</h2>
 
----
+<pre>
+HTML5
+CSS3
+Vanilla JavaScript
+localStorage
+IndexedDB
+FileReader API
+Canvas API
+Web Share API
+Browser Print API
+Service Worker
+Web App Manifest
+html2canvas
+GitHub Pages
+Trusted Web Activity (Android)
+</pre>
 
-# 🧩 Technology Stack
+<p>No frontend framework is required.</p>
 
-```text
-┌──────────────────────────────────────┐
-│             Collection Sathi         │
-├──────────────────────────────────────┤
-│ HTML5                                │
-│ CSS3                                 │
-│ Vanilla JavaScript                   │
-│ localStorage                         │
-│ IndexedDB                            │
-│ FileReader API                       │
-│ Canvas API                           │
-│ Web Share API                        │
-│ Browser Print API                    │
-│ Service Worker                       │
-│ Web App Manifest                     │
-│ html2canvas                          │
-│ GitHub Pages                         │
-│ Trusted Web Activity (Android)       │
-└──────────────────────────────────────┘
-```
-
-No frontend framework is required.
-
-```text
+<pre>
 No React
 No Vue
 No Angular
 No Node.js runtime required for the client
-```
+</pre>
 
-The current app is intentionally built as a compact client-side application.
+</td>
 
----
+<td width="50%" valign="top">
 
-# 📜 License
+<h2>📜 License</h2>
 
-The current project source provided for this README does **not specify a license file or explicit open-source license text**.
+<p>
+The current project source provided for this README does
+<strong>not specify a license file or explicit open-source license text</strong>.
+</p>
 
-If this repository is intended to be publicly reusable, add a license such as **MIT** to the repository and update this section accordingly.
+<p>
+If this repository is intended to be publicly reusable, add a license such as
+<strong>MIT</strong> to the repository and update this section accordingly.
+</p>
 
-Until a license is explicitly added, public visibility of a repository should not be interpreted as granting broad reuse rights.
+<p>
+Until a license is explicitly added, public visibility of a repository should
+not be interpreted as granting broad reuse rights.
+</p>
 
----
+<h2>🤝 Contributing</h2>
 
-# 🤝 Contributing
+<p>Contributions are welcome.</p>
 
-Contributions are welcome.
+<ol>
+<li>Keep existing stored data compatible.</li>
+<li>Avoid breaking old collection rounds.</li>
+<li>Preserve UPI verification behavior.</li>
+<li>Preserve proof-image references.</li>
+<li>Test mobile layouts.</li>
+<li>Test the Android TWA after major web changes.</li>
+<li>Keep the application dependency-light.</li>
+</ol>
 
-A useful contribution should:
-
-1. Keep existing stored data compatible.
-2. Avoid breaking old collection rounds.
-3. Preserve UPI verification behavior.
-4. Preserve proof-image references.
-5. Test mobile layouts.
-6. Test the Android TWA after major web changes.
-7. Keep the application dependency-light.
-
-Suggested workflow:
-
-```bash
-git clone <repository-url>
+<pre>
+git clone &lt;repository-url&gt;
 cd Collection-Sathi
 
 # edit files
@@ -1333,15 +1245,11 @@ cd Collection-Sathi
 git add .
 git commit -m "Improve collection feature"
 git push
-```
+</pre>
 
----
+<h2>🐛 Bug Reports</h2>
 
-# 🐛 Bug Reports
-
-When reporting a bug, include:
-
-```text
+<pre>
 Device:
 Android / Browser:
 App version:
@@ -1351,24 +1259,20 @@ Expected behavior:
 Steps to reproduce:
 Console error, if available:
 Screenshot, if useful:
-```
+</pre>
 
-For data/storage problems, also mention whether:
+<p>For data/storage problems, also mention whether:</p>
 
-```text
+<pre>
 Browser data was cleared
 App was reinstalled
 APK was updated
 index.html was updated
-```
+</pre>
 
----
+<h2>🗺️ Roadmap Ideas</h2>
 
-# 🗺️ Roadmap Ideas
-
-Potential future improvements:
-
-```text
+<pre>
 [ ] Export / Import backup
 [ ] JSON backup
 [ ] CSV export
@@ -1385,138 +1289,15 @@ Potential future improvements:
 [ ] Better offline caching
 [ ] Data migration system
 [ ] Automated storage integrity checks
-```
+</pre>
 
+<p>
 These are roadmap ideas, not necessarily implemented in the current version.
+</p>
 
----
+<h2>📁 Recommended Repository Layout</h2>
 
-# 📦 Downloads, Links & Screenshots
-
-<table>
-  <tr>
-    <td align="center" width="33%">
-      <h3>📱 Android APK</h3>
-      <a href="https://github.com/VinaySoni-IN/Collection-Sathi/releases/latest">
-        <img src="https://img.shields.io/badge/GET%20IT%20ON-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Get it on Android">
-      </a>
-      <br><br>
-      <sub>Download the latest stable APK</sub>
-    </td>
-
-    <td align="center" width="33%">
-      <h3>🌐 Web App</h3>
-      <a href="https://vinaysoni-in.github.io/Collection-Sathi/">
-        <img src="https://img.shields.io/badge/OPEN%20IN-Browser-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Open Web App">
-      </a>
-      <br><br>
-      <sub>Run Collection Sathi directly in your browser</sub>
-    </td>
-
-    <td align="center" width="33%">
-      <h3>🤖 F-Droid</h3>
-      <a href="">
-        <img src="https://img.shields.io/badge/GET%20IT%20ON-F--Droid-87C51F?style=for-the-badge&logo=f-droid&logoColor=white" alt="Get it on F-Droid">
-      </a>
-      <br><br>
-      <sub>Coming soon</sub>
-    </td>
-  </tr>
-
-  <tr>
-    <td align="center" width="33%">
-      <h3>💻 GitHub</h3>
-      <a href="https://github.com/VinaySoni-IN/Collection-Sathi">
-        <img src="https://img.shields.io/badge/VIEW%20ON-GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="View on GitHub">
-      </a>
-      <br><br>
-      <sub>Source code, issues, releases & contributions</sub>
-    </td>
-
-    <td align="center" width="33%">
-      <h3>📸 Screenshot 1</h3>
-      <a href="Screenshot%201.png">
-        <img src="Screenshot%201.png" alt="Collection Sathi Screenshot 1" width="280">
-      </a>
-      <br>
-      <sub><code>Screenshot 1.png</code></sub>
-    </td>
-
-    <td align="center" width="33%">
-      <h3>📸 Screenshot 2</h3>
-      <a href="Screenshot%202.png">
-        <img src="Screenshot%202.png" alt="Collection Sathi Screenshot 2" width="280">
-      </a>
-      <br>
-      <sub><code>Screenshot 2.png</code></sub>
-    </td>
-  </tr>
-</table>
-
----
-
-## 🖼️ Screenshot Gallery
-
-> Add your screenshots to the repository root using the exact filenames below.  
-> The gallery automatically displays them as a clean GitHub grid.
-
-<table>
-  <tr>
-    <td align="center">
-      <a href="Screenshot%201.png">
-        <img src="Screenshot%201.png" alt="Screenshot 1" width="300">
-      </a>
-      <br><strong>Screenshot 1</strong>
-      <br><code>Screenshot 1.png</code>
-    </td>
-
-    <td align="center">
-      <a href="Screenshot%202.png">
-        <img src="Screenshot%202.png" alt="Screenshot 2" width="300">
-      </a>
-      <br><strong>Screenshot 2</strong>
-      <br><code>Screenshot 2.png</code>
-    </td>
-
-    <td align="center">
-      <a href="Screenshot%203.png">
-        <img src="Screenshot%203.png" alt="Screenshot 3" width="300">
-      </a>
-      <br><strong>Screenshot 3</strong>
-      <br><code>Screenshot 3.png</code>
-    </td>
-  </tr>
-
-  <tr>
-    <td align="center">
-      <a href="Screenshot%204.png">
-        <img src="Screenshot%204.png" alt="Screenshot 4" width="300">
-      </a>
-      <br><strong>Screenshot 4</strong>
-      <br><code>Screenshot 4.png</code>
-    </td>
-
-    <td align="center">
-      <a href="Screenshot%205.png">
-        <img src="Screenshot%205.png" alt="Screenshot 5" width="300">
-      </a>
-      <br><strong>Screenshot 5</strong>
-      <br><code>Screenshot 5.png</code>
-    </td>
-
-    <td align="center">
-      <a href="Screenshot%206.png">
-        <img src="Screenshot%206.png" alt="Screenshot 6" width="300">
-      </a>
-      <br><strong>Screenshot 6</strong>
-      <br><code>Screenshot 6.png</code>
-    </td>
-  </tr>
-</table>
-
-### 📁 Recommended repository layout
-
-```text
+<pre>
 Collection-Sathi/
 │
 ├── Banner.png
@@ -1533,38 +1314,201 @@ Collection-Sathi/
 ├── icon-192.png
 ├── icon-512.png
 └── README.md
-```
+</pre>
 
-### 🔗 Direct project links
+</td>
 
-| Platform | Destination |
-|---|---|
-| 📱 Android APK | [Latest GitHub Release](https://github.com/VinaySoni-IN/Collection-Sathi/releases/latest) |
-| 🌐 Web App | [Open Collection Sathi](https://vinaysoni-in.github.io/Collection-Sathi/) |
-| 💻 Source Code | [GitHub Repository](https://github.com/VinaySoni-IN/Collection-Sathi) |
-| 🤖 F-Droid | **Coming Soon** |
+</tr>
+</table>
 
-> **F-Droid:** The button is intentionally left without a destination until Collection Sathi has an official F-Droid listing. Replace `href=""` with the official F-Droid URL when it becomes available.
+<hr>
 
-# 👨‍💻 Author
+<h2 align="center">📦 Downloads, Links & Screenshots</h2>
 
-**Vinay Soni**
+<table width="100%">
+<tr>
 
+<td align="center" width="25%">
+<h3>📱 Android APK</h3>
+
+<a href="https://github.com/VinaySoni-IN/Collection-Sathi/releases/latest">
+<img src="https://img.shields.io/badge/GET%20IT%20ON-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Get it on Android">
+</a>
+
+<p><sub>Download the latest stable APK</sub></p>
+</td>
+
+<td align="center" width="25%">
+<h3>🌐 Web App</h3>
+
+<a href="https://vinaysoni-in.github.io/Collection-Sathi/">
+<img src="https://img.shields.io/badge/OPEN%20IN-Browser-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Open Web App">
+</a>
+
+<p><sub>Run Collection Sathi directly in your browser</sub></p>
+</td>
+
+<td align="center" width="25%">
+<h3>🤖 F-Droid</h3>
+
+<img src="https://img.shields.io/badge/GET%20IT%20ON-F--Droid-87C51F?style=for-the-badge&logo=f-droid&logoColor=white" alt="Get it on F-Droid">
+
+<p><sub>Coming soon</sub></p>
+</td>
+
+<td align="center" width="25%">
+<h3>💻 GitHub</h3>
+
+<a href="https://github.com/VinaySoni-IN/Collection-Sathi">
+<img src="https://img.shields.io/badge/VIEW%20ON-GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="View on GitHub">
+</a>
+
+<p><sub>Source code, issues, releases & contributions</sub></p>
+</td>
+
+</tr>
+</table>
+
+<h2>🖼️ Screenshot Gallery</h2>
+
+<table width="100%">
+<tr>
+
+<td align="center" width="33%">
+<a href="Screenshot%201.png">
+<img src="Screenshot%201.png" alt="Screenshot 1" width="100%">
+</a>
+<br>
+<strong>Screenshot 1</strong>
+</td>
+
+<td align="center" width="33%">
+<a href="Screenshot%202.png">
+<img src="Screenshot%202.png" alt="Screenshot 2" width="100%">
+</a>
+<br>
+<strong>Screenshot 2</strong>
+</td>
+
+<td align="center" width="33%">
+<a href="Screenshot%203.png">
+<img src="Screenshot%203.png" alt="Screenshot 3" width="100%">
+</a>
+<br>
+<strong>Screenshot 3</strong>
+</td>
+
+</tr>
+
+<tr>
+
+<td align="center">
+<a href="Screenshot%204.png">
+<img src="Screenshot%204.png" alt="Screenshot 4" width="100%">
+</a>
+<br>
+<strong>Screenshot 4</strong>
+</td>
+
+<td align="center">
+<a href="Screenshot%205.png">
+<img src="Screenshot%205.png" alt="Screenshot 5" width="100%">
+</a>
+<br>
+<strong>Screenshot 5</strong>
+</td>
+
+<td align="center">
+<a href="Screenshot%206.png">
+<img src="Screenshot%206.png" alt="Screenshot 6" width="100%">
+</a>
+<br>
+<strong>Screenshot 6</strong>
+</td>
+
+</tr>
+</table>
+
+<hr>
+
+<h2 align="center">🔗 Direct Project Links</h2>
+
+<table align="center">
+<tr>
+<th>Platform</th>
+<th>Destination</th>
+</tr>
+
+<tr>
+<td>📱 Android APK</td>
+<td>
+<a href="https://github.com/VinaySoni-IN/Collection-Sathi/releases/latest">
+Latest GitHub Release
+</a>
+</td>
+</tr>
+
+<tr>
+<td>🌐 Web App</td>
+<td>
+<a href="https://vinaysoni-in.github.io/Collection-Sathi/">
+Open Collection Sathi
+</a>
+</td>
+</tr>
+
+<tr>
+<td>💻 Source Code</td>
+<td>
+<a href="https://github.com/VinaySoni-IN/Collection-Sathi">
+GitHub Repository
+</a>
+</td>
+</tr>
+
+<tr>
+<td>🤖 F-Droid</td>
+<td><strong>Coming Soon</strong></td>
+</tr>
+
+</table>
+
+<blockquote>
+<strong>F-Droid:</strong> The button is intentionally left without a destination
+until Collection Sathi has an official F-Droid listing. Replace
+<code>href=""</code> with the official F-Droid URL when it becomes available.
+</blockquote>
+
+<hr>
+
+<table width="100%">
+<tr>
+
+<td width="50%" valign="top">
+
+<h2>👨‍💻 Author</h2>
+
+<p><strong>Vinay Soni</strong></p>
+
+<p>
 GitHub:
+<br>
+<strong>https://github.com/VinaySoni-IN</strong>
+</p>
 
-**https://github.com/VinaySoni-IN**
-
+<p>
 Project:
+<br>
+<strong>Collection Sathi</strong>
+</p>
 
-**Collection Sathi**
+</td>
 
----
+<td width="50%" valign="top">
 
-# ❤️ Project Philosophy
+<h2>❤️ Project Philosophy</h2>
 
-Collection Sathi is built around a simple idea:
-
-```text
+<pre>
 COLLECT
    ↓
 RECORD
@@ -1576,26 +1520,42 @@ STORE
 SUMMARIZE
    ↓
 PRINT / SHARE
-```
+</pre>
 
-A collection record should be easy to enter, easy to verify, easy to review, and easy to turn into a usable record.
+<p>
+A collection record should be easy to enter, easy to verify,
+easy to review, and easy to turn into a usable record.
+</p>
 
----
+</td>
+
+</tr>
+</table>
+
+<hr>
 
 <div align="center">
 
-### 🪔 Collection Sathi
+<h2>🪔 Collection Sathi</h2>
 
-**A simple digital companion for collection records.**
+<p>
+<strong>A simple digital companion for collection records.</strong>
+</p>
 
-<a href="https://github.com/VinaySoni-IN/Collection-Sathi/releases/latest">Download APK</a>
+<p>
+<a href="https://github.com/VinaySoni-IN/Collection-Sathi/releases/latest">
+Download APK
+</a>
 &nbsp; • &nbsp;
-<a href="https://vinaysoni-in.github.io/Collection-Sathi/">Open Web App</a>
+<a href="https://vinaysoni-in.github.io/Collection-Sathi/">
+Open Web App
+</a>
 &nbsp; • &nbsp;
-<a href="">F-Droid</a>
+<strong>F-Droid</strong>
+</p>
 
-<br><br>
+<br>
 
-Made with ❤️ by **Vinay Soni**
+Made with ❤️ by <strong>Vinay Soni</strong>
 
 </div>
