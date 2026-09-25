@@ -199,7 +199,7 @@
   .btn-row .btn{ flex:1; }
   .btn-sm{ padding:6px 10px; font-size:12.5px; border-radius:9px; }
 
-  /* ---------- STUDENT CARD ---------- */
+  /* ---------- PERSON CARD ---------- */
   .empty{
     text-align:center;
     padding:40px 12px;
@@ -618,7 +618,7 @@
   </nav>
 </div>
 
-<!-- ADD STUDENT MODAL -->
+<!-- ADD PERSON MODAL -->
 <div class="overlay" id="overlay">
   <div class="modal">
     <h3>Add person</h3>
@@ -626,7 +626,7 @@
     <div class="single-box" id="singleBox">
       <div class="field">
         <label>Person name</label>
-        <input type="text" id="nameInput" placeholder="e.g. Rahul Sharma" list="studentNames">
+        <input type="text" id="nameInput" placeholder="e.g. Rahul Sharma" list="personNames">
       </div>
       <div class="field">
         <label>Amount (₹)</label>
@@ -662,7 +662,7 @@ Aman Khan"></textarea>
     </div>
   </div>
 </div>
-<datalist id="studentNames"></datalist>
+<datalist id="personNames"></datalist>
 
 <!-- NEW ROUND MODAL -->
 <div class="overlay" id="roundOverlay">
@@ -735,8 +735,6 @@ Aman Khan"></textarea>
   "use strict";
 
   var STORAGE_KEY = "collection_sathi_v2";
-  var LEGACY_V2_KEY = "ganpati_collection_v2";
-  var LEGACY_V1_KEY = "ganpati_collection_v1";
   var state = null;
 
   function todayIso(){ return new Date().toISOString(); }
@@ -746,24 +744,24 @@ Aman Khan"></textarea>
   }
 
   function defaultState(){
-    state = { title:"Collection Sathi", signatureName:"", students:[], events:[], currentEventId:null, nextId:1 };
+    state = { title:"Collection Sathi", signatureName:"", persons:[], events:[], currentEventId:null, nextId:1 };
     var ev = freshEvent("Collection");
     state.events.push(ev);
     state.currentEventId = ev.id;
   }
 
-  function findOrCreateStudent(name){
+  function findOrCreatePerson(name){
     name = (name || "").trim();
     if(!name) name = "Unnamed";
-    var existing = state.students.find(function(s){ return s.name.trim().toLowerCase() === name.toLowerCase(); });
+    var existing = state.persons.find(function(s){ return s.name.trim().toLowerCase() === name.toLowerCase(); });
     if(existing) return existing.id;
     var s = { id: state.nextId++, name: name };
-    state.students.push(s);
+    state.persons.push(s);
     return s.id;
   }
 
-  function getStudentName(id){
-    var s = state.students.find(function(x){ return x.id === id; });
+  function getPersonName(id){
+    var s = state.persons.find(function(x){ return x.id === id; });
     return s ? s.name : "Unknown";
   }
 
@@ -780,40 +778,10 @@ Aman Khan"></textarea>
         var parsed = JSON.parse(raw);
         if(parsed && Array.isArray(parsed.events)){
           state = parsed;
+          if(!Array.isArray(state.persons)){ state.persons = []; }
           if(typeof state.signatureName !== "string"){ state.signatureName = ""; }
           if(!state.currentEventId && state.events.length){ state.currentEventId = state.events[state.events.length-1].id; }
           if(!state.events.length){ var ev = freshEvent("Collection"); state.events.push(ev); state.currentEventId = ev.id; }
-          return;
-        }
-      }
-      // migrate from previous (Ganpati-branded) round-based format
-      var legacyV2Raw = localStorage.getItem(LEGACY_V2_KEY);
-      if(legacyV2Raw){
-        var legacyV2 = JSON.parse(legacyV2Raw);
-        if(legacyV2 && Array.isArray(legacyV2.events)){
-          state = legacyV2;
-          if(typeof state.signatureName !== "string"){ state.signatureName = ""; }
-          if(state.title === "Ganpati Bappa Collection"){ state.title = "Collection Sathi"; }
-          if(!state.currentEventId && state.events.length){ state.currentEventId = state.events[state.events.length-1].id; }
-          if(!state.events.length){ var ev3 = freshEvent("Collection"); state.events.push(ev3); state.currentEventId = ev3.id; }
-          save();
-          return;
-        }
-      }
-      // migrate from the original flat (pre-history) format
-      var legacyV1Raw = localStorage.getItem(LEGACY_V1_KEY);
-      if(legacyV1Raw){
-        var legacyV1 = JSON.parse(legacyV1Raw);
-        if(legacyV1 && Array.isArray(legacyV1.entries)){
-          defaultState();
-          state.title = (legacyV1.title && legacyV1.title !== "Ganpati Bappa Collection") ? legacyV1.title : "Collection Sathi";
-          var ev2 = getCurrentEvent();
-          ev2.date = todayIso();
-          legacyV1.entries.forEach(function(e){
-            var sid = findOrCreateStudent(e.name);
-            ev2.entries.push({ id: state.nextId++, studentId: sid, amount: Number(e.amount)||0, mode: e.mode === "upi" ? "upi" : "cash" });
-          });
-          save();
           return;
         }
       }
@@ -894,9 +862,9 @@ Aman Khan"></textarea>
     });
   }
 
-  function renderStudentDatalist(){
-    var dl = document.getElementById("studentNames");
-    dl.innerHTML = state.students.map(function(s){ return '<option value="'+escapeHtml(s.name)+'">'; }).join("");
+  function renderPersonDatalist(){
+    var dl = document.getElementById("personNames");
+    dl.innerHTML = state.persons.map(function(s){ return '<option value="'+escapeHtml(s.name)+'">'; }).join("");
   }
 
   function renderRoundInfo(){
@@ -924,12 +892,12 @@ Aman Khan"></textarea>
 
     var html = "";
     ev.entries.forEach(function(e, i){
-      var nm = getStudentName(e.studentId);
+      var nm = getPersonName(e.personId);
       if(editingId === e.id){
         html += ''+
           '<div class="entry editing" data-id="'+e.id+'">'+
             '<div class="edit-fields">'+
-              '<input type="text" id="editName" value="'+escapeHtml(nm)+'" placeholder="Name" list="studentNames">'+
+              '<input type="text" id="editName" value="'+escapeHtml(nm)+'" placeholder="Name" list="personNames">'+
               '<input type="number" id="editAmount" value="'+Number(e.amount)+'" min="0" step="1">'+
             '</div>'+
             '<div class="mode-toggle">'+
@@ -981,13 +949,13 @@ Aman Khan"></textarea>
         var amt = Number(document.getElementById("editAmount").value) || 0;
         var en = ev.entries.find(function(x){return x.id===editingId;});
         if(en){
-          var oldStudentId = en.studentId, oldAmount = Number(en.amount)||0, oldMode = en.mode;
-          en.studentId = findOrCreateStudent(nmVal || "Unnamed");
+          var oldPersonId = en.personId, oldAmount = Number(en.amount)||0, oldMode = en.mode;
+          en.personId = findOrCreatePerson(nmVal || "Unnamed");
           en.amount = amt;
           en.mode = currentMode.val;
           if(en.mode !== "upi") {
             en.verification = null;
-          } else if(oldStudentId !== en.studentId || oldAmount !== amt || oldMode !== "upi") {
+          } else if(oldPersonId !== en.personId || oldAmount !== amt || oldMode !== "upi") {
             en.verification = null;
           }
         }
@@ -1007,7 +975,7 @@ Aman Khan"></textarea>
       btn.addEventListener("click", function(){
         var id = Number(btn.getAttribute("data-id"));
         var en = ev.entries.find(function(x){return x.id===id;});
-        var nm = en ? getStudentName(en.studentId) : "this entry";
+        var nm = en ? getPersonName(en.personId) : "this entry";
         openConfirm("entry", id, 'Remove "'+nm+'" from this round? This cannot be undone.');
       });
     });
@@ -1097,7 +1065,7 @@ Aman Khan"></textarea>
     var rows = "";
     ev.entries.forEach(function(e,i){
       var invVerify = e.mode==="upi" ? (e.verification && e.verification.status==="verified" ? '✓ Verified' : '⚠ Not Verified') : '—';
-      rows += '<tr><td>'+(i+1)+'</td><td>'+escapeHtml(getStudentName(e.studentId))+'</td><td class="c">'+(e.mode==="upi"?"UPI":"Cash")+'</td><td class="c">'+invVerify+'</td><td class="r">₹'+fmt(e.amount)+'</td></tr>';
+      rows += '<tr><td>'+(i+1)+'</td><td>'+escapeHtml(getPersonName(e.personId))+'</td><td class="c">'+(e.mode==="upi"?"UPI":"Cash")+'</td><td class="c">'+invVerify+'</td><td class="r">₹'+fmt(e.amount)+'</td></tr>';
     });
     paper.innerHTML = ''+
       '<div class="inv-top">'+
@@ -1123,7 +1091,7 @@ Aman Khan"></textarea>
   function renderAll(){
     titleInput.value = state.title;
     if(document.activeElement !== signatureInput){ signatureInput.value = state.signatureName || ""; }
-    renderStudentDatalist();
+    renderPersonDatalist();
     renderRoundInfo();
     renderEntries();
     renderSummary();
@@ -1164,7 +1132,7 @@ Aman Khan"></textarea>
     btn.addEventListener("click", function(){ activateTab(btn.getAttribute("data-tab")); });
   });
 
-  // ---- add student modal ----
+  // ---- add person modal ----
   var overlay = document.getElementById("overlay");
   var singleBox = document.getElementById("singleBox");
   var bulkBox = document.getElementById("bulkBox");
@@ -1235,14 +1203,14 @@ Aman Khan"></textarea>
         .map(function(l){ return l.trim(); }).filter(function(l){ return l.length > 0; });
       if(!lines.length){ closeAddModal(); return; }
       lines.forEach(function(nm){
-        var sid = findOrCreateStudent(nm);
-        ev.entries.push({ id: state.nextId++, studentId: sid, amount: getDefaultAmount(), mode: "cash" });
+        var pid = findOrCreatePerson(nm);
+        ev.entries.push({ id: state.nextId++, personId: pid, amount: getDefaultAmount(), mode: "cash" });
       });
     } else {
       var nm2 = document.getElementById("nameInput").value.trim();
       var amt2 = Number(document.getElementById("amountInput").value) || 0;
-      var sid2 = findOrCreateStudent(nm2 || "Unnamed");
-      ev.entries.push({ id: state.nextId++, studentId: sid2, amount: amt2, mode: addMode });
+      var pid2 = findOrCreatePerson(nm2 || "Unnamed");
+      ev.entries.push({ id: state.nextId++, personId: pid2, amount: amt2, mode: addMode });
     }
     save();
     closeAddModal();
