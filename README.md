@@ -180,11 +180,16 @@ flowchart LR
     D --> E[Open Pull Request]
     E --> F[Review & Merge]
 ```
+---
 
-## 📄 License
+<p align="center">
+<sub>
+Collection Sathi is provided "as is" without warranty of any kind — the developer is not liable for any loss of data, funds, or disputes arising from its use. All collection data is stored locally on your device; nothing is uploaded to any server, and you are solely responsible for backing up and verifying your own records. This project is licensed under the <a href="LICENSE">MIT License</a> — free to use, modify, and share, with attribution appreciated. Built with respect and gratitude for the open-source community that makes projects like this possible.
+</sub>
+</p>
 
-MIT — free to use, modify, and share.
-
-## 🙏 Credits
-
-Made by **[Vinay Soni](https://github.com/VinaySoni-IN)** · Built with **[Claude](https://claude.ai)**
+<p align="center">
+<sub>
+Made with ❤️ by <a href="https://github.com/VinaySoni-IN">Vinay Soni</a> · Built with <a href="https://claude.ai">Claude</a>
+</sub>
+</p>
