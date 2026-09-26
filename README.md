@@ -109,6 +109,45 @@ flowchart TD
     F --> H[History]
     F --> I[Invoice<br/>Print / PDF / Share]
 ```
+## 🧱 Data Model
+
+```mermaid
+erDiagram
+    STATE ||--o{ PERSON : has
+    STATE ||--o{ EVENT : has
+    EVENT ||--o{ ENTRY : contains
+    PERSON ||--o{ ENTRY : "referenced by"
+
+    STATE {
+        string title
+        string signatureName
+        int nextId
+    }
+    PERSON {
+        int id
+        string name
+    }
+    EVENT {
+        int id
+        string title
+        string date
+    }
+    ENTRY {
+        int id
+        int personId
+        int amount
+        string mode
+    }
+```
+## 🏗️ Architecture
+
+```mermaid
+flowchart LR
+    A[GitHub Pages<br/>index.html] --> B[Browser]
+    A --> C[Android TWA]
+    B --> D[Same Web App]
+    C --> D
+```
 
 ## 🚧 Production Readiness
 
