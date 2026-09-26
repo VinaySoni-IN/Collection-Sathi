@@ -82,6 +82,33 @@ It is designed for practical collection workflows such as **chanda, festival fun
 Plain HTML, CSS & JavaScript — no framework required.
 
 `localStorage` · `IndexedDB` · Canvas API · Web Share API · Service Worker · Web App Manifest · `html2canvas`
+## 🗂️ File Structure
+
+```text
+Collection-Sathi/
+│
+├── index.html              # App UI, CSS & JavaScript (self-contained)
+├── manifest.json           # PWA config — name, icons, theme
+├── sw.js                   # Service worker (installable + offline)
+├── icon-192.png            # App icon (small)
+├── icon-512.png            # App icon (large)
+├── LICENSE                 # MIT License
+└── README.md               # This file
+```
+## 🔄 How It Works
+
+```mermaid
+flowchart TD
+    A[Open App] --> B[Add / Select Person]
+    B --> C[Cash Entry]
+    B --> D[UPI Entry]
+    D --> E[Verify Payment<br/>image / self]
+    C --> F[Saved to Round<br/>localStorage]
+    E --> F
+    F --> G[Summary]
+    F --> H[History]
+    F --> I[Invoice<br/>Print / PDF / Share]
+```
 
 ## 🚧 Production Readiness
 
@@ -102,9 +129,18 @@ Currently in **active development** — functional and usable, not yet a finishe
 - [ ] F-Droid listing
 - [ ] Optional encrypted backup
 
-## 🤝 Contributing
+## 🤝 Contributing & Contribution Flow
 
 Contributions are welcome — keep changes compatible with existing stored data, and test on mobile before submitting.
+
+```mermaid
+flowchart LR
+    A[Fork Repo] --> B[Create Branch]
+    B --> C[Make Changes]
+    C --> D[Test on Mobile]
+    D --> E[Open Pull Request]
+    E --> F[Review & Merge]
+```
 
 ## 📄 License
 
