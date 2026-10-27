@@ -489,6 +489,28 @@
     .fab{ bottom:calc(64px + env(safe-area-inset-bottom,0px)); }
   }
 
+  /* ---------- DATA / EXPORT TAB ---------- */
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:14px; margin-bottom:12px; box-shadow:0 2px 6px rgba(46,27,20,.05);
+  }
+  .hint{ margin:0 0 10px; font-size:12px; line-height:1.5; color:var(--ink-soft); }
+  .card .btn-row{ margin-top:0; }
+  .chk{
+    display:flex; align-items:center; gap:9px; font-size:13px; font-weight:600;
+    color:var(--ink); padding:8px 0; cursor:pointer;
+  }
+  .chk input{ width:18px; height:18px; accent-color:var(--vermillion); flex:none; margin:0; }
+  .health{ display:flex; flex-wrap:wrap; gap:8px; }
+  .health span{
+    background:var(--paper-alt); border:1px solid var(--line); border-radius:8px;
+    padding:4px 9px; font-size:11.5px; color:var(--ink-soft);
+  }
+  @media (max-width:360px){
+    .tabbtn{ font-size:9.5px; }
+    .tabbtn svg{ width:19px; height:19px; }
+  }
+
   /* ---------- PRINT ---------- */
   @media print{
     body *{ visibility:hidden; }
@@ -592,6 +614,43 @@
         Print / Save as PDF
       </button>
     </section>
+
+    <!-- DATA TAB -->
+    <section class="tab-panel" id="dataTab">
+      <div class="section-label">Transaction report</div>
+      <div class="card">
+        <p class="hint">One PDF listing every round and every transaction. Tick the second box and each UPI payment proof image is printed underneath its row.</p>
+        <label class="chk"><input type="checkbox" id="pdfAllRounds" checked> Include every round</label>
+        <label class="chk"><input type="checkbox" id="pdfProofs" checked> Attach payment proof images</label>
+        <button class="btn btn-primary btn-block" id="pdfBtn" style="margin-top:12px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          Generate PDF report
+        </button>
+      </div>
+
+      <div class="section-label">Export</div>
+      <div class="card">
+        <p class="hint">The JSON backup is complete — it carries the proof images too, so it can restore this device from nothing. The CSV is a plain sheet of transactions for Excel or Google Sheets.</p>
+        <div class="btn-row">
+          <button class="btn btn-ghost" id="exportJsonBtn">JSON backup</button>
+          <button class="btn btn-ghost" id="exportCsvBtn">CSV sheet</button>
+        </div>
+      </div>
+
+      <div class="section-label">Import</div>
+      <div class="card">
+        <p class="hint">Restore from a JSON backup. <strong>Merge</strong> adds rounds that aren't on this device yet; <strong>Replace</strong> swaps out everything stored here. CSV files cannot be imported.</p>
+        <div class="btn-row">
+          <button class="btn btn-ghost" id="importMergeBtn">Merge backup</button>
+          <button class="btn btn-ghost" id="importReplaceBtn">Replace all</button>
+        </div>
+        <input type="file" id="importFileInput" accept=".json,application/json" style="display:none;">
+      </div>
+
+      <div class="section-label">On this device</div>
+      <div class="health" id="dataHealth"></div>
+      <p class="hint" style="margin-top:12px;">Everything lives inside this browser. Clearing site data, uninstalling the app, or browsing in private mode will erase it — keep a JSON backup somewhere safe.</p>
+    </section>
   </main>
 
   <button class="fab" id="fabAdd" title="Add person">
@@ -614,6 +673,10 @@
     <button class="tabbtn" data-tab="invoiceTab">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3h8a1 1 0 0 1 1 1v16l-2.5-1.5L12 20l-2.5-1.5L7 20V4a1 1 0 0 1 1-1zM9 8h6M9 12h6"/></svg>
       Invoice
+    </button>
+    <button class="tabbtn" data-tab="dataTab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7c0-1.66 3.58-3 8-3s8 1.34 8 3-3.58 3-8 3-8-1.34-8-3zM4 7v5c0 1.66 3.58 3 8 3s8-1.34 8-3V7M4 12v5c0 1.66 3.58 3 8 3s8-1.34 8-3v-5"/></svg>
+      Data
     </button>
   </nav>
 </div>
@@ -777,18 +840,16 @@ Aman Khan"></textarea>
       if(raw){
         var parsed = JSON.parse(raw);
         if(parsed && Array.isArray(parsed.events)){
+          // normalizeState() also repairs ids written by older versions
           state = parsed;
-          if(!Array.isArray(state.persons)){ state.persons = []; }
-          if(typeof state.signatureName !== "string"){ state.signatureName = ""; }
-          if(!state.currentEventId && state.events.length){ state.currentEventId = state.events[state.events.length-1].id; }
-          if(!state.events.length){ var ev = freshEvent("Collection"); state.events.push(ev); state.currentEventId = ev.id; }
+          normalizeState(state);
           return;
         }
       }
-      defaultState();
     }catch(e){
-      defaultState();
+      /* fall through to a fresh state */
     }
+    defaultState();
   }
   function getDefaultAmount(){
     if(!state || !state.defaultUserSet) return 100;
@@ -796,7 +857,15 @@ Aman Khan"></textarea>
     return (isFinite(n) && n >= 0 && state.defaultAmount !== null && state.defaultAmount !== "") ? n : 100;
   }
   function save(){
-    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      return true;
+    }catch(e){
+      // Never fail silently: a collection that only exists in memory is a
+      // collection the user is about to lose.
+      showToast("Storage full — this change was NOT saved. Export a backup now.");
+      return false;
+    }
   }
 
   var titleInput = document.getElementById("titleInput");
@@ -1104,7 +1173,7 @@ Aman Khan"></textarea>
     dateLabel.textContent = fmtDate(getCurrentEvent().date);
   }
   var _origRenderAll = renderAll;
-  renderAll = function(){ _origRenderAll(); refreshHeaderDate(); };
+  renderAll = function(){ _origRenderAll(); refreshHeaderDate(); renderDataHealth(); };
 
   // ---- title ----
   titleInput.addEventListener("input", function(){
@@ -1242,12 +1311,12 @@ Aman Khan"></textarea>
   var confirmOverlay = document.getElementById("confirmOverlay");
   function openConfirm(type, id, msg){
     pendingDelete = { type: type, id: id };
-    var titles = { event: "Delete round?", qr: "Remove QR?" };
+    var titles = { event: "Delete round?", qr: "Remove QR?", import: "Replace all data?" };
     document.getElementById("confirmTitle").textContent = titles[type] || "Remove person?";
     document.getElementById("confirmMsg").textContent = msg;
     confirmOverlay.classList.add("open");
   }
-  function closeConfirm(){ confirmOverlay.classList.remove("open"); pendingDelete = null; }
+  function closeConfirm(){ confirmOverlay.classList.remove("open"); pendingDelete = null; pendingImport = null; }
   document.getElementById("confirmNo").addEventListener("click", closeConfirm);
   confirmOverlay.addEventListener("click", function(e){ if(e.target === confirmOverlay) closeConfirm(); });
   document.getElementById("confirmYes").addEventListener("click", function(){
@@ -1265,8 +1334,11 @@ Aman Khan"></textarea>
       }
       save();
     }
+    var queuedImport = pendingImport;
+    pendingImport = null;
     closeConfirm();
     renderAll();
+    if(queuedImport) queuedImport();
   });
 
   // ---- UPI QR code (uploaded, cached in state, persists on every reload) ----
@@ -1302,19 +1374,18 @@ Aman Khan"></textarea>
     return "proof_"+Date.now()+"_"+Math.random().toString(36).slice(2);
   }
 
-  function saveProofImage(entryId, blob, method){
-    return getProofDb().then(function(db){
-      return new Promise(function(resolve,reject){
-        var id = makeProofId();
-        var tx = db.transaction(PROOF_STORE, "readwrite");
-        tx.objectStore(PROOF_STORE).put({
-          id:id, entryId:entryId, blob:blob, method:method, createdAt:new Date().toISOString()
-        });
-        tx.oncomplete = function(){ resolve(id); };
-        tx.onerror = function(){ reject(tx.error || new Error("Could not save proof image")); };
-        tx.onabort = function(){ reject(tx.error || new Error("Could not save proof image")); };
+  function saveProofImage(entryId, file, method){
+    // Stored as a data URL so the same record can be rendered here, embedded
+    // in the PDF report and inlined into a JSON backup without extra steps.
+    return blobToDataUrl(file).then(function(dataUrl){
+      return putProofRecord({
+        id: makeProofId(),
+        entryId: entryId,
+        dataUrl: dataUrl,
+        method: method,
+        createdAt: new Date().toISOString()
       });
-    });
+    }).then(function(rec){ return rec.id; });
   }
 
   function getProofImage(proofId){
@@ -1420,10 +1491,12 @@ Aman Khan"></textarea>
     preview.innerHTML = "";
     if(verified && e.verification.method === "image" && e.verification.proofId){
       getProofImage(e.verification.proofId).then(function(rec){
-        if(!rec || verifyEntryId !== e.id) return;
-        var url = URL.createObjectURL(rec.blob);
-        preview.innerHTML = '<img src="'+url+'" alt="UPI payment proof">';
-        preview.style.display = "block";
+        if(!rec) return;
+        return proofRecordToDataUrl(rec).then(function(url){
+          if(!url || verifyEntryId !== e.id) return;
+          preview.innerHTML = '<img src="'+url+'" alt="UPI payment proof">';
+          preview.style.display = "block";
+        });
       }).catch(function(){});
     }
   }
@@ -1521,8 +1594,1228 @@ Aman Khan"></textarea>
     });
   });
 
+
+/* ==================== PDF ENGINE START ==================== */
+/* Minimal, dependency-free PDF writer for A4 reports.
+   - Text uses the standard Helvetica / Helvetica-Bold base-14 fonts (no font embedding).
+   - Images are embedded as JPEG (DCTDecode) XObjects.
+   - Output is a latin1 binary string; callers wrap it in a Blob/Uint8Array.
+   No network, no CDN, no build step. */
+var PdfEngine = (function(){
+  "use strict";
+
+  var PAGE_W = 595.28, PAGE_H = 841.89;   // A4 in PDF points
+  var MARGIN = 42;
+
+  /* Adobe AFM advance widths for chars 32..126 */
+  var HELV_W = [278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584];
+  var HELV_B_W = [278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,333,333,311,584,311,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584];
+
+  /* ---------- text helpers ---------- */
+
+  /* The PDF standard fonts only cover WinAnsi. Map the few unicode glyphs
+     this app actually uses, and degrade anything else to "?". */
+  function sanitize(s){
+    return String(s == null ? "" : s)
+      .replace(/\u20B9/g, "Rs.")      // ₹
+      .replace(/[\u2018\u2019\u201A\u201B]/g, "'")
+      .replace(/[\u201C\u201D\u201E\u201F]/g, '"')
+      .replace(/[\u2013\u2014\u2015]/g, "-")
+      .replace(/\u2026/g, "...")
+      .replace(/\u00A0/g, " ")
+      .replace(/[\u2264]/g, "<=")
+      .replace(/[\u2265]/g, ">=")
+      .replace(/[\u2713\u2714\u2705]/g, "v ")
+      .replace(/[\u26A0\u2757]/g, "! ")
+      .replace(/[\u2022]/g, "-")
+      .replace(/[\t\r\n]+/g, " ")
+      .replace(/[^\x20-\xFF]/g, "?");
+  }
+
+  function rawWidth(str, bold, size){
+    var w = 0, table = bold ? HELV_B_W : HELV_W;
+    for(var i=0;i<str.length;i++){
+      var c = str.charCodeAt(i);
+      // winansi high range: fall back to a reasonable average
+      w += (c >= 32 && c <= 126) ? table[c-32] : (c === 32 ? 278 : 556);
+    }
+    return (w / 1000) * size;
+  }
+
+  function widthOf(str, bold, size){ return rawWidth(sanitize(str), bold, size); }
+
+  function fit(str, maxWidth, bold, size){
+    str = sanitize(str);
+    if(rawWidth(str, bold, size) <= maxWidth) return str;
+    var out = "";
+    for(var i=0;i<str.length;i++){
+      var next = out + str.charAt(i);
+      if(rawWidth(next + "...", bold, size) > maxWidth) break;
+      out = next;
+    }
+    return out + "...";
+  }
+
+  /* Shrink the font size until the string fits, never going below `min`. */
+  function fitSize(str, maxWidth, bold, size, min){
+    var s = size;
+    while(s > min && rawWidth(sanitize(str), bold, s) > maxWidth) s -= 0.5;
+    return s;
+  }
+
+  function wrap(str, maxWidth, bold, size){
+    str = sanitize(str);
+    var words = str.split(" "), lines = [], line = "";
+    for(var i=0;i<words.length;i++){
+      var test = line ? line + " " + words[i] : words[i];
+      if(rawWidth(test, bold, size) > maxWidth && line){
+        lines.push(line);
+        line = words[i];
+      } else {
+        line = test;
+      }
+    }
+    if(line) lines.push(line);
+    return lines.length ? lines : [""];
+  }
+
+  function pdfStr(s){
+    return "(" + s.replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)") + ")";
+  }
+
+  function num(n){
+    if(!isFinite(n)) n = 0;
+    return (Math.round(n * 100) / 100).toString();
+  }
+
+  function color(c){
+    if(!c) c = [0,0,0];
+    return num(c[0]) + " " + num(c[1]) + " " + num(c[2]);
+  }
+
+  function b64ToLatin1(b64){
+    b64 = String(b64).replace(/^data:[^,]*,/, "").replace(/\s+/g, "");
+    if(typeof atob === "function") return atob(b64);
+    if(typeof Buffer !== "undefined") return Buffer.from(b64, "base64").toString("latin1");
+    throw new Error("No base64 decoder available");
+  }
+
+  /* ---------- document ---------- */
+
+  function Doc(){
+    this.pages = [];
+    this.images = [];
+    this.cur = null;
+  }
+
+  Doc.prototype.page = function(){
+    this.cur = { ops: [], xobj: {} };
+    this.pages.push(this.cur);
+    return this.pageCount();
+  };
+
+  Doc.prototype.pageCount = function(){ return this.pages.length; };
+
+  Doc.prototype.addImage = function(dataUrl, pixelW, pixelH){
+    var name = "Im" + (this.images.length + 1);
+    this.images.push({ name: name, body: b64ToLatin1(dataUrl), w: pixelW, h: pixelH });
+    return name;
+  };
+
+  function need(doc){
+    if(!doc.cur) doc.page();
+    return doc.cur;
+  }
+
+  Doc.prototype.text = function(x, y, str, opt){
+    opt = opt || {};
+    var bold = !!opt.bold;
+    var size = opt.size || 10;
+    var font = bold ? "/F2" : "/F1";
+    var s = opt.raw ? String(str) : sanitize(str);
+    var op = "BT " + color(opt.color) + " rg " + font + " " + num(size) + " Tf " +
+             num(x) + " " + num(y) + " Td " + pdfStr(s) + " Tj ET";
+    need(this).ops.push(op);
+  };
+
+  Doc.prototype.textRight = function(rightX, y, str, opt){
+    opt = opt || {};
+    var w = widthOf(str, !!opt.bold, opt.size || 10);
+    this.text(rightX - w, y, str, opt);
+  };
+
+  Doc.prototype.textCenter = function(cx, y, str, opt){
+    opt = opt || {};
+    var w = widthOf(str, !!opt.bold, opt.size || 10);
+    this.text(cx - w/2, y, str, opt);
+  };
+
+  Doc.prototype.rect = function(x, y, w, h, fill){
+    need(this).ops.push("q " + color(fill) + " rg " + num(x) + " " + num(y) + " " + num(w) + " " + num(h) + " re f Q");
+  };
+
+  Doc.prototype.line = function(x1, y1, x2, y2, stroke, lw){
+    need(this).ops.push("q " + color(stroke) + " RG " + num(lw || 0.5) + " w " +
+      num(x1) + " " + num(y1) + " m " + num(x2) + " " + num(y2) + " l S Q");
+  };
+
+  Doc.prototype.image = function(name, x, y, w, h){
+    var p = need(this);
+    p.xobj[name] = true;
+    p.ops.push("q " + num(w) + " 0 0 " + num(h) + " " + num(x) + " " + num(y) + " cm /" + name + " Do Q");
+  };
+
+  Doc.prototype.build = function(){
+    var self = this;
+    var chunks = [], total = 0;
+    var offsets = {};
+
+    function emit(s){ chunks.push(s); total += s.length; }
+    function beginObj(n){ offsets[n] = total; emit(n + " 0 obj\n"); }
+    function endObj(){ emit("endobj\n"); }
+
+    emit("%PDF-1.4\n%\xE2\xE3\xCF\xD3\n");
+
+    /* number the objects up-front */
+    var next = 5;                       // 1..4 reserved
+    var imgNum = {};
+    for(var i=0;i<this.images.length;i++) imgNum[this.images[i].name] = next++;
+    var contentNum = [], pageNum = [];
+    for(var p=0;p<this.pages.length;p++){ contentNum[p] = next++; pageNum[p] = next++; }
+    var objCount = next;                // last used number
+
+    /* 1: catalog */
+    beginObj(1);
+    emit("<< /Type /Catalog /Pages 2 0 R >>\n");
+    endObj();
+
+    /* 2: page tree */
+    beginObj(2);
+    var kids = [];
+    for(var k=0;k<pageNum.length;k++) kids.push(pageNum[k] + " 0 R");
+    emit("<< /Type /Pages /Kids [" + kids.join(" ") + "] /Count " + pageNum.length + " >>\n");
+    endObj();
+
+    /* 3,4: fonts */
+    beginObj(3);
+    emit("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>\n");
+    endObj();
+    beginObj(4);
+    emit("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>\n");
+    endObj();
+
+    /* images */
+    for(var m=0;m<this.images.length;m++){
+      var im = this.images[m];
+      beginObj(imgNum[im.name]);
+      emit("<< /Type /XObject /Subtype /Image /Width " + im.w + " /Height " + im.h +
+           " /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length " + im.body.length + " >>\nstream\n");
+      emit(im.body);
+      emit("\nendstream\n");
+      endObj();
+    }
+
+    /* pages */
+    for(var q=0;q<this.pages.length;q++){
+      var page = this.pages[q];
+      var content = page.ops.join("\n");
+
+      beginObj(contentNum[q]);
+      emit("<< /Length " + content.length + " >>\nstream\n" + content + "\nendstream\n");
+      endObj();
+
+      var xo = Object.keys(page.xobj);
+      var res = "<< /Font << /F1 3 0 R /F2 4 0 R >>";
+      if(xo.length){
+        var parts = [];
+        for(var x=0;x<xo.length;x++) parts.push("/" + xo[x] + " " + imgNum[xo[x]] + " 0 R");
+        res += " /XObject << " + parts.join(" ") + " >>";
+      }
+      res += " >>";
+
+      beginObj(pageNum[q]);
+      emit("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 " + num(PAGE_W) + " " + num(PAGE_H) + "] " +
+           "/Resources " + res + " /Contents " + contentNum[q] + " 0 R >>\n");
+      endObj();
+    }
+
+    /* xref */
+    var xrefPos = total;
+    emit("xref\n0 " + (objCount) + "\n");
+    emit("0000000000 65535 f \n");
+    for(var n=1;n<objCount;n++){
+      var off = offsets[n] || 0;
+      var s = String(off);
+      while(s.length < 10) s = "0" + s;
+      emit(s + " 00000 n \n");
+    }
+    emit("trailer\n<< /Size " + objCount + " /Root 1 0 R >>\nstartxref\n" + xrefPos + "\n%%EOF\n");
+
+    return chunks.join("");
+  };
+
+  /* ---------- colour palette (matches the app) ---------- */
+  var INK        = [0.18, 0.11, 0.08];
+  var INK_SOFT   = [0.42, 0.32, 0.25];
+  var MAROON     = [0.42, 0.08, 0.125];
+  var VERMILLION = [0.84, 0.28, 0.23];
+  var MARIGOLD   = [0.89, 0.66, 0.23];
+  var LINE       = [0.87, 0.82, 0.76];
+  var PAPER_ALT  = [0.95, 0.91, 0.85];
+  var GOOD       = [0.25, 0.42, 0.23];
+  var WARN       = [0.72, 0.24, 0.18];
+
+  function latin1ToBytes(str){
+    var out = new Uint8Array(str.length);
+    for(var i=0;i<str.length;i++) out[i] = str.charCodeAt(i) & 0xFF;
+    return out;
+  }
+
+  /* =========================================================
+     Transaction report layout
+     model = {
+       collectionTitle, signatureName, generatedAt,
+       totals: { grand, cash, upi, entries, rounds, persons, verified, unverified },
+       rounds: [{ title, dateText, totalText, cashText, upiText, verifiedCount, unverifiedCount,
+                  entries: [{ sr, name, amountText, mode, verifiedText }] }],
+       proofs: [{ dataUrl, w, h, caption, sub }],
+       includeProofs: bool
+     }
+     ========================================================= */
+  function buildReport(model){
+    var doc = new Doc();
+    var innerW = PAGE_W - MARGIN * 2;
+    var y = 0;
+
+    function footer(){
+      var total = doc.pageCount();
+      for(var i=0;i<total;i++){
+        doc.cur = doc.pages[i];
+        doc.rect(0, 0, PAGE_W, 30, PAPER_ALT);
+        doc.text(MARGIN, 12, "Collection Sathi  ·  collection report", { size: 7.5, color: INK_SOFT });
+        doc.textRight(PAGE_W - MARGIN, 12, "Page " + (i+1) + " of " + total, { size: 7.5, color: INK_SOFT });
+      }
+    }
+
+    function newPage(continued){
+      doc.page();
+      y = PAGE_H - MARGIN;
+      if(continued){
+        doc.text(MARGIN, y - 6, model.collectionTitle || "Collection", { size: 8, color: INK_SOFT });
+        y -= 22;
+      }
+      return y;
+    }
+
+    function space(need){
+      if(y - need < MARGIN + 30) newPage(true);
+    }
+
+    /* ---------- cover / summary band ---------- */
+    doc.page();
+    doc.rect(0, PAGE_H - 132, PAGE_W, 132, MAROON);
+    doc.rect(0, PAGE_H - 136, PAGE_W, 4, MARIGOLD);
+
+    doc.text(MARGIN, PAGE_H - 54, "COLLECTION SATHI", { size: 10, bold: true, color: MARIGOLD });
+    var titleText = model.collectionTitle || "Collection";
+    var titleSize = fitSize(titleText, innerW, true, 24, 13);
+    doc.text(MARGIN, PAGE_H - 82, titleText, { size: titleSize, bold: true, color: [1,1,1] });
+    doc.text(MARGIN, PAGE_H - 100, "Transaction report  ·  all rounds", { size: 10, color: [0.96,0.88,0.82] });
+    doc.textRight(PAGE_W - MARGIN, PAGE_H - 100, model.generatedAt || "", { size: 8.5, color: [0.96,0.88,0.82] });
+
+    y = PAGE_H - 168;
+
+    /* ---------- stat boxes ---------- */
+    var t = model.totals || {};
+    var boxes = [
+      { lab: "Total collected", val: t.grand || "0" },
+      { lab: "Cash", val: t.cash || "0" },
+      { lab: "UPI", val: t.upi || "0" }
+    ];
+    var gap = 10, boxW = (innerW - gap * 2) / 3, boxH = 54;
+    for(var b=0;b<boxes.length;b++){
+      var bx = MARGIN + b * (boxW + gap);
+      doc.rect(bx, y - boxH, boxW, boxH, [0.976, 0.955, 0.925]);
+      doc.text(bx + 10, y - 18, boxes[b].lab, { size: 7.5, color: INK_SOFT });
+      doc.text(bx + 10, y - 40, fit(boxes[b].val, boxW - 20, true, 15), { size: 15, bold: true, color: MAROON });
+    }
+    y -= boxH + 14;
+
+    var meta = (t.entries || 0) + " entries across " + (t.rounds || 0) + " round" + ((t.rounds === 1) ? "" : "s") +
+               "  ·  " + (t.persons || 0) + " people  ·  UPI verified " + (t.verified || 0) +
+               ", pending " + (t.unverified || 0);
+    doc.text(MARGIN, y, meta, { size: 8.5, color: INK_SOFT });
+    y -= 18;
+
+    if(model.signatureName){
+      doc.text(MARGIN, y, "Prepared by: " + model.signatureName, { size: 8.5, color: INK_SOFT });
+      y -= 14;
+    }
+
+    y -= 8;
+    doc.line(MARGIN, y, PAGE_W - MARGIN, y, LINE, 0.8);
+    y -= 24;
+
+    /* ---------- tables ---------- */
+    var COLS = [
+      { key: "sr",      label: "Sr.",    w: 26,  align: "left"  },
+      { key: "name",    label: "Name",   w: 0,   align: "left"  },   // flexible
+      { key: "mode",    label: "Mode",   w: 52,  align: "left"  },
+      { key: "verify",  label: "Status", w: 96,  align: "left"  },
+      { key: "amount",  label: "Amount", w: 74,  align: "right" }
+    ];
+    var fixed = COLS[0].w + COLS[2].w + COLS[3].w + COLS[4].w;
+    COLS[1].w = innerW - fixed;
+
+    function colX(i){
+      var x = MARGIN;
+      for(var j=0;j<i;j++) x += COLS[j].w;
+      return x;
+    }
+
+    function tableHead(){
+      doc.rect(MARGIN, y - 16, innerW, 18, [0.976, 0.955, 0.925]);
+      for(var c=0;c<COLS.length;c++){
+        var cx = colX(c);
+        if(COLS[c].align === "right"){
+          doc.textRight(cx + COLS[c].w - 4, y - 12, COLS[c].label, { size: 8, bold: true, color: INK_SOFT });
+        } else {
+          doc.text(cx + 4, y - 12, COLS[c].label, { size: 8, bold: true, color: INK_SOFT });
+        }
+      }
+      y -= 18;
+    }
+
+    function roundBlock(rd){
+      space(70);
+      doc.text(MARGIN, y - 4, fit(rd.title || "Collection", innerW - 150, true, 11), { size: 11, bold: true, color: MAROON });
+      doc.textRight(PAGE_W - MARGIN, y - 4, rd.totalText || "", { size: 11, bold: true, color: MAROON });
+      y -= 14;
+      doc.text(MARGIN, y - 4, (rd.dateText || "") + "   ·   " + rd.entries.length + " entr" + (rd.entries.length === 1 ? "y" : "ies") +
+               "   ·   Cash " + (rd.cashText || "") + "   ·   UPI " + (rd.upiText || ""), { size: 8, color: INK_SOFT });
+      y -= 16;
+      tableHead();
+
+      for(var i=0;i<rd.entries.length;i++){
+        var e = rd.entries[i];
+        if(y - 17 < MARGIN + 30){ newPage(true); tableHead(); }
+        var isUnverified = /not|pending/i.test(e.verifiedText || "");
+        var rowH = 17;
+        if(i % 2 === 1) doc.rect(MARGIN, y - rowH + 3, innerW, rowH, [0.996, 0.988, 0.972]);
+
+        doc.text(colX(0) + 4, y - 9, String(e.sr), { size: 8.5, color: INK_SOFT });
+        doc.text(colX(1) + 4, y - 9, fit(e.name, COLS[1].w - 8, false, 8.5), { size: 8.5, color: INK });
+        doc.text(colX(2) + 4, y - 9, e.mode, { size: 8.5, color: INK_SOFT });
+        doc.text(colX(3) + 4, y - 9, fit(e.verifiedText, COLS[3].w - 8, false, 8), {
+          size: 8, color: isUnverified ? WARN : GOOD
+        });
+        doc.textRight(colX(4) + COLS[4].w - 4, y - 9, e.amountText, { size: 8.5, bold: true, color: INK });
+
+        y -= rowH;
+        doc.line(MARGIN, y + 3, PAGE_W - MARGIN, y + 3, [0.93, 0.90, 0.86], 0.4);
+      }
+
+      /* round subtotal */
+      space(30);
+      doc.line(MARGIN, y, PAGE_W - MARGIN, y, MAROON, 1);
+      y -= 14;
+      doc.text(MARGIN, y, "Round total (" + rd.entries.length + " entries)", { size: 9, bold: true, color: INK });
+      doc.textRight(colX(4) + COLS[4].w - 4, y, rd.totalText, { size: 9.5, bold: true, color: MAROON });
+      y -= 26;
+    }
+
+    function signOff(){
+      space(80);
+      y -= 26;
+      doc.line(PAGE_W - MARGIN - 150, y, PAGE_W - MARGIN, y, LINE, 0.8);
+      if(model.signatureName){
+        doc.text(PAGE_W - MARGIN - 150, y + 6, model.signatureName, { size: 9, color: INK });
+      }
+      doc.text(PAGE_W - MARGIN - 150, y - 12, "Signature", { size: 7.5, color: INK_SOFT });
+      doc.text(MARGIN, y - 2, "Generated locally on this device.  Every figure above came from this device's own storage.", { size: 7.5, color: INK_SOFT });
+    }
+
+    if(!model.rounds || !model.rounds.length){
+      doc.text(MARGIN, y, "No entries recorded yet.", { size: 10, color: INK_SOFT });
+      y -= 20;
+    } else {
+      for(var r=0;r<model.rounds.length;r++) roundBlock(model.rounds[r]);
+    }
+
+    signOff();
+
+
+    /* ---------- proof appendix (2-up grid) ---------- */
+    var proofs = model.proofs || [];
+    if(model.includeProofs && proofs.length){
+      newPage(false);
+      doc.rect(MARGIN, y - 22, innerW, 24, MAROON);
+      doc.text(MARGIN + 10, y - 15, "PAYMENT PROOFS  ·  " + proofs.length + " image" + (proofs.length === 1 ? "" : "s"), {
+        size: 9.5, bold: true, color: [1,1,1]
+      });
+      y -= 40;
+
+      var gapX = 12, gapY = 12;
+      var cellW = (innerW - gapX) / 2;
+      var maxImgH = 300;
+
+      for(var pi=0; pi<proofs.length; pi++){
+        var pr = proofs[pi];
+        var iw = pr.w || 600, ih = pr.h || 800;
+        var scale = Math.min(cellW / iw, maxImgH / ih, 1);
+        var dw = iw * scale, dh = ih * scale;
+        var blockH = maxImgH + 30;
+
+        var col = pi % 2;
+        if(col === 0){
+          if(y - blockH < MARGIN + 30) newPage(true);
+        }
+
+        var bx = MARGIN + col * (cellW + gapX);
+        var by = y;
+
+        doc.rect(bx, by - blockH, cellW, blockH, [0.976, 0.955, 0.925]);
+        var imgName = doc.addImage(pr.dataUrl, pr.w, pr.h);
+        /* centre the image inside its cell */
+        doc.image(imgName, bx + (cellW - dw) / 2, by - 8 - dh, dw, dh);
+
+        var capY = by - maxImgH - 16;
+        doc.text(bx + 8, capY, fit(pr.caption || "", cellW - 16, true, 8.5), { size: 8.5, bold: true, color: INK });
+        if(pr.sub){
+          doc.text(bx + 8, capY - 10, fit(pr.sub, cellW - 16, false, 7.5), { size: 7.5, color: INK_SOFT });
+        }
+
+        if(col === 1 || pi === proofs.length - 1) y -= blockH + gapY;
+      }
+      y -= 4;
+    } else if(model.includeProofs && !proofs.length){
+      y -= 6;
+      doc.text(MARGIN, y, "No payment proof images are attached to this collection.", { size: 8.5, color: INK_SOFT });
+      y -= 16;
+    }
+
+    footer();
+    return doc.build();
+  }
+
+  return {
+    Doc: Doc,
+    buildReport: buildReport,
+    sanitize: sanitize,
+    widthOf: widthOf,
+    fitSize: fitSize,
+    toBytes: latin1ToBytes,
+    PAGE_W: PAGE_W,
+    PAGE_H: PAGE_H
+  };
+})();
+/* ==================== PDF ENGINE END ==================== */
+
+
+  var pendingImport = null;
+
+  /* ==================================================================
+     DATA SAFETY + EXPORT / IMPORT / PDF REPORT
+     Everything here is dependency-free and runs fully offline.
+     ================================================================== */
+
+  /* ---------- state sanitation (also repairs older stored data) ---------- */
+
+  function normalizeState(st){
+    if(!st || typeof st !== "object") return null;
+
+    if(!Array.isArray(st.persons)) st.persons = [];
+    if(!Array.isArray(st.events)) st.events = [];
+    if(typeof st.title !== "string" || !st.title) st.title = "Collection Sathi";
+    if(typeof st.signatureName !== "string") st.signatureName = "";
+
+    st.persons = st.persons.filter(function(p){
+      return p && typeof p === "object";
+    });
+    st.persons.forEach(function(p){
+      if(typeof p.name !== "string" || !p.name.trim()) p.name = "Unnamed";
+      p.name = p.name.trim();
+    });
+
+    st.events = st.events.filter(function(ev){ return ev && typeof ev === "object"; });
+    st.events.forEach(function(ev){
+      if(typeof ev.title !== "string" || !ev.title) ev.title = "Collection";
+      if(!ev.date || isNaN(new Date(ev.date).getTime())) ev.date = new Date().toISOString();
+      if(!Array.isArray(ev.entries)) ev.entries = [];
+      ev.entries = ev.entries.filter(function(e){ return e && typeof e === "object"; });
+      ev.entries.forEach(function(e){
+        e.amount = Number(e.amount);
+        if(!isFinite(e.amount) || e.amount < 0) e.amount = 0;
+        if(e.mode !== "upi") e.mode = "cash";
+        if(e.mode === "upi"){
+          if(!e.verification || typeof e.verification !== "object" ||
+             e.verification.status !== "verified"){ e.verification = null; }
+        } else {
+          e.verification = null;
+        }
+      });
+    });
+
+    if(!st.events.length){
+      st.events.push({ id: 1, title: "Collection", date: new Date().toISOString(), entries: [] });
+    }
+    if(typeof st.qrImage !== "string") st.qrImage = null;
+
+    repairIds(st);
+    return st;
+  }
+
+  /* Guarantees every person / round / entry id is a positive integer and that
+     nextId is above all of them. Older or hand-edited data used to produce
+     NaN ids, which made rows impossible to edit or delete. */
+  function repairIds(st){
+    var seen = {}, broken = false;
+
+    function check(id){
+      if(typeof id !== "number" || !isFinite(id) || id <= 0 ||
+         Math.floor(id) !== id || seen[id]){ broken = true; return; }
+      seen[id] = true;
+    }
+
+    st.persons.forEach(function(p){ check(p.id); });
+    st.events.forEach(function(ev){ check(ev.id); ev.entries.forEach(function(e){ check(e.id); }); });
+
+    if(broken){
+      var next = 1, personMap = {}, eventMap = {};
+
+      st.persons.forEach(function(p){
+        personMap[String(p.id)] = next;
+        p.id = next++;
+      });
+
+      st.events.slice().sort(function(a, b){
+        return new Date(a.date) - new Date(b.date);
+      }).forEach(function(ev){
+        var oldEventId = ev.id;
+        eventMap[String(oldEventId)] = next;
+        ev.id = next++;
+        ev.entries.forEach(function(e){
+          var mapped = personMap[String(e.personId)];
+          if(mapped === undefined){
+            var fresh = { id: next++, name: "Unknown" };
+            st.persons.push(fresh);
+            personMap[String(e.personId)] = fresh.id;
+            mapped = fresh.id;
+          }
+          e.personId = mapped;
+          e.id = next++;
+        });
+      });
+
+      if(eventMap[String(st.currentEventId)] !== undefined){
+        st.currentEventId = eventMap[String(st.currentEventId)];
+      } else {
+        st.currentEventId = st.events[st.events.length - 1].id;
+      }
+    }
+
+    var max = 0;
+    st.persons.forEach(function(p){ if(p.id > max) max = p.id; });
+    st.events.forEach(function(ev){
+      if(ev.id > max) max = ev.id;
+      ev.entries.forEach(function(e){ if(e.id > max) max = e.id; });
+    });
+
+    var declared = Number(st.nextId);
+    st.nextId = Math.max(isFinite(declared) ? declared : 0, max + 1);
+
+    if(!st.currentEventId || !st.events.some(function(ev){ return ev.id === st.currentEventId; })){
+      st.currentEventId = st.events[st.events.length - 1].id;
+    }
+  }
+
+  /* ---------- proof archive helpers ---------- */
+
+  function blobToDataUrl(blob){
+    return new Promise(function(resolve, reject){
+      var fr = new FileReader();
+      fr.onload = function(){ resolve(fr.result); };
+      fr.onerror = function(){ reject(fr.error || new Error("Could not read image")); };
+      fr.readAsDataURL(blob);
+    });
+  }
+
+  function putProofRecord(rec){
+    return getProofDb().then(function(db){
+      return new Promise(function(resolve, reject){
+        var tx = db.transaction(PROOF_STORE, "readwrite");
+        tx.objectStore(PROOF_STORE).put(rec);
+        tx.oncomplete = function(){ resolve(rec); };
+        tx.onerror = function(){ reject(tx.error || new Error("Could not save proof")); };
+        tx.onabort = function(){ reject(tx.error || new Error("Could not save proof")); };
+      });
+    });
+  }
+
+  function getAllProofRecords(){
+    return getProofDb().then(function(db){
+      return new Promise(function(resolve){
+        var tx = db.transaction(PROOF_STORE, "readonly");
+        var store = tx.objectStore(PROOF_STORE);
+        if(store.getAll){
+          var req = store.getAll();
+          req.onsuccess = function(){ resolve(req.result || []); };
+          req.onerror = function(){ resolve([]); };
+        } else {
+          var items = [];
+          var cur = store.openCursor();
+          cur.onsuccess = function(ev){
+            var c = ev.target.result;
+            if(c){ items.push(c.value); c.continue(); } else { resolve(items); }
+          };
+          cur.onerror = function(){ resolve([]); };
+        }
+      });
+    }).catch(function(){ return []; });
+  }
+
+  function proofRecordToDataUrl(rec){
+    if(!rec) return Promise.resolve(null);
+    if(rec.dataUrl) return Promise.resolve(rec.dataUrl);
+    if(rec.blob) return blobToDataUrl(rec.blob).catch(function(){ return null; });
+    return Promise.resolve(null);
+  }
+
+  /* entries that carry a proof id, paired with their round */
+  function collectProofRefs(events){
+    var out = [];
+    (events || state.events).forEach(function(ev){
+      ev.entries.forEach(function(e){
+        if(e.mode === "upi" && e.verification && e.verification.status === "verified"){
+          out.push({ event: ev, entry: e, proofId: e.verification.proofId || null });
+        }
+      });
+    });
+    return out;
+  }
+
+  /* ---------- small file helpers ---------- */
+
+  function slug(s){
+    return String(s || "collection").toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40) || "collection";
+  }
+  function stamp(){
+    var d = new Date();
+    function p(n){ return (n < 10 ? "0" : "") + n; }
+    return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + "-" + p(d.getHours()) + p(d.getMinutes());
+  }
+  function downloadBlob(blob, filename){
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+  }
+  function niceDate(iso){
+    try{
+      return new Date(iso).toLocaleString("en-IN", {
+        day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit"
+      });
+    }catch(e){ return String(iso || ""); }
+  }
+
+  /* ================================ EXPORT ================================ */
+
+  function buildBackupPayload(){
+    var byId = {};
+    return getAllProofRecords().then(function(recs){
+      recs.forEach(function(r){ if(r && r.id) byId[r.id] = r; });
+
+      var proofJobs = collectProofRefs().map(function(ref){
+        if(!ref.proofId) return Promise.resolve(null);
+        return proofRecordToDataUrl(byId[ref.proofId]).then(function(dataUrl){
+          if(!dataUrl) return null;
+          return {
+            id: ref.proofId,
+            entryId: ref.entry.id,
+            round: ref.event.title,
+            name: getPersonName(ref.entry.personId),
+            amount: Number(ref.entry.amount) || 0,
+            method: (ref.entry.verification && ref.entry.verification.method) || "image",
+            verifiedAt: ref.entry.verification && ref.entry.verification.verifiedAt,
+            dataUrl: dataUrl
+          };
+        });
+      });
+
+      return Promise.all(proofJobs).then(function(proofs){
+        return {
+          app: "Collection Sathi",
+          format: "collection-sathi-backup",
+          version: 2,
+          exportedAt: new Date().toISOString(),
+          counts: {
+            rounds: state.events.length,
+            entries: state.events.reduce(function(n, ev){ return n + ev.entries.length; }, 0),
+            proofs: proofs.filter(Boolean).length
+          },
+          state: state,
+          proofs: proofs.filter(Boolean)
+        };
+      });
+    });
+  }
+
+  function exportJson(){
+    showToast("Preparing backup…");
+    buildBackupPayload().then(function(payload){
+      var blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      downloadBlob(blob, "collection-sathi-" + slug(state.title) + "-" + stamp() + ".json");
+      showToast("Backup saved — " + payload.counts.entries + " entries, " + payload.counts.proofs + " proofs.");
+    }).catch(function(){
+      showToast("Could not build the backup. Try again.");
+    });
+  }
+
+  function csvCell(v){
+    var s = (v === null || v === undefined) ? "" : String(v);
+    return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  }
+
+  function buildCsv(){
+    var rows = [];
+    rows.push(["Round", "Round date", "Sr.", "Name", "Mode", "Amount (INR)",
+               "UPI status", "Proof image", "Proof id", "Verified at"]);
+
+    var sr = 0, grand = 0, cash = 0, upi = 0;
+
+    state.events.forEach(function(ev){
+      ev.entries.forEach(function(e){
+        sr++;
+        var amount = Number(e.amount) || 0;
+        grand += amount;
+        if(e.mode === "upi") upi += amount; else cash += amount;
+
+        var verified = e.mode === "upi" && e.verification && e.verification.status === "verified";
+        rows.push([
+          ev.title,
+          String(ev.date).slice(0, 10),
+          sr,
+          getPersonName(e.personId),
+          e.mode === "upi" ? "UPI" : "Cash",
+          amount,
+          e.mode === "upi" ? (verified ? "Verified" : "Not verified") : "",
+          verified ? (e.verification.method === "image" ? "Yes" : "Self verified") : "No",
+          (verified && e.verification.proofId) || "",
+          (verified && e.verification.verifiedAt) ? String(e.verification.verifiedAt).slice(0, 19).replace("T", " ") : ""
+        ]);
+      });
+    });
+
+    rows.push([]);
+    rows.push(["SUMMARY", "", "", "", "", "", "", "", "", ""]);
+    rows.push(["Total entries", sr, "Total amount", grand, "Cash", cash, "UPI", upi, "", ""]);
+    rows.push(["Rounds", state.events.length, "Exported", new Date().toISOString().slice(0, 16).replace("T", " "), "", "", "", "", "", ""]);
+
+    // BOM so Excel reads UTF-8 (₹ and Devanagari names) correctly
+    return "\uFEFF" + rows.map(function(r){
+      return r.map(csvCell).join(",");
+    }).join("\r\n");
+  }
+
+  function exportCsv(){
+    var text = buildCsv();
+    var blob = new Blob([text], { type: "text/csv;charset=utf-8" });
+    downloadBlob(blob, "collection-sathi-" + slug(state.title) + "-" + stamp() + ".csv");
+    showToast("CSV saved — opens in Excel, Sheets or Numbers.");
+  }
+
+  /* ================================ IMPORT ================================ */
+
+  function parseBackup(text){
+    var data;
+    try{
+      data = JSON.parse(text);
+    }catch(e){
+      throw new Error("That file is not valid JSON.");
+    }
+
+    // full backup envelope
+    if(data && data.state && Array.isArray(data.state.events)){
+      return { state: data.state, proofs: Array.isArray(data.proofs) ? data.proofs : [] };
+    }
+    // bare state object
+    if(data && Array.isArray(data.events)){
+      return { state: data, proofs: [] };
+    }
+    // a raw localStorage dump
+    if(data && typeof data === "object"){
+      var inner = data[STORAGE_KEY];
+      if(typeof inner === "string"){
+        try{
+          var parsed = JSON.parse(inner);
+          if(parsed && Array.isArray(parsed.events)) return { state: parsed, proofs: [] };
+        }catch(e){ /* keep looking */ }
+      }
+      if(inner && typeof inner === "object" && Array.isArray(inner.events)){
+        return { state: inner, proofs: [] };
+      }
+    }
+    throw new Error("No collection data found in that file.");
+  }
+
+  function importBackup(payload, mode){
+    var incoming = normalizeState(JSON.parse(JSON.stringify(payload.state)));
+    if(!incoming) throw new Error("That backup has no usable collection data.");
+
+    var incomingProofs = {};
+    (payload.proofs || []).forEach(function(p){
+      if(p && p.id && p.dataUrl) incomingProofs[p.id] = p;
+    });
+
+    if(mode === "replace"){
+      state = incoming;
+      state.currentEventId = state.events[state.events.length - 1].id;
+    } else {
+      /* merge: add rounds that are not already present, never overwrite */
+      var personMap = {};
+      incoming.persons.forEach(function(p){
+        var key = p.name.trim().toLowerCase();
+        var found = state.persons.find(function(x){ return x.name.trim().toLowerCase() === key; });
+        if(found){
+          personMap[String(p.id)] = found.id;
+        } else {
+          var fresh = { id: state.nextId++, name: p.name };
+          state.persons.push(fresh);
+          personMap[String(p.id)] = fresh.id;
+        }
+      });
+
+      incoming.events.forEach(function(ev){
+        var duplicate = state.events.some(function(x){
+          return x.title === ev.title && String(x.date).slice(0, 10) === String(ev.date).slice(0, 10);
+        });
+        if(duplicate) return;
+
+        var newEvent = { id: state.nextId++, title: ev.title, date: ev.date, entries: [] };
+        ev.entries.forEach(function(e){
+          var personId = personMap[String(e.personId)];
+          if(!personId){
+            var unknown = { id: state.nextId++, name: "Unknown" };
+            state.persons.push(unknown);
+            personMap[String(e.personId)] = unknown.id;
+            personId = unknown.id;
+          }
+          var entry = {
+            id: state.nextId++,
+            personId: personId,
+            amount: Number(e.amount) || 0,
+            mode: e.mode === "upi" ? "upi" : "cash"
+          };
+          if(entry.mode === "upi" && e.verification && e.verification.status === "verified"){
+            var proofId = e.verification.proofId && incomingProofs[e.verification.proofId] ? e.verification.proofId : null;
+            entry.verification = {
+              status: "verified",
+              method: e.verification.method === "image" && proofId ? "image" : "self",
+              proofId: proofId,
+              verifiedAt: e.verification.verifiedAt || new Date().toISOString()
+            };
+            if(!proofId) entry.verification.method = "self";
+          }
+          newEvent.entries.push(entry);
+        });
+        state.events.push(newEvent);
+      });
+    }
+
+    normalizeState(state);
+
+    if(!save()){
+      throw new Error("Storage is full — nothing was imported.");
+    }
+
+    // restore proof images into the local archive
+    var writes = Object.keys(incomingProofs).map(function(id){
+      var p = incomingProofs[id];
+      var stillUsed = state.events.some(function(ev){
+        return ev.entries.some(function(e){
+          return e.verification && e.verification.proofId === id;
+        });
+      });
+      if(!stillUsed) return Promise.resolve(false);
+      return putProofRecord({
+        id: id,
+        entryId: p.entryId || null,
+        dataUrl: p.dataUrl,
+        method: p.method || "image",
+        createdAt: p.verifiedAt || p.createdAt || new Date().toISOString()
+      }).then(function(){ return true; }).catch(function(){ return false; });
+    });
+
+    return Promise.all(writes).then(function(results){
+      var restored = results.filter(Boolean).length;
+      editingId = null;
+      renderAll();
+      renderDataHealth();
+      return {
+        mode: mode,
+        rounds: state.events.length,
+        entries: state.events.reduce(function(n, ev){ return n + ev.entries.length; }, 0),
+        proofs: restored
+      };
+    });
+  }
+
+  var importMode = "merge";
+
+  function readImportFile(file){
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      var payload;
+      try{
+        payload = parseBackup(String(reader.result));
+      }catch(err){
+        showToast(err.message || "Could not read that file.");
+        return;
+      }
+      var proceed = function(){
+        try{
+          importBackup(payload, importMode).then(function(res){
+            showToast("Imported " + res.entries + " entries in " + res.rounds +
+                      " rounds · " + res.proofs + " proofs restored.");
+            activateTab("collectTab");
+          }).catch(function(err){
+            showToast(err && err.message ? err.message : "Import failed.");
+          });
+        }catch(err){
+          showToast(err && err.message ? err.message : "Import failed.");
+        }
+      };
+
+      if(importMode === "replace"){
+        openConfirm("import", null,
+          "Replace all data on this device with the backup? Current rounds and entries will be discarded.");
+        pendingImport = proceed;
+      } else {
+        proceed();
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  /* ============================ PDF REPORT ============================ */
+
+  function toJpegDataUrl(dataUrl, maxDim){
+    return new Promise(function(resolve){
+      var img = new Image();
+      img.onload = function(){
+        var w = img.width || maxDim, h = img.height || maxDim;
+        var scale = Math.min(1, maxDim / Math.max(w, h));
+        var cw = Math.max(1, Math.round(w * scale));
+        var ch = Math.max(1, Math.round(h * scale));
+        var canvas = document.createElement("canvas");
+        canvas.width = cw;
+        canvas.height = ch;
+        var ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, cw, ch);
+        ctx.drawImage(img, 0, 0, cw, ch);
+        var out;
+        try{ out = canvas.toDataURL("image/jpeg", 0.85); }catch(e){ out = null; }
+        resolve(out ? { dataUrl: out, w: cw, h: ch } : null);
+      };
+      img.onerror = function(){ resolve(null); };
+      img.src = dataUrl;
+    });
+  }
+
+  function buildPdfReport(scopeAll, includeProofs){
+    var events = scopeAll ? state.events.slice() : [getCurrentEvent()];
+    var model = {
+      collectionTitle: state.title,
+      signatureName: state.signatureName,
+      generatedAt: niceDate(new Date().toISOString()),
+      includeProofs: includeProofs,
+      totals: {},
+      rounds: [],
+      proofs: []
+    };
+
+    var sr = 0, verified = 0, unverified = 0, people = {}, grand = 0, cashTotal = 0, upiTotal = 0;
+
+    events.forEach(function(ev){
+      var t = computeTotals(ev);
+      grand += t.total;
+      cashTotal += t.cash;
+      upiTotal += t.upi;
+
+      var rows = ev.entries.map(function(e){
+        sr++;
+        people[e.personId] = true;
+        var isUpi = e.mode === "upi";
+        var isVerified = isUpi && e.verification && e.verification.status === "verified";
+        if(isUpi){ if(isVerified) verified++; else unverified++; }
+        return {
+          sr: sr,
+          name: getPersonName(e.personId),
+          amountText: "Rs. " + fmt(e.amount),
+          mode: isUpi ? "UPI" : "Cash",
+          verifiedText: isUpi ? (isVerified ? "Verified" : "Not verified") : "-"
+        };
+      });
+
+      model.rounds.push({
+        title: ev.title,
+        dateText: fmtDate(ev.date),
+        totalText: "Rs. " + fmt(t.total),
+        cashText: "Rs. " + fmt(t.cash),
+        upiText: "Rs. " + fmt(t.upi),
+        entries: rows
+      });
+    });
+
+    model.totals = {
+      grand: "Rs. " + fmt(grand),
+      cash: "Rs. " + fmt(cashTotal),
+      upi: "Rs. " + fmt(upiTotal),
+      entries: sr,
+      rounds: events.length,
+      persons: Object.keys(people).length,
+      verified: verified,
+      unverified: unverified
+    };
+
+    if(!includeProofs) return Promise.resolve(model);
+
+    var refs = collectProofRefs(events).filter(function(r){ return !!r.proofId; });
+    if(!refs.length) return Promise.resolve(model);
+
+    return getAllProofRecords().then(function(recs){
+      var byId = {};
+      recs.forEach(function(r){ if(r && r.id) byId[r.id] = r; });
+
+      var jobs = refs.map(function(ref){
+        return proofRecordToDataUrl(byId[ref.proofId]).then(function(dataUrl){
+          if(!dataUrl) return null;
+          return toJpegDataUrl(dataUrl, 900).then(function(jpeg){
+            if(!jpeg) return null;
+            return {
+              dataUrl: jpeg.dataUrl,
+              w: jpeg.w,
+              h: jpeg.h,
+              caption: getPersonName(ref.entry.personId) + "  ·  " + ref.event.title + "  ·  Rs. " + fmt(ref.entry.amount),
+              sub: "Verified " + niceDate(ref.entry.verification.verifiedAt || new Date().toISOString())
+            };
+          });
+        });
+      });
+
+      return Promise.all(jobs).then(function(list){
+        model.proofs = list.filter(Boolean);
+        return model;
+      });
+    });
+  }
+
+  function generatePdfReport(){
+    var includeProofs = document.getElementById("pdfProofs").checked;
+    var scopeAll = document.getElementById("pdfAllRounds").checked;
+    var btn = document.getElementById("pdfBtn");
+
+    btn.disabled = true;
+    showToast(includeProofs ? "Building report with proofs…" : "Building report…");
+
+    buildPdfReport(scopeAll, includeProofs).then(function(model){
+      var binary = PdfEngine.buildReport(model);
+      var bytes = PdfEngine.toBytes(binary);
+      var blob = new Blob([bytes], { type: "application/pdf" });
+      var filename = "collection-sathi-" + slug(state.title) + "-" + stamp() + ".pdf";
+      var file = null;
+      try{ file = new File([blob], filename, { type: "application/pdf" }); }catch(e){ file = null; }
+
+      if(file && navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share){
+        navigator.share({
+          files: [file],
+          title: state.title,
+          text: state.title + " — " + model.totals.entries + " transactions, " + model.totals.grand
+        }).catch(function(){ /* dismissed */ });
+      } else {
+        downloadBlob(blob, filename);
+      }
+      showToast("Report ready — " + model.totals.entries + " transactions, " +
+                model.proofs.length + " proofs, " + (blob.size / 1024).toFixed(0) + " KB.");
+    }).catch(function(){
+      showToast("Could not build the PDF. Try again.");
+    }).then(function(){
+      btn.disabled = false;
+    });
+  }
+
+  /* ============================ DATA TAB UI ============================ */
+
+  function renderDataHealth(){
+    var el = document.getElementById("dataHealth");
+    if(!el) return;
+
+    var entries = 0, proofEntries = 0;
+    state.events.forEach(function(ev){
+      ev.entries.forEach(function(e){
+        entries++;
+        if(e.mode === "upi" && e.verification && e.verification.status === "verified" && e.verification.proofId) proofEntries++;
+      });
+    });
+
+    var bytes = 0;
+    try{ bytes = JSON.stringify(state).length; }catch(e){ bytes = 0; }
+    var kb = (bytes / 1024).toFixed(1);
+
+    el.innerHTML =
+      '<span>' + state.events.length + ' rounds</span>' +
+      '<span>' + entries + ' entries</span>' +
+      '<span>' + proofEntries + ' proofs</span>' +
+      '<span>collection data ~' + kb + ' KB</span>';
+
+    if(navigator.storage && navigator.storage.estimate){
+      navigator.storage.estimate().then(function(est){
+        if(!est || !est.usage) return;
+        var chip = document.createElement("span");
+        chip.textContent = "device storage used " + (est.usage / 1048576).toFixed(1) + " MB";
+        el.appendChild(chip);
+      }).catch(function(){});
+    }
+  }
+
+  function wireDataTab(){
+    var pdfBtn = document.getElementById("pdfBtn");
+    if(!pdfBtn) return;
+
+    pdfBtn.addEventListener("click", generatePdfReport);
+    document.getElementById("exportJsonBtn").addEventListener("click", exportJson);
+    document.getElementById("exportCsvBtn").addEventListener("click", exportCsv);
+
+    var fileInput = document.getElementById("importFileInput");
+
+    document.getElementById("importMergeBtn").addEventListener("click", function(){
+      importMode = "merge";
+      fileInput.value = "";
+      fileInput.click();
+    });
+    document.getElementById("importReplaceBtn").addEventListener("click", function(){
+      importMode = "replace";
+      fileInput.value = "";
+      fileInput.click();
+    });
+
+    fileInput.addEventListener("change", function(){
+      var file = fileInput.files && fileInput.files[0];
+      if(file) readImportFile(file);
+    });
+  }
+
   // ---- init ----
   load();
+  wireDataTab();
   renderAll();
 
   if ("serviceWorker" in navigator) {
