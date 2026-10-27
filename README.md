@@ -166,18 +166,19 @@ Written with a UTF‑8 BOM so ₹ and Devanagari names display correctly, and it
 
 <table>
 <tr>
-<td align="center"><img src="screenshots/screen1.png" width="220"><br><sub>Home Screen</sub></td>
-<td align="center"><img src="screenshots/screen2.png" width="220"><br><sub>Add Person</sub></td>
-<td align="center"><img src="screenshots/screen3.png" width="220"><br><sub>UPI Verification</sub></td>
+<td align="center"><img src="screenshots/screen1.png" width="220"><br><sub>Collect</sub></td>
+<td align="center"><img src="screenshots/screen2.png" width="220"><br><sub>Add person</sub></td>
+<td align="center"><img src="screenshots/screen3.png" width="220"><br><sub>UPI verification</sub></td>
 </tr>
 <tr>
 <td align="center"><img src="screenshots/screen4.png" width="220"><br><sub>Summary</sub></td>
 <td align="center"><img src="screenshots/screen5.png" width="220"><br><sub>History</sub></td>
+<td align="center"><img src="screenshots/screen6.png" width="220"><br><sub>Invoice</sub></td>
 </tr>
 <tr>
-<td align="center"><img src="screenshots/screen6.png" width="220"><br><sub>Invoice</sub></td>
 <td align="center"><img src="screenshots/screen7.png" width="220"><br><sub>Report, export &amp; import</sub></td>
-<td></td>
+<td align="center"><img src="screenshots/screen8.png" width="220"><br><sub>UPI QR code</sub></td>
+<td align="center"><img src="screenshots/screen9.png" width="220"><br><sub>Empty round</sub></td>
 </tr>
 </table>
 
