@@ -9,16 +9,16 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/license-MIT-6B1420?style=flat-square" alt="MIT">
-  <img src="https://img.shields.io/badge/platform-Web%20%7C%20Android-9A1B2B?style=flat-square" alt="Web and Android">
-  <img src="https://img.shields.io/badge/storage-100%25%20on--device-3F6B3A?style=flat-square" alt="Local only">
-  <img src="https://img.shields.io/badge/dependencies-none-333333?style=flat-square" alt="No dependencies">
+  <img src="https://img.shields.io/badge/license-MIT-B87517?style=flat-square&amp;labelColor=072146" alt="License: MIT">
+  <img src="https://img.shields.io/badge/platform-Web%20%7C%20Android-B87517?style=flat-square&amp;labelColor=072146" alt="Platform: Web and Android">
+  <img src="https://img.shields.io/badge/storage-100%25%20on--device-B87517?style=flat-square&amp;labelColor=072146" alt="Storage: 100% on-device">
+  <img src="https://img.shields.io/badge/dependencies-none-B87517?style=flat-square&amp;labelColor=072146" alt="Dependencies: none">
 </p>
 
 <p align="center">
-  <a href="https://vinaysoni-in.github.io/Collection-Sathi/"><img src="https://img.shields.io/badge/Open%20Web%20App-Live-9A1B2B?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Open Web App"></a>
+  <a href="https://vinaysoni-in.github.io/Collection-Sathi/"><img src="https://img.shields.io/badge/Open%20Web%20App-Live-B87517?style=for-the-badge&amp;labelColor=B87517&amp;logo=googlechrome&amp;logoColor=white" alt="Open Web App"></a>
   &nbsp;
-  <a href="https://github.com/VinaySoni-IN/Collection-Sathi/releases/latest"><img src="https://img.shields.io/badge/Download%20APK-Latest%20Release-6B1420?style=for-the-badge&logo=android&logoColor=white" alt="Download APK"></a>
+  <a href="https://github.com/VinaySoni-IN/Collection-Sathi/releases/latest"><img src="https://img.shields.io/badge/Download%20APK-Latest%20Release-072146?style=for-the-badge&amp;labelColor=072146&amp;logo=android&amp;logoColor=F5B55B" alt="Download APK"></a>
 </p>
 
 <p align="center">
