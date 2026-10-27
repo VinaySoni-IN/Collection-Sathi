@@ -20,7 +20,7 @@ const PRECACHE = [
   "./manifest.json",
   "./icon-192.png",
   "./icon-512.png",
-  "./icon-maskable-512.png",
+  "./apple-touch-icon.png",
   "./favicon-64.png",
   "./vendor/html2canvas.min.js"
 ];

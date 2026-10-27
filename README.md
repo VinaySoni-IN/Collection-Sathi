@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="icon-512.png" width="88" alt="Collection Sathi icon">
+  <img src="icon-512.png" width="120" alt="Collection Sathi">
 </p>
 
 <h1 align="center">Collection Sathi</h1>
@@ -207,9 +207,9 @@ Collection-Sathi/
 ├── index.html              # App UI, CSS, JavaScript and the PDF engine (self-contained)
 ├── manifest.json           # PWA config — name, icons, theme
 ├── sw.js                   # Service worker (installable + offline)
-├── icon-192.png            # App icon (small)
-├── icon-512.png            # App icon (large)
-├── icon-maskable-512.png   # Adaptive icon for Android launchers
+├── icon-192.png            # App icon (small, rounded)
+├── icon-512.png            # App icon (large, rounded)
+├── apple-touch-icon.png    # iOS home-screen icon (square, iOS masks it)
 ├── favicon-64.png          # Browser favicon
 ├── vendor/
 │   └── html2canvas.min.js  # Vendored + SRI-pinned (invoice image share)
