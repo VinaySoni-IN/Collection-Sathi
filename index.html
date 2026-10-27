@@ -1924,6 +1924,14 @@ var PdfEngine = (function(){
     need(this).ops.push("q " + color(fill) + " rg " + num(x) + " " + num(y) + " " + num(w) + " " + num(h) + " re f Q");
   };
 
+  Doc.prototype.poly = function(pts, fill){
+    if(!pts || !pts.length) return;
+    var op = "q " + color(fill) + " rg " + num(pts[0][0]) + " " + num(pts[0][1]) + " m ";
+    for(var i = 1; i < pts.length; i++) op += num(pts[i][0]) + " " + num(pts[i][1]) + " l ";
+    op += "h f Q";
+    need(this).ops.push(op);
+  };
+
   Doc.prototype.line = function(x1, y1, x2, y2, stroke, lw){
     need(this).ops.push("q " + color(stroke) + " RG " + num(lw || 0.5) + " w " +
       num(x1) + " " + num(y1) + " m " + num(x2) + " " + num(y2) + " l S Q");
@@ -2034,6 +2042,18 @@ var PdfEngine = (function(){
   var PAPER_ALT  = [0.969, 0.945, 0.898];   // cream
   var GOOD       = [0.184, 0.420, 0.247];   // #2F6B3F
   var WARN       = [0.706, 0.220, 0.180];   // #B4382E
+  var RED        = [0.706, 0.220, 0.180];   // #B4382E pending band
+  var RED_SOFT   = [0.973, 0.886, 0.871];   // #F8E2DE pending row tint
+
+  function fmtNum(n){
+    n = Math.round(Number(n) || 0);
+    var str = String(Math.abs(n)), out = "", c = 0;
+    for(var i = str.length - 1; i >= 0; i--){
+      out = str.charAt(i) + out;
+      if(++c === 3 && i > 0){ out = "," + out; c = 0; }
+    }
+    return (n < 0 ? "-" : "") + out;
+  }
 
   function latin1ToBytes(str){
     var out = new Uint8Array(str.length);
@@ -2259,9 +2279,89 @@ var PdfEngine = (function(){
       }
       y -= 4;
     } else if(model.includeProofs && !proofs.length){
-      y -= 6;
+      // signOff() has already drawn its rule, caption and footnote at this y;
+      // step clear of all three before writing here.
+      y -= 30;
+      space(18);
       doc.text(MARGIN, y, "No payment proof images are attached to this collection.", { size: 8.5, color: INK_SOFT });
       y -= 16;
+    }
+
+    /* ---------- pending verification appendix (red) ---------- */
+    var pending = model.pending || [];
+    if(pending.length){
+      newPage(false);
+
+      doc.rect(MARGIN, y - 26, innerW, 28, RED);
+      var wbx = MARGIN + 10, wby = y - 25, wbs = 18;
+      doc.poly([[wbx, wby], [wbx + wbs / 2, wby + 16], [wbx + wbs, wby]], [1, 1, 1]);
+      doc.textCenter(wbx + wbs / 2, wby + 3.5, "!", { size: 10, bold: true, color: RED });
+      doc.text(wbx + wbs + 8, y - 18,
+               "PAYMENT VERIFICATION PENDING  \u00b7  " + pending.length +
+               (pending.length === 1 ? " payment" : " payments"),
+               { size: 9.5, bold: true, color: [1, 1, 1] });
+      y -= 40;
+
+      doc.text(MARGIN, y, "These UPI payments have no verified proof image on record. Confirm each one before the collection is closed.",
+               { size: 8.5, color: INK_SOFT });
+      y -= 18;
+
+      var PCOLS = [
+        { label: "Sr.",    w: 26,  align: "left"  },
+        { label: "Name",   w: 0,   align: "left"  },
+        { label: "Round",  w: 128, align: "left"  },
+        { label: "Reason", w: 108, align: "left"  },
+        { label: "Amount", w: 74,  align: "right" }
+      ];
+      var pFixed = PCOLS[0].w + PCOLS[2].w + PCOLS[3].w + PCOLS[4].w;
+      PCOLS[1].w = innerW - pFixed;
+
+      function pcolX(i){
+        var px = MARGIN;
+        for(var j = 0; j < i; j++) px += PCOLS[j].w;
+        return px;
+      }
+
+      function pendingHead(){
+        doc.rect(MARGIN, y - 16, innerW, 18, RED_SOFT);
+        for(var c = 0; c < PCOLS.length; c++){
+          var cx = pcolX(c);
+          if(PCOLS[c].align === "right"){
+            doc.textRight(cx + PCOLS[c].w - 4, y - 12, PCOLS[c].label, { size: 8, bold: true, color: RED });
+          } else {
+            doc.text(cx + 4, y - 12, PCOLS[c].label, { size: 8, bold: true, color: RED });
+          }
+        }
+        y -= 18;
+      }
+
+      pendingHead();
+
+      var pendTotal = 0;
+      for(var pj = 0; pj < pending.length; pj++){
+        var pe = pending[pj];
+        pendTotal += Number(pe.amountRaw) || 0;
+        if(y - 17 < MARGIN + 30){ newPage(true); pendingHead(); }
+        var prowH = 17;
+
+        if(pj % 2 === 1) doc.rect(MARGIN, y - prowH + 3, innerW, prowH, [0.996, 0.965, 0.960]);
+
+        doc.text(pcolX(0) + 4, y - 9, String(pe.sr), { size: 8.5, color: INK_SOFT });
+        doc.text(pcolX(1) + 4, y - 9, fit(pe.name, PCOLS[1].w - 8, false, 8.5), { size: 8.5, color: INK });
+        doc.text(pcolX(2) + 4, y - 9, fit(pe.round, PCOLS[2].w - 8, false, 8.5), { size: 8.5, color: INK_SOFT });
+        doc.text(pcolX(3) + 4, y - 9, fit(pe.reason, PCOLS[3].w - 8, true, 8), { size: 8, bold: true, color: RED });
+        doc.textRight(pcolX(4) + PCOLS[4].w - 4, y - 9, pe.amountText, { size: 8.5, bold: true, color: INK });
+
+        y -= prowH;
+        doc.line(MARGIN, y + 3, PAGE_W - MARGIN, y + 3, [0.93, 0.90, 0.86], 0.4);
+      }
+
+      space(30);
+      doc.line(MARGIN, y, PAGE_W - MARGIN, y, RED, 1);
+      y -= 14;
+      doc.text(MARGIN, y, "Pending total (" + pending.length + ")", { size: 9, bold: true, color: RED });
+      doc.textRight(pcolX(4) + PCOLS[4].w - 4, y, "Rs. " + fmtNum(pendTotal), { size: 9.5, bold: true, color: RED });
+      y -= 24;
     }
 
     footer();
@@ -2813,6 +2913,28 @@ var PdfEngine = (function(){
     };
 
     var sr = 0, verified = 0, unverified = 0, people = {}, grand = 0, cashTotal = 0, upiTotal = 0;
+    var upiRows = [], missingProofs = {};
+
+    /* Built after the proof archive has been read, because whether an image is
+       actually present decides if the payment belongs on the pending page. */
+    function rebuildPending(){
+      var out = [], n = 0;
+      upiRows.forEach(function(r){
+        var why = null;
+        if(!r.isVerified) why = "Not verified";
+        else if(!r.proofId || r.method !== "image") why = "No proof image";
+        else if(missingProofs[r.proofId]) why = "Proof image missing";
+        if(why){
+          out.push({
+            sr: ++n, name: r.name, round: r.round, reason: why,
+            amountText: r.amountText, amountRaw: r.amountRaw
+          });
+        }
+      });
+      pending.length = 0;
+      for(var i = 0; i < out.length; i++) pending.push(out[i]);
+    }
+    var pending = [];
 
     events.forEach(function(ev){
       var t = computeTotals(ev);
@@ -2826,6 +2948,18 @@ var PdfEngine = (function(){
         var isUpi = e.mode === "upi";
         var isVerified = isUpi && e.verification && e.verification.status === "verified";
         if(isUpi){ if(isVerified) verified++; else unverified++; }
+
+        if(isUpi){
+          upiRows.push({
+            name: getPersonName(e.personId),
+            round: ev.title,
+            amountText: "Rs. " + fmt(e.amount),
+            amountRaw: Number(e.amount) || 0,
+            isVerified: isVerified,
+            proofId: (e.verification && e.verification.proofId) || null,
+            method: (e.verification && e.verification.method) || null
+          });
+        }
         return {
           sr: sr,
           name: getPersonName(e.personId),
@@ -2859,11 +2993,29 @@ var PdfEngine = (function(){
     if(!includeProofs) return Promise.resolve(model);
 
     var refs = collectProofRefs(events).filter(function(r){ return !!r.proofId; });
-    if(!refs.length) return Promise.resolve(model);
+
+    var finish = function(){
+      model.pending = pending;
+      return model;
+    };
+
+    if(!refs.length){
+      // nothing to embed, but a verified-by-image entry whose record is gone
+      // still belongs on the pending page
+      collectProofRefs(events).forEach(function(r){
+        if(r.proofId) missingProofs[r.proofId] = true;
+      });
+      rebuildPending();
+      return Promise.resolve(finish());
+    }
 
     return getAllProofRecords().then(function(recs){
       var byId = {};
       recs.forEach(function(r){ if(r && r.id) byId[r.id] = r; });
+      collectProofRefs(events).forEach(function(r){
+        if(r.proofId && !byId[r.proofId]) missingProofs[r.proofId] = true;
+      });
+      rebuildPending();
 
       var jobs = refs.map(function(ref){
         return proofRecordToDataUrl(byId[ref.proofId]).then(function(dataUrl){
@@ -2883,7 +3035,7 @@ var PdfEngine = (function(){
 
       return Promise.all(jobs).then(function(list){
         model.proofs = list.filter(Boolean);
-        return model;
+        return finish();
       });
     });
   }

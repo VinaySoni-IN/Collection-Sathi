@@ -60,6 +60,18 @@ The **Data** tab turns a device's records into a single, printable PDF — no in
 - **Signature line** carrying the name typed on the Invoice tab
 - A4, paginated, with a running header and “Page *n* of *N*”
 
+### Pending payments page
+
+If any UPI payment has no verified proof image, the report ends with a red **Payment verification pending** page listing exactly those payments and why each one is still open:
+
+| Reason | Meaning |
+|---|---|
+| **Not verified** | Marked UPI, never verified |
+| **No proof image** | Verified by tapping *Self Verified* rather than uploading a screenshot |
+| **Proof image missing** | Marked as image-verified, but the stored image is gone (e.g. cleared browser data) |
+
+The page carries a warning mark, a pending count and a pending total, so the thing that needs chasing is on paper rather than buried in the app.
+
 Two checkboxes control the output:
 
 | Option | Effect |
