@@ -214,8 +214,7 @@
     padding:40px 12px;
     color:var(--ink-soft);
   }
-  .empty .big{ margin-bottom:10px; color:var(--gold-deep); }
-  .empty .big svg{ width:44px; height:44px; }
+  .empty .big{ font-size:38px; margin-bottom:8px; }
 
   .entry{
     background:var(--card);
@@ -278,7 +277,6 @@
     width:100%;
   }
   .mode-toggle{ display:flex; gap:6px; margin-top:8px; }
-  .mode-opt svg{ width:16px; height:16px; flex:none; }
   .mode-opt{
     flex:1; text-align:center; padding:8px 6px; border-radius:9px;
     border:1px solid var(--line); font-size:13px; font-weight:600; cursor:pointer;
@@ -404,7 +402,7 @@
     border:1px solid #EDE1C9;
   }
   .inv-top{ text-align:center; margin-bottom:14px; }
-  .inv-om{ font-size:26px; line-height:0; }
+  .inv-om{ font-size:26px; }
   .inv-title{ font-family:var(--font-display); font-size:23px; color:var(--brand); margin:4px 0 2px; }
   .inv-date{ font-size:12px; color:#64718C; }
   .inv-rule{ border:none; border-top:2px solid var(--gold-light); margin:14px 0; }
@@ -529,8 +527,17 @@
     body *{ visibility:hidden; }
     #invoiceTab, #invoiceTab *{ visibility:visible; }
     #invoiceTab{ position:absolute; left:0; top:0; width:100%; padding:0; margin:0; }
+
+    /* On-screen chrome must not appear on paper. These need !important because
+       renderInvoice() sets style.display inline, and an inline style beats a
+       stylesheet rule — which is why the button used to print. */
+    #invoiceTab .field,
+    #invoiceTab .section-label,
+    #invoiceActions,
+    #printBtn{ display:none !important; }
+
     .invoice-paper{ box-shadow:none; border:none; border-radius:0; padding:10px 4px; }
-    #printBtn, #shareBtn{ display:none; }
+    @page{ margin:14mm; }
   }
 </style>
 </head>
@@ -539,7 +546,7 @@
 
   <header>
     <div class="hdr-row">
-      <span class="hdr-emoji"><img src="icon-192.png" alt="Collection Sathi" width="38" height="38"></span>
+      <span class="hdr-emoji">💸</span>
       <input id="titleInput" placeholder="Collection title" maxlength="40">
       <button class="qr-btn" id="qrBtn" title="UPI QR code" aria-label="Show UPI QR code">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM19 14v3M14 19h3M19 19h2"/></svg>
@@ -719,8 +726,8 @@
       <div class="field">
         <label>Payment mode</label>
         <div class="mode-toggle">
-          <div class="mode-opt sel-cash" id="modeCashOpt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 12h.01M18 12h.01"/></svg> Cash</div>
-          <div class="mode-opt" id="modeUpiOpt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.4"/><path d="M10.5 8h3M10.5 11h3M10.5 14h1.5"/><path d="m15 15 2.5 2.5M17.5 15 15 17.5"/></svg> UPI</div>
+          <div class="mode-opt sel-cash" id="modeCashOpt">💵 Cash</div>
+          <div class="mode-opt" id="modeUpiOpt">📲 UPI</div>
         </div>
       </div>
     </div>
@@ -781,8 +788,8 @@ Aman Khan"></textarea>
       <div class="proof-preview" id="proofPreview" style="display:none;"></div>
     </div>
     <div class="proof-actions">
-      <button class="btn btn-ghost" id="verifyUploadBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L8 8m4-4 4 4"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg> Upload Image</button>
-      <button class="btn btn-ghost" id="verifyCameraBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="12.5" r="3.2"/></svg> Take Image</button>
+      <button class="btn btn-ghost" id="verifyUploadBtn">📁 Upload Image</button>
+      <button class="btn btn-ghost" id="verifyCameraBtn">📷 Take Image</button>
       <button class="btn btn-primary" id="verifySelfBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg> Self Verified</button>
     </div>
     <div class="verify-note">Verification is stored with this transaction. Proof images are kept in a local archive on this device and are removed when the entry is deleted.</div>
@@ -1038,7 +1045,7 @@ Aman Khan"></textarea>
     collectLabel.textContent = ev.entries.length ? ev.entries.length + " entr" + (ev.entries.length>1?"ies":"y") : "Persons";
 
     if(!ev.entries.length){
-      entryList.innerHTML = '<div class="empty"><div class="big"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M7 11V6a1.5 1.5 0 0 1 3 0v4\"/><path d=\"M10 10V4.5a1.5 1.5 0 0 1 3 0V11\"/><path d=\"M13 11V5.5a1.5 1.5 0 0 1 3 0V13\"/><path d=\"M7 11 5.4 13.2a3 3 0 0 0 .6 4.2L7.5 18.6A5 5 0 0 0 11 20h1a5 5 0 0 0 5-5v-3\"/></svg></div>No entries in this round yet.<br>Tap the + button to start collection.</div>';
+      entryList.innerHTML = '<div class="empty"><div class="big">🙏</div>No entries in this round yet.<br>Tap the + button to start collection.</div>';
       return;
     }
 
@@ -1053,8 +1060,8 @@ Aman Khan"></textarea>
               '<input type="number" id="editAmount" value="'+Number(e.amount)+'" min="0" step="1">'+
             '</div>'+
             '<div class="mode-toggle">'+
-              '<div class="mode-opt '+(e.mode!=="upi"?"sel-cash":"")+'" id="editModeCash"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"2\" y=\"6\" width=\"20\" height=\"12\" rx=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"2.6\"/><path d=\"M6 12h.01M18 12h.01\"/></svg> Cash</div>'+
-              '<div class="mode-opt '+(e.mode==="upi"?"sel-upi":"")+'" id="editModeUpi"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"6\" y=\"2\" width=\"12\" height=\"20\" rx=\"2.4\"/><path d=\"M10.5 8h3M10.5 11h3M10.5 14h1.5\"/><path d=\"m15 15 2.5 2.5M17.5 15 15 17.5\"/></svg> UPI</div>'+
+              '<div class="mode-opt '+(e.mode!=="upi"?"sel-cash":"")+'" id="editModeCash">💵 Cash</div>'+
+              '<div class="mode-opt '+(e.mode==="upi"?"sel-upi":"")+'" id="editModeUpi">📲 UPI</div>'+
             '</div>'+
             '<div class="edit-actions">'+
               '<button class="btn btn-ghost" id="cancelEditBtn" style="flex:1;justify-content:center;">'+svgX()+' Cancel</button>'+
@@ -1185,7 +1192,7 @@ Aman Khan"></textarea>
           '</div>'+
         '</div>';
     });
-    list.innerHTML = html || '<div class="empty"><div class="big"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2.5\"/><path d=\"M8 3v4M16 3v4M3 10h18\"/></svg></div>No rounds yet.</div>';
+    list.innerHTML = html || '<div class="empty"><div class="big">📅</div>No rounds yet.</div>';
 
     list.querySelectorAll(".event-card").forEach(function(card){
       card.addEventListener("click", function(e){
@@ -1208,6 +1215,20 @@ Aman Khan"></textarea>
     });
   }
 
+  /* The signature block is shared by the empty and the filled invoice, so the
+     name you type always appears — it used to be skipped entirely while the
+     round had no entries. */
+  function signatureBlock(){
+    if(state.signatureName){
+      return '<div class="inv-sign"><div class="sign-col">'+
+        '<div class="sign-cursive">'+escapeHtml(state.signatureName)+'</div>'+
+        '<div class="sign-label">Signature</div></div></div>';
+    }
+    return '<div class="inv-sign"><div class="sign-col">'+
+      '<div class="sign-cursive sign-placeholder">Your name</div>'+
+      '<div class="sign-label">Signature</div></div></div>';
+  }
+
   function renderInvoice(){
     var ev = getCurrentEvent();
     var t = computeTotals(ev);
@@ -1215,8 +1236,9 @@ Aman Khan"></textarea>
     var actions = document.getElementById("invoiceActions");
     var printBtn = document.getElementById("printBtn");
     if(!ev.entries.length){
-      paper.innerHTML = '<div class="inv-top"><div class="inv-om"><img src="icon-192.png" alt="" width="42" height="42" style="border-radius:9px;"></div><div class="inv-title">'+escapeHtml(state.title)+'</div><div class="inv-date">'+fmtDate(ev.date)+' · '+escapeHtml(ev.title)+'</div></div>'+
-        '<hr class="inv-rule"><div class="empty-inv">Add at least one person to generate the invoice.</div>';
+      paper.innerHTML = '<div class="inv-top"><div class="inv-om">🧾</div><div class="inv-title">'+escapeHtml(state.title)+'</div><div class="inv-date">'+fmtDate(ev.date)+' · '+escapeHtml(ev.title)+'</div></div>'+
+        '<hr class="inv-rule"><div class="empty-inv">Add at least one person to generate the invoice.</div>'+
+        signatureBlock();
       actions.style.display = "none";
       printBtn.style.display = "none";
       return;
@@ -1230,7 +1252,7 @@ Aman Khan"></textarea>
     });
     paper.innerHTML = ''+
       '<div class="inv-top">'+
-        '<div class="inv-om"><img src="icon-192.png" alt="" width="42" height="42" style="border-radius:9px;"></div>'+
+        '<div class="inv-om">🧾</div>'+
         '<div class="inv-title">'+escapeHtml(state.title)+'</div>'+
         '<div class="inv-date">'+fmtDate(ev.date)+' · '+escapeHtml(ev.title)+'</div>'+
       '</div>'+
@@ -1240,13 +1262,9 @@ Aman Khan"></textarea>
         '<tbody>'+rows+'</tbody>'+
         '<tfoot><tr class="inv-total-row"><td colspan="4">Total ('+t.count+' entries)</td><td class="r">₹'+fmt(t.total)+'</td></tr></tfoot>'+
       '</table>'+
-      '<div class="inv-foot">Cash: ₹'+fmt(t.cash)+' &nbsp;•&nbsp; UPI: ₹'+fmt(t.upi)+'<br>Thank you for contributing.</div>'+
-      '<div class="inv-sign">'+
-        (state.signatureName
-          ? '<div class="sign-col"><div class="sign-cursive">'+escapeHtml(state.signatureName)+'</div><div class="sign-label">Signature</div></div>'
-          : '<div class="sign-col"><div class="sign-cursive sign-placeholder">Your name</div><div class="sign-label">Signature</div></div>')+
-      '</div>'+
-      '<div class="inv-credit">Made by <a href="https://github.com/VinaySoni-IN" target="_blank" rel="noopener">Vinay Soni</a> · Built with <a href="https://claude.ai" target="_blank" rel="noopener">Claude</a></div>';
+      '<div class="inv-foot">Cash: ₹'+fmt(t.cash)+' &nbsp;•&nbsp; UPI: ₹'+fmt(t.upi)+'<br>Thank you for contributing! 🙏</div>'+
+      signatureBlock()+
+      '<div class="inv-credit">Made by <a href="https://github.com/VinaySoni-IN" target="_blank" rel="noopener">Vinay Soni</a> · Built with AI assistance</div>';
   }
 
   function renderAll(){
