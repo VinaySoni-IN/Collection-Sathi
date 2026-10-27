@@ -161,9 +161,31 @@ Written with a UTF‑8 BOM so ₹ and Devanagari names display correctly, and it
 <tr>
 <td align="center"><img src="screenshots/screen4.png" width="220"><br><sub>Summary</sub></td>
 <td align="center"><img src="screenshots/screen5.png" width="220"><br><sub>History</sub></td>
+</tr>
+<tr>
 <td align="center"><img src="screenshots/screen6.png" width="220"><br><sub>Invoice</sub></td>
+<td align="center"><img src="screenshots/screen7.png" width="220"><br><sub>Report, export &amp; import</sub></td>
+<td></td>
 </tr>
 </table>
+
+---
+
+## 🎨 Visual identity
+
+The app, its icons and the PDF report all draw from one five-colour palette:
+
+| Swatch | Hex | Used for |
+|---|---|---|
+| Deep navy | `#072146` | Header, primary text, invoice headings, PDF cover |
+| Gold | `#E09630` | Primary buttons, accents, totals |
+| Light gold | `#F5B55B` | Header title, cash bars, highlights |
+| Cream | `#F7F1E5` | App background |
+| White | `#FFFFFF` | Cards and panels |
+
+Supporting tints (deep navy `#0A2A52` for UPI, `#B87517` for gold-on-cream text, `#2F6B3F` for verified, `#B4382E` for unverified) are derived from those five. Every colour in the codebase is a CSS custom property in `:root`, so retheming is a five-line change.
+
+Typography is **Playfair Display** for headings and figures, **Work Sans** for body, **Caveat** for the invoice signature.
 
 ---
 
@@ -173,7 +195,7 @@ Plain HTML, CSS & JavaScript — no framework, no build step, no package manager
 
 `localStorage` · `IndexedDB` · Canvas API · Web Share API · Service Worker · Web App Manifest · built-in PDF writer
 
-Two external files, both optional at runtime: Google Fonts (typography) and `html2canvas` (used only for “share invoice as image”). Everything else, including the PDF engine, ships inside the repo.
+The only external request at runtime is **Google Fonts**. `html2canvas` is vendored into `vendor/` and pinned with a Subresource Integrity hash, so the app and its invoice sharing both work with no connection.
 
 ---
 
@@ -187,6 +209,10 @@ Collection-Sathi/
 ├── sw.js                   # Service worker (installable + offline)
 ├── icon-192.png            # App icon (small)
 ├── icon-512.png            # App icon (large)
+├── icon-maskable-512.png   # Adaptive icon for Android launchers
+├── favicon-64.png          # Browser favicon
+├── vendor/
+│   └── html2canvas.min.js  # Vendored + SRI-pinned (invoice image share)
 ├── Banner.png              # README banner
 ├── screenshots/            # Screenshots used in this README
 ├── LICENSE                 # MIT License
@@ -282,7 +308,7 @@ flowchart LR
 
 Functional and in everyday use for real collections, still short of a finished v1.
 
-**Ready:** core collection flow · invoices (print / share) · UPI verification + proof archiving · multi-round history · installable PWA · **PDF transaction report with proofs** · **JSON backup & restore** · **CSV export** · data repair for older stored data
+**Ready:** core collection flow · invoices (print / share) · UPI verification + proof archiving · multi-round history · installable PWA · **PDF transaction report with proofs** · **JSON backup & restore** · **CSV export** · data repair for older stored data · offline-capable service worker · dialog semantics, focus trapping and Escape-to-close
 
 **Not yet ready:** cross-device sync (by design — the app is local-only) · cross-device testing · signed release APK · versioned releases
 
@@ -295,9 +321,13 @@ Functional and in everyday use for real collections, still short of a finished v
 - [x] Export / Import (JSON with proofs, CSV export)
 - [x] PDF report with attached payment proofs
 - [x] Repair pass for legacy / corrupted stored data
+- [x] Auto-delete proof images when their entry or round is deleted
+- [x] One-tap cleanup for orphaned proof images
+- [x] Offline-capable, self-updating service worker
+- [x] Full keyboard and screen-reader support in dialogs
 - [ ] Auto-backup reminder (nudge after N days without an export)
 - [ ] Search & filter entries
-- [ ] Proof archive viewer + cleanup of orphaned images
+- [ ] Proof archive viewer
 - [ ] Dark mode
 - [ ] Marathi / Hindi interface
 - [ ] Signed, versioned APK releases

@@ -6,37 +6,39 @@
 <title>Collection Sathi</title>
 <meta name="description" content="Collection Sathi (Chanda Sathi) — a free, open-source app to track group money collection with Cash/UPI split, multi-round history, and one-tap printable invoices. Ideal for chanda, festival funds, class collections, and community contributions.">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#6B1420">
+<meta name="theme-color" content="#072146">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Collection Sathi">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Caveat:wght@600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Caveat:wght@600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="vendor/html2canvas.min.js" integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H" crossorigin="anonymous"></script>
 <style>
   :root{
-    --paper:#FBF1E4;
-    --paper-alt:#F1E1C4;
-    --card:#FFFCF6;
-    --ink:#2E1B14;
-    --ink-soft:#6B5240;
-    --maroon:#6B1420;
-    --maroon-deep:#450B14;
-    --vermillion:#D6483A;
-    --marigold:#E3A93B;
-    --marigold-deep:#B9821F;
-    --indigo:#2C4870;
-    --indigo-deep:#1C3050;
+    /* Collection Sathi brand palette */
+    --paper:#F7F1E5;
+    --paper-alt:#EFE6D5;
+    --card:#FFFFFF;
+    --ink:#072146;
+    --ink-soft:#56668A;
+    --brand:#072146;
+    --brand-deep:#04122B;
+    --gold:#E09630;
+    --gold-light:#F5B55B;
+    --gold-deep:#B87517;
+    --upi:#0E3A6B;
+    --upi-deep:#0A2A52;
     --whatsapp:#25D366;
-    --line: rgba(46,27,20,0.14);
-    --shadow: rgba(46,27,20,0.18);
-    --good:#3F6B3A;
+    --danger:#B4382E;
+    --line: rgba(7,33,70,0.14);
+    --shadow: rgba(7,33,70,0.18);
+    --good:#2F6B3F;
     --app-max-width:720px;
-    --font-display:'Yatra One','Noto Sans Devanagari',serif;
+    --font-display:'Playfair Display',Georgia,'Noto Serif',serif;
     --font-body:'Work Sans','Segoe UI',system-ui,sans-serif;
     color-scheme: light;
 
@@ -77,8 +79,8 @@
     max-width:100%;
     overflow:hidden;
     padding: calc(14px + env(safe-area-inset-top,0px)) 18px 14px;
-    background: linear-gradient(135deg, var(--maroon-deep), var(--maroon) 55%, var(--vermillion));
-    border-bottom: 3px solid var(--marigold);
+    background: linear-gradient(135deg, var(--brand-deep) 0%, var(--brand) 58%, var(--upi) 100%);
+    border-bottom: 3px solid var(--gold);
     box-shadow: 0 6px 16px var(--shadow);
   }
   .hdr-row{
@@ -89,7 +91,8 @@
     width:100%;
     min-width:0;
   }
-  .hdr-emoji{ font-size:26px; line-height:1; filter: drop-shadow(0 2px 2px rgba(0,0,0,.35)); }
+  .hdr-emoji{ font-size:26px; line-height:1; display:flex; align-items:center; }
+  .hdr-emoji img{ border-radius:8px; box-shadow:0 2px 7px rgba(0,0,0,.32); display:block; }
   #titleInput{
     flex:1;
     min-width:0;
@@ -97,25 +100,25 @@
     background:transparent;
     border:none;
     outline:none;
-    color:var(--marigold);
+    color:var(--gold-light);
     font-family:var(--font-display);
     font-size:22px;
     padding:2px 4px;
-    border-bottom: 1px dashed rgba(227,169,59,0.5);
+    border-bottom: 1px dashed rgba(245,181,91,0.5);
   }
-  #titleInput::placeholder{ color: rgba(227,169,59,0.6); }
+  #titleInput::placeholder{ color: rgba(245,181,91,0.6); }
   .hdr-sub{
     margin:6px 2px 0;
     font-size:12.5px;
-    color:#F1DCC0;
+    color:#EDE1C9;
     display:flex;
     justify-content:space-between;
     align-items:center;
   }
   .hdr-total-chip{
     background:rgba(0,0,0,0.22);
-    border:1px solid rgba(227,169,59,0.45);
-    color:var(--marigold);
+    border:1px solid rgba(245,181,91,0.45);
+    color:var(--gold-light);
     padding:3px 10px;
     border-radius:20px;
     font-weight:600;
@@ -130,7 +133,7 @@
     justify-self:center;
     align-self:center;
     border-radius:10px;
-    background:rgba(0,0,0,0.22); border:1px solid rgba(227,169,59,0.45); color:var(--marigold);
+    background:rgba(0,0,0,0.22); border:1px solid rgba(245,181,91,0.45); color:var(--gold-light);
     display:flex; align-items:center; justify-content:center; cursor:pointer;
   }
   .qr-btn svg{ width:18px; height:18px; }
@@ -146,7 +149,7 @@
     margin:auto;
     text-align:center; box-shadow:0 8px 24px var(--shadow); position:relative;
   }
-  .qr-card h3{ font-family:var(--font-display); font-size:19px; margin:0; color:var(--maroon); }
+  .qr-card h3{ font-family:var(--font-display); font-size:19px; margin:0; color:var(--brand); }
   .qr-close{ position:absolute; top:12px; right:12px; }
   .qr-image-wrap{ background:#fff; border-radius:14px; padding:14px; margin:16px 0; min-height:120px; display:flex; align-items:center; justify-content:center; }
   .qr-image-wrap img{ width:100%; display:block; border-radius:6px; }
@@ -170,9 +173,9 @@
   }
 
   .round-info{ margin: 2px 2px 12px; display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
-  .round-title{ font-weight:700; font-size:16px; color:var(--maroon); }
+  .round-title{ font-weight:700; font-size:16px; color:var(--brand); }
   .round-date{ font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
-  .round-switch{ font-size:12px; font-weight:700; color:var(--indigo); white-space:nowrap; cursor:pointer; }
+  .round-switch{ font-size:12px; font-weight:700; color:var(--upi); white-space:nowrap; cursor:pointer; }
 
   /* ---------- ADD BAR ---------- */
   .btn{
@@ -189,10 +192,16 @@
     transition: transform .12s ease, filter .12s ease;
   }
   .btn:active{ transform:scale(0.96); }
+  :focus-visible{
+    outline:3px solid var(--gold);
+    outline-offset:2px;
+    border-radius:8px;
+  }
+  .tabbtn:focus-visible{ outline-offset:-3px; }
   .btn svg{ width:16px; height:16px; flex:none; }
-  .btn-primary{ background:var(--vermillion); color:#fff; box-shadow:0 3px 8px var(--shadow); }
+  .btn-primary{ background:var(--gold); color:var(--brand-deep); font-weight:700; box-shadow:0 3px 8px var(--shadow); }
   .btn-ghost{ background:var(--card); color:var(--ink); border:1px solid var(--line); }
-  .btn-gold{ background:var(--marigold); color:#3A2205; box-shadow:0 3px 8px var(--shadow); }
+  .btn-gold{ background:var(--gold-light); color:#072146; box-shadow:0 3px 8px var(--shadow); }
   .btn-whatsapp{ background:var(--whatsapp); color:#053019; box-shadow:0 3px 8px var(--shadow); }
   .btn-block{ width:100%; justify-content:center; }
   .btn-row{ display:flex; gap:10px; margin-top:14px; }
@@ -205,7 +214,8 @@
     padding:40px 12px;
     color:var(--ink-soft);
   }
-  .empty .big{ font-size:38px; margin-bottom:8px; }
+  .empty .big{ margin-bottom:10px; color:var(--gold-deep); }
+  .empty .big svg{ width:44px; height:44px; }
 
   .entry{
     background:var(--card);
@@ -230,8 +240,8 @@
   .entry-meta{ display:flex; align-items:center; gap:8px; margin-top:4px; }
   .amount{ font-weight:700; font-size:14.5px; color:var(--ink); }
   .badge{ font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; letter-spacing:.2px; }
-  .badge.cash{ background:rgba(227,169,59,0.18); color:var(--marigold-deep); }
-  .badge.upi{ background:rgba(44,72,112,0.15); color:var(--indigo); }
+  .badge.cash{ background:rgba(224,150,48,0.16); color:#8A5A10; }
+  .badge.upi{ background:rgba(14,58,107,0.15); color:var(--upi); }
   .entry-actions{ display:flex; gap:6px; flex:none; align-items:center; }
   .verify-btn{
     border:none; background:var(--paper-alt); color:var(--ink-soft);
@@ -240,9 +250,9 @@
     cursor:pointer; font-family:var(--font-body); font-size:11px; font-weight:700;
   }
   .verify-btn svg{ width:16px; height:16px; flex:none; }
-  .verify-btn.verified{ background:rgba(63,107,58,.14); color:var(--good); }
+  .verify-btn.verified{ background:rgba(47,107,63,.14); color:var(--good); }
   .verify-btn.unverified{ background:rgba(180,56,46,.10); color:#B4382E; }
-  .badge.upi.verified{ background:rgba(63,107,58,.14); color:var(--good); }
+  .badge.upi.verified{ background:rgba(47,107,63,.14); color:var(--good); }
   .badge.upi.unverified{ background:rgba(180,56,46,.10); color:#B4382E; }
   .iconbtn{
     border:none; background:var(--paper-alt); color:var(--ink-soft);
@@ -268,18 +278,19 @@
     width:100%;
   }
   .mode-toggle{ display:flex; gap:6px; margin-top:8px; }
+  .mode-opt svg{ width:16px; height:16px; flex:none; }
   .mode-opt{
     flex:1; text-align:center; padding:8px 6px; border-radius:9px;
     border:1px solid var(--line); font-size:13px; font-weight:600; cursor:pointer;
     color:var(--ink-soft); background:var(--paper-alt);
   }
-  .mode-opt.sel-cash{ background:var(--marigold); color:#3A2205; border-color:var(--marigold-deep); }
-  .mode-opt.sel-upi{ background:var(--indigo); color:#fff; border-color:var(--indigo-deep); }
+  .mode-opt.sel-cash{ background:var(--gold-light); color:#072146; border-color:var(--gold-deep); }
+  .mode-opt.sel-upi{ background:var(--upi); color:#fff; border-color:var(--upi-deep); }
   .edit-actions{ display:flex; gap:8px; margin-top:10px; }
 
   /* ---------- MODAL ---------- */
   .overlay{
-    position:fixed; inset:0; background:rgba(20,10,6,0.55);
+    position:fixed; inset:0; background:rgba(4,18,43,0.55);
     display:none; align-items:flex-end; justify-content:center; z-index:50;
   }
   .overlay.open{ display:flex; }
@@ -298,14 +309,14 @@
     overflow-y:auto;
   }
   @keyframes slideup{ from{ transform:translateY(24px); opacity:.5;} to{ transform:none; opacity:1;} }
-  .modal h3{ font-family:var(--font-display); font-size:19px; margin:0 0 12px; color:var(--maroon); }
+  .modal h3{ font-family:var(--font-display); font-size:19px; margin:0 0 12px; color:var(--brand); }
   .field{ margin-bottom:12px; }
   .field label{ display:block; font-size:12.5px; color:var(--ink-soft); font-weight:600; margin-bottom:5px; }
   .modal-actions{ display:flex; gap:10px; margin-top:16px; }
   .amount-row{ display:flex; gap:8px; align-items:stretch; }
   .amount-row input{ flex:1; min-width:0; }
   .set-default-btn{
-    flex:none; border:1px solid var(--line); background:var(--card); color:var(--indigo);
+    flex:none; border:1px solid var(--line); background:var(--card); color:var(--upi);
     font-family:var(--font-body); font-size:12.5px; font-weight:600; padding:0 12px;
     border-radius:10px; cursor:pointer; white-space:nowrap;
   }
@@ -324,25 +335,25 @@
   .proof-actions{ display:flex; flex-direction:column; gap:8px; margin-top:12px; }
   .proof-actions .btn{ width:100%; justify-content:center; }
   .verify-note{ font-size:11.5px; color:var(--ink-soft); margin-top:10px; line-height:1.45; }
-  .link-toggle{ text-align:center; font-size:13px; color:var(--indigo); font-weight:600; margin-top:6px; cursor:pointer; }
+  .link-toggle{ text-align:center; font-size:13px; color:var(--upi); font-weight:600; margin-top:6px; cursor:pointer; }
   .bulk-box{ display:none; }
   .bulk-box.show{ display:block; }
   .single-box.hide{ display:none; }
 
   /* ---------- SUMMARY ---------- */
   .hero-stat{
-    background: linear-gradient(135deg, var(--maroon-deep), var(--maroon));
+    background: linear-gradient(135deg, var(--brand-deep), var(--brand));
     border-radius:18px;
     padding:22px 18px;
     text-align:center;
-    color:#F6E7CC;
+    color:#FBF4E7;
     margin-bottom:16px;
     box-shadow: 0 4px 14px var(--shadow);
   }
-  .hero-stat .label{ font-size:12.5px; color:#E6C79A; font-weight:600; }
-  .hero-stat .num{ font-family:var(--font-display); font-size:42px; color:var(--marigold); margin:4px 0; }
-  .hero-stat .sub{ font-size:12px; color:#D8BC96; }
-  .hero-stat .alltime{ font-size:11.5px; color:#C9A876; margin-top:6px; border-top:1px dashed rgba(227,169,59,0.3); padding-top:6px; }
+  .hero-stat .label{ font-size:12.5px; color:#EBD9BC; font-weight:600; }
+  .hero-stat .num{ font-family:var(--font-display); font-size:42px; color:var(--gold-light); margin:4px 0; }
+  .hero-stat .sub{ font-size:12px; color:#DCCBAB; }
+  .hero-stat .alltime{ font-size:11.5px; color:#CBB37F; margin-top:6px; border-top:1px dashed rgba(245,181,91,0.3); padding-top:6px; }
 
   .split-row{ display:flex; gap:10px; margin-bottom:16px; }
   .split-card{ flex:1; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px; }
@@ -350,12 +361,12 @@
   .split-card .samt{ font-size:20px; font-weight:700; }
   .split-card .scount{ font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
   .dot{ width:9px; height:9px; border-radius:50%; display:inline-block; }
-  .dot.cash{ background:var(--marigold); }
-  .dot.upi{ background:var(--indigo); }
+  .dot.cash{ background:var(--gold); }
+  .dot.upi{ background:var(--upi); }
 
   .bar-wrap{ background:var(--paper-alt); border-radius:10px; overflow:hidden; height:14px; display:flex; margin-bottom:8px; }
-  .bar-cash{ background:var(--marigold); height:100%; }
-  .bar-upi{ background:var(--indigo); height:100%; }
+  .bar-cash{ background:linear-gradient(90deg, var(--gold), var(--gold-light)); height:100%; }
+  .bar-upi{ background:var(--upi); height:100%; }
   .bar-legend{ display:flex; justify-content:space-between; font-size:11.5px; color:var(--ink-soft); margin-bottom:20px; }
 
   .mini-stats{ display:flex; gap:10px; }
@@ -369,15 +380,15 @@
     padding:12px 14px; display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;
   }
   .alltime-chip .atlabel{ font-size:12px; color:var(--ink-soft); font-weight:600; }
-  .alltime-chip .atnum{ font-size:19px; font-weight:700; color:var(--maroon); }
+  .alltime-chip .atnum{ font-size:19px; font-weight:700; color:var(--brand); }
   .event-card{
     background:var(--card); border:1px solid var(--line); border-radius:14px; padding:13px 14px; margin-bottom:10px;
     display:flex; align-items:center; gap:10px; cursor:pointer;
   }
-  .event-card.active{ border-color:var(--marigold-deep); box-shadow:0 0 0 2px rgba(227,169,59,0.25); }
+  .event-card.active{ border-color:var(--gold-deep); box-shadow:0 0 0 2px rgba(245,181,91,0.25); }
   .event-main{ flex:1; min-width:0; }
   .event-title{ font-weight:700; font-size:14.5px; display:flex; align-items:center; gap:6px; }
-  .active-tag{ font-size:9.5px; background:var(--marigold); color:#3A2205; padding:1px 6px; border-radius:8px; font-weight:700; }
+  .active-tag{ font-size:9.5px; background:var(--gold-light); color:#072146; padding:1px 6px; border-radius:8px; font-weight:700; }
   .event-date{ font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
   .event-stats{ font-size:11.5px; color:var(--ink-soft); margin-top:4px; }
   .event-total{ font-weight:700; font-size:15px; color:var(--ink); white-space:nowrap; }
@@ -385,34 +396,34 @@
 
   /* ---------- INVOICE ---------- */
   .invoice-paper{
-    background:#FFFDF8;
-    color:#241611;
+    background:#FFFFFF;
+    color:#04122B;
     border-radius:10px;
     padding:22px 18px;
     box-shadow:0 4px 16px var(--shadow);
-    border:1px solid #E7D8B9;
+    border:1px solid #EDE1C9;
   }
   .inv-top{ text-align:center; margin-bottom:14px; }
-  .inv-om{ font-size:26px; }
-  .inv-title{ font-family:var(--font-display); font-size:23px; color:var(--maroon); margin:4px 0 2px; }
-  .inv-date{ font-size:12px; color:#7A6350; }
-  .inv-rule{ border:none; border-top:2px solid var(--marigold); margin:14px 0; }
+  .inv-om{ font-size:26px; line-height:0; }
+  .inv-title{ font-family:var(--font-display); font-size:23px; color:var(--brand); margin:4px 0 2px; }
+  .inv-date{ font-size:12px; color:#64718C; }
+  .inv-rule{ border:none; border-top:2px solid var(--gold-light); margin:14px 0; }
   table.inv-table{ width:100%; border-collapse:collapse; font-size:13px; }
-  table.inv-table th{ text-align:left; font-size:11px; color:#7A6350; border-bottom:1px solid #E7D8B9; padding:6px 4px; font-weight:700; }
-  table.inv-table td{ padding:7px 4px; border-bottom:1px solid #F1E7D3; }
+  table.inv-table th{ text-align:left; font-size:11px; color:#64718C; border-bottom:1px solid #EDE1C9; padding:6px 4px; font-weight:700; }
+  table.inv-table td{ padding:7px 4px; border-bottom:1px solid #F3EADA; }
   table.inv-table td.r, table.inv-table th.r{ text-align:right; }
   table.inv-table td.c, table.inv-table th.c{ text-align:center; }
-  .inv-total-row td{ font-weight:700; border-top:2px solid var(--marigold); border-bottom:none; padding-top:10px; }
-  .inv-foot{ margin-top:22px; text-align:center; color:#7A6350; font-size:12.5px; }
+  .inv-total-row td{ font-weight:700; border-top:2px solid var(--gold-light); border-bottom:none; padding-top:10px; }
+  .inv-foot{ margin-top:22px; text-align:center; color:#64718C; font-size:12.5px; }
   .inv-sign{ display:flex; justify-content:center; margin-top:32px; }
   .sign-col{ text-align:center; min-width:140px; }
-  .sign-value{ font-weight:700; font-size:13.5px; color:#241611; }
-  .sign-cursive{ font-family:'Caveat','Segoe Script',cursive; font-size:30px; color:var(--maroon); line-height:1; }
-  .sign-label{ border-top:1px solid #C9B48B; margin-top:6px; padding-top:4px; font-size:11px; color:#7A6350; }
-  .inv-credit{ margin-top:18px; text-align:center; font-size:10.5px; color:#B8A184; letter-spacing:.2px; }
-  .inv-credit a{ color:#8A6A4A; text-decoration:underline; }
-  .sign-placeholder{ color:#C9B48B; opacity:.7; }
-  .empty-inv{ text-align:center; color:#9C8467; padding:30px 10px; font-size:13.5px; }
+  .sign-value{ font-weight:700; font-size:13.5px; color:#04122B; }
+  .sign-cursive{ font-family:'Caveat','Segoe Script',cursive; font-size:30px; color:var(--brand); line-height:1; }
+  .sign-label{ border-top:1px solid #D9C7A4; margin-top:6px; padding-top:4px; font-size:11px; color:#64718C; }
+  .inv-credit{ margin-top:18px; text-align:center; font-size:10.5px; color:#A8B1C4; letter-spacing:.2px; }
+  .inv-credit a{ color:#6E7A94; text-decoration:underline; }
+  .sign-placeholder{ color:#D9C7A4; opacity:.7; }
+  .empty-inv{ text-align:center; color:#8590A8; padding:30px 10px; font-size:13.5px; }
 
   /* ---------- TAB BAR ---------- */
   nav.tabbar{
@@ -430,13 +441,14 @@
     color:var(--ink-soft); font-family:var(--font-body); font-size:10.5px; font-weight:600;
   }
   .tabbtn svg{ width:21px; height:21px; }
-  .tabbtn.active{ color:var(--vermillion); }
+  .tabbtn.active{ color:var(--brand); }
+  .tabbtn.active svg{ stroke-width:2.3; }
 
   .fab{
     position:fixed;
     right:max(18px, calc((100vw - var(--app-max-width)) / 2 + 18px));
     bottom:calc(78px + env(safe-area-inset-bottom,0px));
-    background:var(--vermillion); color:#fff; border:none; width:52px; height:52px; border-radius:50%;
+    background:var(--gold); color:var(--brand-deep); border:none; width:52px; height:52px; border-radius:50%;
     box-shadow:0 6px 16px var(--shadow); display:flex; align-items:center; justify-content:center; cursor:pointer;
     z-index:25;
   }
@@ -477,7 +489,7 @@
   @media (min-width:721px){
     body{ background:var(--paper-alt); }
     .app{
-      box-shadow:0 0 28px rgba(46,27,20,.10);
+      box-shadow:0 0 28px rgba(7,33,70,.10);
       min-height:100dvh;
     }
   }
@@ -492,7 +504,7 @@
   /* ---------- DATA / EXPORT TAB ---------- */
   .card{
     background:var(--card); border:1px solid var(--line); border-radius:14px;
-    padding:14px; margin-bottom:12px; box-shadow:0 2px 6px rgba(46,27,20,.05);
+    padding:14px; margin-bottom:12px; box-shadow:0 2px 6px rgba(7,33,70,.05);
   }
   .hint{ margin:0 0 10px; font-size:12px; line-height:1.5; color:var(--ink-soft); }
   .card .btn-row{ margin-top:0; }
@@ -500,7 +512,7 @@
     display:flex; align-items:center; gap:9px; font-size:13px; font-weight:600;
     color:var(--ink); padding:8px 0; cursor:pointer;
   }
-  .chk input{ width:18px; height:18px; accent-color:var(--vermillion); flex:none; margin:0; }
+  .chk input{ width:18px; height:18px; accent-color:var(--gold); flex:none; margin:0; }
   .health{ display:flex; flex-wrap:wrap; gap:8px; }
   .health span{
     background:var(--paper-alt); border:1px solid var(--line); border-radius:8px;
@@ -526,9 +538,9 @@
 
   <header>
     <div class="hdr-row">
-      <span class="hdr-emoji">💸</span>
+      <span class="hdr-emoji"><img src="icon-192.png" alt="" width="30" height="30"></span>
       <input id="titleInput" placeholder="Collection title" maxlength="40">
-      <button class="qr-btn" id="qrBtn" title="UPI QR code">
+      <button class="qr-btn" id="qrBtn" title="UPI QR code" aria-label="Show UPI QR code">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM19 14v3M14 19h3M19 19h2"/></svg>
       </button>
     </div>
@@ -540,7 +552,7 @@
 
   <main>
     <!-- COLLECT TAB -->
-    <section class="tab-panel active" id="collectTab">
+    <section class="tab-panel active" id="collectTab" role="tabpanel" aria-labelledby="tab-collectTab" tabindex="0">
       <div class="round-info">
         <div>
           <div class="round-title" id="roundTitleLabel">Round</div>
@@ -553,7 +565,7 @@
     </section>
 
     <!-- SUMMARY TAB -->
-    <section class="tab-panel" id="summaryTab">
+    <section class="tab-panel" id="summaryTab" role="tabpanel" aria-labelledby="tab-summaryTab" tabindex="0">
       <div class="hero-stat">
         <div class="label">This round's total</div>
         <div class="num">₹<span id="sumGrand">0</span></div>
@@ -562,12 +574,12 @@
       </div>
       <div class="split-row">
         <div class="split-card">
-          <div class="stag" style="color:var(--marigold-deep)"><span class="dot cash"></span> Cash</div>
+          <div class="stag" style="color:var(--gold-deep)"><span class="dot cash"></span> Cash</div>
           <div class="samt">₹<span id="sumCash">0</span></div>
           <div class="scount" id="sumCashCount">0 entries</div>
         </div>
         <div class="split-card">
-          <div class="stag" style="color:var(--indigo)"><span class="dot upi"></span> UPI</div>
+          <div class="stag" style="color:var(--upi)"><span class="dot upi"></span> UPI</div>
           <div class="samt">₹<span id="sumUpi">0</span></div>
           <div class="scount" id="sumUpiCount">0 entries</div>
         </div>
@@ -584,7 +596,7 @@
     </section>
 
     <!-- HISTORY TAB -->
-    <section class="tab-panel" id="historyTab">
+    <section class="tab-panel" id="historyTab" role="tabpanel" aria-labelledby="tab-historyTab" tabindex="0">
       <div class="alltime-chip">
         <div>
           <div class="atlabel">All rounds combined</div>
@@ -596,7 +608,7 @@
     </section>
 
     <!-- INVOICE TAB -->
-    <section class="tab-panel" id="invoiceTab">
+    <section class="tab-panel" id="invoiceTab" role="tabpanel" aria-labelledby="tab-invoiceTab" tabindex="0">
       <div class="field" style="margin-bottom:14px;">
         <label>Your name (for signature)</label>
         <input type="text" id="signatureInput" placeholder="Type your name" maxlength="40">
@@ -616,7 +628,7 @@
     </section>
 
     <!-- DATA TAB -->
-    <section class="tab-panel" id="dataTab">
+    <section class="tab-panel" id="dataTab" role="tabpanel" aria-labelledby="tab-dataTab" tabindex="0">
       <div class="section-label">Transaction report</div>
       <div class="card">
         <p class="hint">One PDF listing every round and every transaction. Tick the second box and each UPI payment proof image is printed underneath its row.</p>
@@ -649,32 +661,36 @@
 
       <div class="section-label">On this device</div>
       <div class="health" id="dataHealth"></div>
+      <button class="btn btn-ghost btn-block" id="cleanProofsBtn" style="margin-top:12px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m2 0-.8 12.4A2 2 0 0 1 15.2 20H8.8a2 2 0 0 1-2-1.6L6 6"/></svg>
+        Clean up orphaned proofs
+      </button>
       <p class="hint" style="margin-top:12px;">Everything lives inside this browser. Clearing site data, uninstalling the app, or browsing in private mode will erase it — keep a JSON backup somewhere safe.</p>
     </section>
   </main>
 
-  <button class="fab" id="fabAdd" title="Add person">
+  <button class="fab" id="fabAdd" title="Add person" aria-label="Add a person to this round">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
   </button>
 
-  <nav class="tabbar">
-    <button class="tabbtn active" data-tab="collectTab">
+  <nav class="tabbar" role="tablist" aria-label="Sections">
+    <button class="tabbtn active" data-tab="collectTab" role="tab" id="tab-collectTab" aria-controls="collectTab" aria-selected="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 20h5v-2a4 4 0 0 0-3-3.87M9 20H4v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2M13 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM19 8a2.5 2.5 0 1 0 0-5"/></svg>
       Collect
     </button>
-    <button class="tabbtn" data-tab="summaryTab">
+    <button class="tabbtn" data-tab="summaryTab" role="tab" id="tab-summaryTab" aria-controls="summaryTab" aria-selected="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M8 17V10M13 17V6M18 17v-4"/></svg>
       Summary
     </button>
-    <button class="tabbtn" data-tab="historyTab">
+    <button class="tabbtn" data-tab="historyTab" role="tab" id="tab-historyTab" aria-controls="historyTab" aria-selected="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
       History
     </button>
-    <button class="tabbtn" data-tab="invoiceTab">
+    <button class="tabbtn" data-tab="invoiceTab" role="tab" id="tab-invoiceTab" aria-controls="invoiceTab" aria-selected="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3h8a1 1 0 0 1 1 1v16l-2.5-1.5L12 20l-2.5-1.5L7 20V4a1 1 0 0 1 1-1zM9 8h6M9 12h6"/></svg>
       Invoice
     </button>
-    <button class="tabbtn" data-tab="dataTab">
+    <button class="tabbtn" data-tab="dataTab" role="tab" id="tab-dataTab" aria-controls="dataTab" aria-selected="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7c0-1.66 3.58-3 8-3s8 1.34 8 3-3.58 3-8 3-8-1.34-8-3zM4 7v5c0 1.66 3.58 3 8 3s8-1.34 8-3V7M4 12v5c0 1.66 3.58 3 8 3s8-1.34 8-3v-5"/></svg>
       Data
     </button>
@@ -682,9 +698,9 @@
 </div>
 
 <!-- ADD PERSON MODAL -->
-<div class="overlay" id="overlay">
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="addPersonTitle">
   <div class="modal">
-    <h3>Add person</h3>
+    <h3 id="addPersonTitle">Add person</h3>
 
     <div class="single-box" id="singleBox">
       <div class="field">
@@ -702,8 +718,8 @@
       <div class="field">
         <label>Payment mode</label>
         <div class="mode-toggle">
-          <div class="mode-opt sel-cash" id="modeCashOpt">💵 Cash</div>
-          <div class="mode-opt" id="modeUpiOpt">📲 UPI</div>
+          <div class="mode-opt sel-cash" id="modeCashOpt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 12h.01M18 12h.01"/></svg> Cash</div>
+          <div class="mode-opt" id="modeUpiOpt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.4"/><path d="M10.5 8h3M10.5 11h3M10.5 14h1.5"/><path d="m15 15 2.5 2.5M17.5 15 15 17.5"/></svg> UPI</div>
         </div>
       </div>
     </div>
@@ -728,9 +744,9 @@ Aman Khan"></textarea>
 <datalist id="personNames"></datalist>
 
 <!-- NEW ROUND MODAL -->
-<div class="overlay" id="roundOverlay">
+<div class="overlay" id="roundOverlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="roundTitle">
   <div class="modal">
-    <h3>Start new collection round</h3>
+    <h3 id="roundTitle">Start new collection round</h3>
     <div class="field">
       <label>Round name</label>
       <input type="text" id="roundNameInput" placeholder="e.g. Day 2 Collection">
@@ -743,7 +759,7 @@ Aman Khan"></textarea>
 </div>
 
 <!-- CONFIRM DELETE MODAL -->
-<div class="overlay" id="confirmOverlay">
+<div class="overlay" id="confirmOverlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="confirmTitle">
   <div class="modal">
     <h3 id="confirmTitle">Remove?</h3>
     <p id="confirmMsg" style="font-size:14px;color:var(--ink-soft);margin:0 0 16px;"></p>
@@ -755,20 +771,20 @@ Aman Khan"></textarea>
 </div>
 
 <!-- UPI VERIFICATION MODAL -->
-<div class="overlay" id="verifyOverlay">
+<div class="overlay" id="verifyOverlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="verifyTitle">
   <div class="modal">
-    <h3>UPI Verification</h3>
+    <h3 id="verifyTitle">UPI Verification</h3>
     <div class="verify-card">
       <div class="verify-status pending" id="verifyStatusText">⚠ Not Verified UPI</div>
       <div class="verify-method" id="verifyMethodText">Payment proof has not been verified yet.</div>
       <div class="proof-preview" id="proofPreview" style="display:none;"></div>
     </div>
     <div class="proof-actions">
-      <button class="btn btn-ghost" id="verifyUploadBtn">📁 Upload Image</button>
-      <button class="btn btn-ghost" id="verifyCameraBtn">📷 Take Image</button>
-      <button class="btn btn-primary" id="verifySelfBtn">✓ Self Verified</button>
+      <button class="btn btn-ghost" id="verifyUploadBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L8 8m4-4 4 4"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg> Upload Image</button>
+      <button class="btn btn-ghost" id="verifyCameraBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="12.5" r="3.2"/></svg> Take Image</button>
+      <button class="btn btn-primary" id="verifySelfBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg> Self Verified</button>
     </div>
-    <div class="verify-note">Verification is stored with this transaction. Proof images are saved locally in the app's permanent proof archive and are not automatically deleted.</div>
+    <div class="verify-note">Verification is stored with this transaction. Proof images are kept in a local archive on this device and are removed when the entry is deleted.</div>
     <div class="modal-actions">
       <button class="btn btn-ghost" id="verifyCloseBtn" style="flex:1;justify-content:center;">Close</button>
     </div>
@@ -778,12 +794,12 @@ Aman Khan"></textarea>
 <input type="file" accept="image/*" capture="environment" id="verifyCameraInput" style="display:none;">
 
 <!-- QR MODAL -->
-<div class="overlay qr-overlay" id="qrOverlay">
+<div class="overlay qr-overlay" id="qrOverlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="qrTitle">
   <div class="qr-card">
-    <button class="iconbtn qr-close" id="qrCloseBtn">
+    <button class="iconbtn qr-close" id="qrCloseBtn" aria-label="Close QR code">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
-    <h3>UPI QR code</h3>
+    <h3 id="qrTitle">UPI QR code</h3>
     <div class="qr-image-wrap" id="qrImageWrap"></div>
     <div class="btn-row" id="qrActions">
       <button class="btn btn-ghost" id="qrChangeBtn">Change QR</button>
@@ -888,6 +904,8 @@ Aman Khan"></textarea>
   function showToast(msg){
     var t = document.createElement("div");
     t.className = "toast";
+    t.setAttribute("role", "status");
+    t.setAttribute("aria-live", "polite");
     t.textContent = msg;
     document.body.appendChild(t);
     requestAnimationFrame(function(){ t.classList.add("show"); });
@@ -896,6 +914,70 @@ Aman Khan"></textarea>
       setTimeout(function(){ t.remove(); }, 300);
     }, 2600);
   }
+
+  /* ---------- accessible overlays: focus trap, Escape, focus restore ---------- */
+  var FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]),' +
+                  ' textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  var overlayStack = [];
+
+  function showOverlay(el){
+    if(!el || el.classList.contains("open")) return;
+    overlayStack.push({ el: el, restore: document.activeElement });
+    el.classList.add("open");
+    el.setAttribute("aria-hidden", "false");
+    var first = el.querySelector(FOCUSABLE);
+    if(first) setTimeout(function(){ try{ first.focus(); }catch(e){} }, 40);
+  }
+
+  function hideOverlay(el){
+    if(!el) return;
+    el.classList.remove("open");
+    el.setAttribute("aria-hidden", "true");
+    for(var i = overlayStack.length - 1; i >= 0; i--){
+      if(overlayStack[i].el === el){
+        var rec = overlayStack.splice(i, 1)[0];
+        if(rec.restore && rec.restore.focus){
+          try{ rec.restore.focus(); }catch(e){}
+        }
+        break;
+      }
+    }
+  }
+
+  /* Each dialog knows which control legitimately closes it, so Escape runs the
+     same cleanup path as tapping that control. */
+  var ESC_CLOSER = {
+    overlay: "cancelAdd",
+    roundOverlay: "cancelRound",
+    confirmOverlay: "confirmNo",
+    verifyOverlay: "verifyCloseBtn",
+    qrOverlay: "qrCloseBtn"
+  };
+
+  document.addEventListener("keydown", function(e){
+    if(!overlayStack.length) return;
+    var top = overlayStack[overlayStack.length - 1].el;
+
+    if(e.key === "Escape" || e.key === "Esc"){
+      e.preventDefault();
+      var btn = document.getElementById(ESC_CLOSER[top.id] || "");
+      if(btn) btn.click(); else hideOverlay(top);
+      return;
+    }
+
+    if(e.key === "Tab"){
+      var items = Array.prototype.filter.call(top.querySelectorAll(FOCUSABLE), function(n){
+        return n.getClientRects().length > 0;
+      });
+      if(!items.length) return;
+      var first = items[0], last = items[items.length - 1];
+      if(e.shiftKey && document.activeElement === first){
+        e.preventDefault(); last.focus();
+      } else if(!e.shiftKey && document.activeElement === last){
+        e.preventDefault(); first.focus();
+      }
+    }
+  });
 
   var editingId = null;
   var pendingDelete = null; // { type: "entry"|"event", id }
@@ -955,7 +1037,7 @@ Aman Khan"></textarea>
     collectLabel.textContent = ev.entries.length ? ev.entries.length + " entr" + (ev.entries.length>1?"ies":"y") : "Persons";
 
     if(!ev.entries.length){
-      entryList.innerHTML = '<div class="empty"><div class="big">🙏</div>No entries in this round yet.<br>Tap the + button to start collection.</div>';
+      entryList.innerHTML = '<div class="empty"><div class="big"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M7 11V6a1.5 1.5 0 0 1 3 0v4\"/><path d=\"M10 10V4.5a1.5 1.5 0 0 1 3 0V11\"/><path d=\"M13 11V5.5a1.5 1.5 0 0 1 3 0V13\"/><path d=\"M7 11 5.4 13.2a3 3 0 0 0 .6 4.2L7.5 18.6A5 5 0 0 0 11 20h1a5 5 0 0 0 5-5v-3\"/></svg></div>No entries in this round yet.<br>Tap the + button to start collection.</div>';
       return;
     }
 
@@ -970,8 +1052,8 @@ Aman Khan"></textarea>
               '<input type="number" id="editAmount" value="'+Number(e.amount)+'" min="0" step="1">'+
             '</div>'+
             '<div class="mode-toggle">'+
-              '<div class="mode-opt '+(e.mode!=="upi"?"sel-cash":"")+'" id="editModeCash">💵 Cash</div>'+
-              '<div class="mode-opt '+(e.mode==="upi"?"sel-upi":"")+'" id="editModeUpi">📲 UPI</div>'+
+              '<div class="mode-opt '+(e.mode!=="upi"?"sel-cash":"")+'" id="editModeCash"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"2\" y=\"6\" width=\"20\" height=\"12\" rx=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"2.6\"/><path d=\"M6 12h.01M18 12h.01\"/></svg> Cash</div>'+
+              '<div class="mode-opt '+(e.mode==="upi"?"sel-upi":"")+'" id="editModeUpi"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"6\" y=\"2\" width=\"12\" height=\"20\" rx=\"2.4\"/><path d=\"M10.5 8h3M10.5 11h3M10.5 14h1.5\"/><path d=\"m15 15 2.5 2.5M17.5 15 15 17.5\"/></svg> UPI</div>'+
             '</div>'+
             '<div class="edit-actions">'+
               '<button class="btn btn-ghost" id="cancelEditBtn" style="flex:1;justify-content:center;">'+svgX()+' Cancel</button>'+
@@ -992,9 +1074,9 @@ Aman Khan"></textarea>
               '</div>'+
             '</div>'+
             '<div class="entry-actions">'+
-              (e.mode==="upi" ? '<button class="verify-btn '+(e.verification && e.verification.status==="verified"?"verified":"unverified")+' verifyEntryBtn" data-id="'+e.id+'" title="UPI verification">'+svgCheck()+'</button>' : '')+
-              '<button class="iconbtn editRowBtn" data-id="'+e.id+'">'+svgEdit()+'</button>'+
-              '<button class="iconbtn danger delRowBtn" data-id="'+e.id+'">'+svgTrash()+'</button>'+
+              (e.mode==="upi" ? '<button class="verify-btn '+(e.verification && e.verification.status==="verified"?"verified":"unverified")+' verifyEntryBtn" data-id="'+e.id+'" title="UPI verification" aria-label="Verify UPI payment for '+escapeHtml(nm)+'">'+svgCheck()+'</button>' : '')+
+              '<button class="iconbtn editRowBtn" data-id="'+e.id+'" aria-label="Edit entry for '+escapeHtml(nm)+'">'+svgEdit()+'</button>'+
+              '<button class="iconbtn danger delRowBtn" data-id="'+e.id+'" aria-label="Delete entry for '+escapeHtml(nm)+'">'+svgTrash()+'</button>'+
             '</div>'+
           '</div>';
       }
@@ -1015,18 +1097,27 @@ Aman Khan"></textarea>
       var cancelBtn = document.getElementById("cancelEditBtn");
       if(saveBtn) saveBtn.addEventListener("click", function(){
         var nmVal = document.getElementById("editName").value.trim();
-        var amt = Number(document.getElementById("editAmount").value) || 0;
+        var rawEdit = document.getElementById("editAmount").value;
+        var amt = Number(rawEdit);
+        if(rawEdit === "" || !isFinite(amt) || amt <= 0){
+          showToast("Amount must be greater than zero.");
+          document.getElementById("editAmount").focus();
+          return;
+        }
+        amt = Math.round(amt);
         var en = ev.entries.find(function(x){return x.id===editingId;});
         if(en){
           var oldPersonId = en.personId, oldAmount = Number(en.amount)||0, oldMode = en.mode;
           en.personId = findOrCreatePerson(nmVal || "Unnamed");
           en.amount = amt;
           en.mode = currentMode.val;
+          var hadProof = en.verification && en.verification.proofId;
           if(en.mode !== "upi") {
             en.verification = null;
           } else if(oldPersonId !== en.personId || oldAmount !== amt || oldMode !== "upi") {
             en.verification = null;
           }
+          if(hadProof && !en.verification) deleteProofRecord(hadProof);
         }
         editingId = null;
         save(); renderAll();
@@ -1089,11 +1180,11 @@ Aman Khan"></textarea>
           '</div>'+
           '<div class="event-total">₹'+fmt(t.total)+'</div>'+
           '<div class="event-actions">'+
-            (state.events.length>1 ? '<button class="iconbtn danger delEventBtn" data-id="'+ev.id+'">'+svgTrash()+'</button>' : '')+
+            (state.events.length>1 ? '<button class="iconbtn danger delEventBtn" data-id="'+ev.id+'" aria-label="Delete round '+escapeHtml(ev.title)+'">'+svgTrash()+'</button>' : '')+
           '</div>'+
         '</div>';
     });
-    list.innerHTML = html || '<div class="empty"><div class="big">📅</div>No rounds yet.</div>';
+    list.innerHTML = html || '<div class="empty"><div class="big"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2.5\"/><path d=\"M8 3v4M16 3v4M3 10h18\"/></svg></div>No rounds yet.</div>';
 
     list.querySelectorAll(".event-card").forEach(function(card){
       card.addEventListener("click", function(e){
@@ -1123,7 +1214,7 @@ Aman Khan"></textarea>
     var actions = document.getElementById("invoiceActions");
     var printBtn = document.getElementById("printBtn");
     if(!ev.entries.length){
-      paper.innerHTML = '<div class="inv-top"><div class="inv-om">🧾</div><div class="inv-title">'+escapeHtml(state.title)+'</div><div class="inv-date">'+fmtDate(ev.date)+' · '+escapeHtml(ev.title)+'</div></div>'+
+      paper.innerHTML = '<div class="inv-top"><div class="inv-om"><img src="icon-192.png" alt="" width="42" height="42" style="border-radius:9px;"></div><div class="inv-title">'+escapeHtml(state.title)+'</div><div class="inv-date">'+fmtDate(ev.date)+' · '+escapeHtml(ev.title)+'</div></div>'+
         '<hr class="inv-rule"><div class="empty-inv">Add at least one person to generate the invoice.</div>';
       actions.style.display = "none";
       printBtn.style.display = "none";
@@ -1138,7 +1229,7 @@ Aman Khan"></textarea>
     });
     paper.innerHTML = ''+
       '<div class="inv-top">'+
-        '<div class="inv-om">🧾</div>'+
+        '<div class="inv-om"><img src="icon-192.png" alt="" width="42" height="42" style="border-radius:9px;"></div>'+
         '<div class="inv-title">'+escapeHtml(state.title)+'</div>'+
         '<div class="inv-date">'+fmtDate(ev.date)+' · '+escapeHtml(ev.title)+'</div>'+
       '</div>'+
@@ -1148,7 +1239,7 @@ Aman Khan"></textarea>
         '<tbody>'+rows+'</tbody>'+
         '<tfoot><tr class="inv-total-row"><td colspan="4">Total ('+t.count+' entries)</td><td class="r">₹'+fmt(t.total)+'</td></tr></tfoot>'+
       '</table>'+
-      '<div class="inv-foot">Cash: ₹'+fmt(t.cash)+' &nbsp;•&nbsp; UPI: ₹'+fmt(t.upi)+'<br>Thank you for contributing! 🙏</div>'+
+      '<div class="inv-foot">Cash: ₹'+fmt(t.cash)+' &nbsp;•&nbsp; UPI: ₹'+fmt(t.upi)+'<br>Thank you for contributing.</div>'+
       '<div class="inv-sign">'+
         (state.signatureName
           ? '<div class="sign-col"><div class="sign-cursive">'+escapeHtml(state.signatureName)+'</div><div class="sign-label">Signature</div></div>'
@@ -1193,8 +1284,17 @@ Aman Khan"></textarea>
   // ---- tabs ----
   var fabAdd = document.getElementById("fabAdd");
   function activateTab(tabId){
-    document.querySelectorAll(".tabbtn").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-tab")===tabId); });
-    document.querySelectorAll(".tab-panel").forEach(function(p){ p.classList.toggle("active", p.id===tabId); });
+    document.querySelectorAll(".tabbtn").forEach(function(b){
+      var on = b.getAttribute("data-tab") === tabId;
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-selected", on ? "true" : "false");
+      b.setAttribute("tabindex", on ? "0" : "-1");
+    });
+    document.querySelectorAll(".tab-panel").forEach(function(p){
+      var on = p.id === tabId;
+      p.classList.toggle("active", on);
+      p.setAttribute("aria-hidden", on ? "false" : "true");
+    });
     fabAdd.classList.toggle("hidden", tabId !== "collectTab");
   }
   document.querySelectorAll(".tabbtn").forEach(function(btn){
@@ -1226,7 +1326,7 @@ Aman Khan"></textarea>
   document.getElementById("setDefaultBtn").addEventListener("click", function(){
     var raw = document.getElementById("amountInput").value;
     var n = Number(raw);
-    if(raw === "" || !isFinite(n) || n < 0){ showToast("Enter a valid amount first"); return; }
+    if(raw === "" || !isFinite(n) || n <= 0){ showToast("Enter an amount greater than zero first."); return; }
     state.defaultAmount = n;
     state.defaultUserSet = true;
     save();
@@ -1245,10 +1345,10 @@ Aman Khan"></textarea>
     singleBox.classList.remove("hide");
     bulkBox.classList.remove("show");
     toggleModeLink.textContent = "Paste multiple names instead";
-    overlay.classList.add("open");
+    showOverlay(overlay);
     setTimeout(function(){ document.getElementById("nameInput").focus(); }, 50);
   }
-  function closeAddModal(){ overlay.classList.remove("open"); }
+  function closeAddModal(){ hideOverlay(overlay); }
 
   fabAdd.addEventListener("click", openAddModal);
   document.getElementById("cancelAdd").addEventListener("click", closeAddModal);
@@ -1277,7 +1377,14 @@ Aman Khan"></textarea>
       });
     } else {
       var nm2 = document.getElementById("nameInput").value.trim();
-      var amt2 = Number(document.getElementById("amountInput").value) || 0;
+      var raw2 = document.getElementById("amountInput").value;
+      var amt2 = Number(raw2);
+      if(raw2 === "" || !isFinite(amt2) || amt2 <= 0){
+        showToast("Enter an amount greater than zero.");
+        document.getElementById("amountInput").focus();
+        return;
+      }
+      amt2 = Math.round(amt2);
       var pid2 = findOrCreatePerson(nm2 || "Unnamed");
       ev.entries.push({ id: state.nextId++, personId: pid2, amount: amt2, mode: addMode });
     }
@@ -1290,11 +1397,11 @@ Aman Khan"></textarea>
   var roundOverlay = document.getElementById("roundOverlay");
   document.getElementById("newRoundBtn").addEventListener("click", function(){
     document.getElementById("roundNameInput").value = "";
-    roundOverlay.classList.add("open");
+    showOverlay(roundOverlay);
     setTimeout(function(){ document.getElementById("roundNameInput").focus(); }, 50);
   });
-  document.getElementById("cancelRound").addEventListener("click", function(){ roundOverlay.classList.remove("open"); });
-  roundOverlay.addEventListener("click", function(e){ if(e.target === roundOverlay) roundOverlay.classList.remove("open"); });
+  document.getElementById("cancelRound").addEventListener("click", function(){ hideOverlay(roundOverlay); });
+  roundOverlay.addEventListener("click", function(e){ if(e.target === roundOverlay) hideOverlay(roundOverlay); });
   document.getElementById("confirmRound").addEventListener("click", function(){
     var nm = document.getElementById("roundNameInput").value.trim();
     var ev = freshEvent(nm || ("Round " + (state.events.length+1)));
@@ -1302,7 +1409,7 @@ Aman Khan"></textarea>
     state.currentEventId = ev.id;
     editingId = null;
     save();
-    roundOverlay.classList.remove("open");
+    hideOverlay(roundOverlay);
     renderAll();
     activateTab("collectTab");
   });
@@ -1314,17 +1421,27 @@ Aman Khan"></textarea>
     var titles = { event: "Delete round?", qr: "Remove QR?", import: "Replace all data?" };
     document.getElementById("confirmTitle").textContent = titles[type] || "Remove person?";
     document.getElementById("confirmMsg").textContent = msg;
-    confirmOverlay.classList.add("open");
+    showOverlay(confirmOverlay);
   }
-  function closeConfirm(){ confirmOverlay.classList.remove("open"); pendingDelete = null; pendingImport = null; }
+  function closeConfirm(){ hideOverlay(confirmOverlay); pendingDelete = null; pendingImport = null; }
   document.getElementById("confirmNo").addEventListener("click", closeConfirm);
   confirmOverlay.addEventListener("click", function(e){ if(e.target === confirmOverlay) closeConfirm(); });
   document.getElementById("confirmYes").addEventListener("click", function(){
     if(pendingDelete){
       if(pendingDelete.type === "entry"){
         var ev = getCurrentEvent();
+        var going = ev.entries.filter(function(x){ return x.id === pendingDelete.id; })[0];
+        if(going && going.verification && going.verification.proofId){
+          deleteProofRecord(going.verification.proofId);
+        }
         ev.entries = ev.entries.filter(function(x){ return x.id !== pendingDelete.id; });
       } else if(pendingDelete.type === "event"){
+        var doomed = state.events.filter(function(x){ return x.id === pendingDelete.id; })[0];
+        if(doomed){
+          doomed.entries.forEach(function(e){
+            if(e.verification && e.verification.proofId) deleteProofRecord(e.verification.proofId);
+          });
+        }
         state.events = state.events.filter(function(x){ return x.id !== pendingDelete.id; });
         if(!state.events.length){ var fresh = freshEvent("Collection"); state.events.push(fresh); }
         if(state.currentEventId === pendingDelete.id){ state.currentEventId = getLatestEvent().id; }
@@ -1388,6 +1505,40 @@ Aman Khan"></textarea>
     }).then(function(rec){ return rec.id; });
   }
 
+  function deleteProofRecord(proofId){
+    if(!proofId) return Promise.resolve(false);
+    return getProofDb().then(function(db){
+      return new Promise(function(resolve){
+        var tx = db.transaction(PROOF_STORE, "readwrite");
+        tx.objectStore(PROOF_STORE).delete(proofId);
+        tx.oncomplete = function(){ resolve(true); };
+        tx.onerror = function(){ resolve(false); };
+        tx.onabort = function(){ resolve(false); };
+      });
+    }).catch(function(){ return false; });
+  }
+
+  /* Remove proof blobs that no entry points at any more. */
+  function cleanOrphanedProofs(){
+    var referenced = {};
+    state.events.forEach(function(ev){
+      ev.entries.forEach(function(e){
+        if(e.verification && e.verification.proofId) referenced[e.verification.proofId] = true;
+      });
+    });
+    return getAllProofRecords().then(function(recs){
+      var orphans = recs.filter(function(r){ return r && r.id && !referenced[r.id]; });
+      return Promise.all(orphans.map(function(r){ return deleteProofRecord(r.id); }))
+        .then(function(res){
+          var removed = res.filter(Boolean).length;
+          var bytes = orphans.reduce(function(n, r){
+            return n + ((r.dataUrl && r.dataUrl.length) || 0);
+          }, 0);
+          return { removed: removed, kb: bytes / 1024 };
+        });
+    });
+  }
+
   function getProofImage(proofId){
     return getProofDb().then(function(db){
       return new Promise(function(resolve,reject){
@@ -1420,10 +1571,10 @@ Aman Khan"></textarea>
 
   qrBtn.addEventListener("click", function(){
     renderQrCard();
-    qrOverlay.classList.add("open");
+    showOverlay(qrOverlay);
   });
-  document.getElementById("qrCloseBtn").addEventListener("click", function(){ qrOverlay.classList.remove("open"); });
-  qrOverlay.addEventListener("click", function(e){ if(e.target === qrOverlay) qrOverlay.classList.remove("open"); });
+  document.getElementById("qrCloseBtn").addEventListener("click", function(){ hideOverlay(qrOverlay); });
+  qrOverlay.addEventListener("click", function(e){ if(e.target === qrOverlay) hideOverlay(qrOverlay); });
 
   document.getElementById("qrChangeBtn").addEventListener("click", function(){ qrFileInput.click(); });
   document.getElementById("qrRemoveBtn").addEventListener("click", function(){
@@ -1506,11 +1657,11 @@ Aman Khan"></textarea>
     if(!e || e.mode !== "upi") return;
     verifyEntryId = id;
     renderVerifyModal();
-    verifyOverlay.classList.add("open");
+    showOverlay(verifyOverlay);
   }
 
   function closeVerify(){
-    verifyOverlay.classList.remove("open");
+    hideOverlay(verifyOverlay);
     verifyEntryId = null;
     document.getElementById("proofPreview").innerHTML = "";
   }
@@ -1563,11 +1714,11 @@ Aman Khan"></textarea>
   document.getElementById("shareBtn").addEventListener("click", function(){
     var target = document.getElementById("invoicePaper");
     if(typeof html2canvas === "undefined"){
-      showToast("Image library load nahi hui — internet check karke dubara try karo.");
+      showToast("Image library load nahi hui — use Print / Save as PDF instead.");
       return;
     }
     showToast("Invoice image taiyar ho rahi hai...");
-    html2canvas(target, { backgroundColor: "#FFFDF8", scale: 2 }).then(function(canvas){
+    html2canvas(target, { backgroundColor: "#FFFFFF", scale: 2 }).then(function(canvas){
       canvas.toBlob(function(blob){
         if(!blob){ showToast("Image nahi ban payi, dubara try karo."); return; }
         var ev = getCurrentEvent();
@@ -1855,15 +2006,15 @@ var PdfEngine = (function(){
   };
 
   /* ---------- colour palette (matches the app) ---------- */
-  var INK        = [0.18, 0.11, 0.08];
-  var INK_SOFT   = [0.42, 0.32, 0.25];
-  var MAROON     = [0.42, 0.08, 0.125];
-  var VERMILLION = [0.84, 0.28, 0.23];
-  var MARIGOLD   = [0.89, 0.66, 0.23];
-  var LINE       = [0.87, 0.82, 0.76];
-  var PAPER_ALT  = [0.95, 0.91, 0.85];
-  var GOOD       = [0.25, 0.42, 0.23];
-  var WARN       = [0.72, 0.24, 0.18];
+  var INK        = [0.027, 0.129, 0.275];   // #072146 navy
+  var INK_SOFT   = [0.337, 0.400, 0.541];   // #56668A
+  var MAROON     = [0.027, 0.129, 0.275];   // header band -> brand navy
+  var VERMILLION = [0.878, 0.588, 0.188];   // #E09630 gold
+  var MARIGOLD   = [0.961, 0.710, 0.357];   // #F5B55B gold light
+  var LINE       = [0.871, 0.851, 0.800];
+  var PAPER_ALT  = [0.969, 0.945, 0.898];   // cream
+  var GOOD       = [0.184, 0.420, 0.247];   // #2F6B3F
+  var WARN       = [0.706, 0.220, 0.180];   // #B4382E
 
   function latin1ToBytes(str){
     var out = new Uint8Array(str.length);
@@ -2770,10 +2921,12 @@ var PdfEngine = (function(){
     try{ bytes = JSON.stringify(state).length; }catch(e){ bytes = 0; }
     var kb = (bytes / 1024).toFixed(1);
 
+    function plural(n, one, many){ return n + ' ' + (n === 1 ? one : many); }
+
     el.innerHTML =
-      '<span>' + state.events.length + ' rounds</span>' +
-      '<span>' + entries + ' entries</span>' +
-      '<span>' + proofEntries + ' proofs</span>' +
+      '<span>' + plural(state.events.length, 'round', 'rounds') + '</span>' +
+      '<span>' + plural(entries, 'entry', 'entries') + '</span>' +
+      '<span>' + plural(proofEntries, 'proof', 'proofs') + '</span>' +
       '<span>collection data ~' + kb + ' KB</span>';
 
     if(navigator.storage && navigator.storage.estimate){
@@ -2791,6 +2944,15 @@ var PdfEngine = (function(){
     if(!pdfBtn) return;
 
     pdfBtn.addEventListener("click", generatePdfReport);
+
+    document.getElementById("cleanProofsBtn").addEventListener("click", function(){
+      cleanOrphanedProofs().then(function(res){
+        if(!res.removed){ showToast("No orphaned proofs — nothing to clean."); return; }
+        showToast("Removed " + res.removed + " orphaned proof" + (res.removed === 1 ? "" : "s") +
+                  " (" + res.kb.toFixed(0) + " KB freed).");
+        renderDataHealth();
+      }).catch(function(){ showToast("Could not clean up proofs."); });
+    });
     document.getElementById("exportJsonBtn").addEventListener("click", exportJson);
     document.getElementById("exportCsvBtn").addEventListener("click", exportCsv);
 
