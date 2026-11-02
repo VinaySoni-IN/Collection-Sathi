@@ -7,15 +7,19 @@
 <meta name="description" content="Collection Sathi (Chanda Sathi) — a free, open-source app to track group money collection with Cash/UPI split, multi-round history, and one-tap printable invoices. Ideal for chanda, festival funds, class collections, and community contributions.">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#072146">
+<meta name="color-scheme" content="light">
+<meta name="application-name" content="Collection Sathi">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Collection Sathi">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Caveat:wght@600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<!-- Fonts are shipped with the app (vendor/fonts.css + vendor/fonts/*.woff2):
+     identical faces and weights, but they load with no third-party request
+     and are available offline. Do not swap this back to a CDN link. -->
+<link rel="stylesheet" href="vendor/fonts.css">
 <script src="vendor/html2canvas.min.js" integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H" crossorigin="anonymous"></script>
 <style>
   :root{
@@ -3151,9 +3155,23 @@ var PdfEngine = (function(){
   wireDataTab();
   renderAll();
 
+  // ---- service worker: install + keep itself up to date ----
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", function() {
-      navigator.serviceWorker.register("sw.js").catch(function(){ /* ignore if missing */ });
+      navigator.serviceWorker.register("sw.js", { scope: "./", updateViaCache: "none" })
+        .then(function(reg) {
+          // Check for a new release when the app returns to the foreground
+          // (at most once an hour). No forced reload: an in-progress entry is
+          // never interrupted, the new worker takes over on the next launch.
+          var lastCheck = Date.now();
+          document.addEventListener("visibilitychange", function() {
+            if (document.visibilityState !== "visible") return;
+            if (Date.now() - lastCheck < 60 * 60 * 1000) return;
+            lastCheck = Date.now();
+            reg.update().catch(function(){ /* offline: try again later */ });
+          });
+        })
+        .catch(function(){ /* ignore if missing */ });
     });
   }
 })();

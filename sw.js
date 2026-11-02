@@ -6,12 +6,16 @@
  *   - Everything else (icons, fonts, vendor JS): stale-while-revalidate, so
  *     the app opens instantly and still works with no connection.
  *
+ * The app shell is fully self-contained: there is no CDN, no web font host and
+ * no API. Everything the first paint needs is listed in PRECACHE below, so a
+ * single visit (even a single load) is enough to run the app offline.
+ *
  * Bump CACHE_VERSION on every release. The activate handler deletes any cache
  * that does not match, which is what stops this worker from serving a stale
  * index.html forever.
  */
 
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v3";
 const CACHE_NAME = "collection-sathi-" + CACHE_VERSION;
 
 const PRECACHE = [
@@ -20,9 +24,30 @@ const PRECACHE = [
   "./manifest.json",
   "./icon-192.png",
   "./icon-512.png",
+  "./icon-maskable-192.png",
+  "./icon-maskable-512.png",
   "./apple-touch-icon.png",
   "./favicon-64.png",
-  "./vendor/html2canvas.min.js"
+  "./vendor/html2canvas.min.js",
+  "./vendor/fonts.css",
+  // Self-hosted webfonts (Playfair Display, Caveat, Work Sans) so type never
+  // falls back to a system face while offline.
+  "./vendor/fonts/caveat-latin-600-normal.woff2",
+  "./vendor/fonts/caveat-latin-700-normal.woff2",
+  "./vendor/fonts/caveat-latin-ext-600-normal.woff2",
+  "./vendor/fonts/caveat-latin-ext-700-normal.woff2",
+  "./vendor/fonts/playfair-display-latin-700-normal.woff2",
+  "./vendor/fonts/playfair-display-latin-800-normal.woff2",
+  "./vendor/fonts/playfair-display-latin-ext-700-normal.woff2",
+  "./vendor/fonts/playfair-display-latin-ext-800-normal.woff2",
+  "./vendor/fonts/work-sans-latin-400-normal.woff2",
+  "./vendor/fonts/work-sans-latin-500-normal.woff2",
+  "./vendor/fonts/work-sans-latin-600-normal.woff2",
+  "./vendor/fonts/work-sans-latin-700-normal.woff2",
+  "./vendor/fonts/work-sans-latin-ext-400-normal.woff2",
+  "./vendor/fonts/work-sans-latin-ext-500-normal.woff2",
+  "./vendor/fonts/work-sans-latin-ext-600-normal.woff2",
+  "./vendor/fonts/work-sans-latin-ext-700-normal.woff2"
 ];
 
 self.addEventListener("install", function (event) {
