@@ -184,6 +184,30 @@ Written with a UTF‑8 BOM so ₹ and Devanagari names display correctly, and it
 
 ---
 
+## 📲 Install as an app
+
+Collection Sathi is a full PWA: it installs to the home screen / desktop, opens in its own
+window with its own icon and splash, and works with **no connection at all**.
+
+| Platform | How |
+|---|---|
+| **Android (Chrome / Edge / Samsung)** | Open the app → ⋮ menu → **Install app** / **Add to Home screen** |
+| **iPhone / iPad (Safari)** | Open the app → **Share** → **Add to Home Screen** |
+| **Desktop (Chrome / Edge)** | Install icon in the address bar → **Install** |
+
+What is in place (details and evidence in [PWA-AUDIT.md](PWA-AUDIT.md)):
+
+- **Manifest** — name, short name, stable `id`, `start_url` + `scope`, standalone display, theme & background colours, language, categories
+- **Icons** — 192 px and 512 px for every platform, plus dedicated **maskable** 192/512 icons so Android can crop the icon to a circle/squircle without clipping the artwork
+- **Install dialog** — three labelled phone screenshots so Android shows a proper preview
+- **Shortcuts** — long-press / right-click the installed icon for **Collect**, **Summary**, **Invoice** and **Export**, each deep-linking straight to that tab (`./#summaryTab`, …)
+- **Offline** — the service worker precaches the whole app shell (HTML, manifest, icons, `html2canvas`, fonts): **27 entries, zero third-party requests**, and the app is fully usable in aeroplane mode
+- **Updates** — network-first navigation, an hourly foreground update check and optional periodic background sync (12 h) that refreshes the cached shell while the app is closed; nothing ever reloads under a half-entered payment
+- **Desktop** — `window-controls-overlay` title bar (safe-area padded so nothing sits under the buttons), `launch_handler` reuses the open window, and Edge can pin the app to its sidebar
+- **iOS** — `apple-touch-icon`, standalone meta tags and `viewport-fit=cover` with safe-area padding
+
+---
+
 ## 🎨 Visual identity
 
 The app, its icons and the PDF report all draw from one five-colour palette:
@@ -208,7 +232,7 @@ Plain HTML, CSS & JavaScript — no framework, no build step, no package manager
 
 `localStorage` · `IndexedDB` · Canvas API · Web Share API · Service Worker · Web App Manifest · built-in PDF writer
 
-The only external request at runtime is **Google Fonts**. `html2canvas` is vendored into `vendor/` and pinned with a Subresource Integrity hash, so the app and its invoice sharing both work with no connection.
+There are **zero external requests at runtime**. `html2canvas` is vendored into `vendor/` and pinned with a Subresource Integrity hash; the three webfonts (Playfair Display, Caveat, Work Sans) are self-hosted in `vendor/fonts/`; the service worker serves both from cache. The app shell, the type and the invoice sharing all work with no connection — see [PWA-AUDIT.md](PWA-AUDIT.md).
 
 ---
 
@@ -218,16 +242,21 @@ The only external request at runtime is **Google Fonts**. `html2canvas` is vendo
 Collection-Sathi/
 │
 ├── index.html              # App UI, CSS, JavaScript and the PDF engine (self-contained)
-├── manifest.json           # PWA config — name, icons, theme
-├── sw.js                   # Service worker (installable + offline)
+├── manifest.json           # PWA config — name, icons, maskable icons, screenshots, theme
+├── sw.js                   # Service worker (installable + offline app shell)
 ├── icon-192.png            # App icon (small, rounded)
 ├── icon-512.png            # App icon (large, rounded)
+├── icon-maskable-192.png   # Android adaptive icon (small, full-bleed, safe-zoned)
+├── icon-maskable-512.png   # Android adaptive icon (large, full-bleed, safe-zoned)
 ├── apple-touch-icon.png    # iOS home-screen icon (square, iOS masks it)
 ├── favicon-64.png          # Browser favicon
 ├── vendor/
-│   └── html2canvas.min.js  # Vendored + SRI-pinned (invoice image share)
+│   ├── html2canvas.min.js  # Vendored + SRI-pinned (invoice image share)
+│   ├── fonts.css           # Self-hosted @font-face rules
+│   └── fonts/              # 16 woff2 files — Playfair Display, Caveat, Work Sans
 ├── Banner.png              # README banner
-├── screenshots/            # Screenshots used in this README
+├── screenshots/            # Screenshots used in this README and the install dialog
+├── PWA-AUDIT.md            # PWA requirement-by-requirement audit
 ├── LICENSE                 # MIT License
 └── README.md               # This file
 ```
@@ -337,6 +366,7 @@ Functional and in everyday use for real collections, still short of a finished v
 - [x] Auto-delete proof images when their entry or round is deleted
 - [x] One-tap cleanup for orphaned proof images
 - [x] Offline-capable, self-updating service worker
+- [x] Full PWA install UX — maskable icons, install screenshots, self-hosted offline fonts, zero third-party requests
 - [x] Full keyboard and screen-reader support in dialogs
 - [ ] Auto-backup reminder (nudge after N days without an export)
 - [ ] Search & filter entries

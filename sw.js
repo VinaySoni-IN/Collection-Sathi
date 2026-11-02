@@ -6,12 +6,16 @@
  *   - Everything else (icons, fonts, vendor JS): stale-while-revalidate, so
  *     the app opens instantly and still works with no connection.
  *
+ * The app shell is fully self-contained: there is no CDN, no web font host and
+ * no API. Everything the first paint needs is listed in PRECACHE below, so a
+ * single visit (even a single load) is enough to run the app offline.
+ *
  * Bump CACHE_VERSION on every release. The activate handler deletes any cache
  * that does not match, which is what stops this worker from serving a stale
  * index.html forever.
  */
 
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v4";
 const CACHE_NAME = "collection-sathi-" + CACHE_VERSION;
 
 const PRECACHE = [
@@ -20,9 +24,30 @@ const PRECACHE = [
   "./manifest.json",
   "./icon-192.png",
   "./icon-512.png",
+  "./icon-maskable-192.png",
+  "./icon-maskable-512.png",
   "./apple-touch-icon.png",
   "./favicon-64.png",
-  "./vendor/html2canvas.min.js"
+  "./vendor/html2canvas.min.js",
+  "./vendor/fonts.css",
+  // Self-hosted webfonts (Playfair Display, Caveat, Work Sans) so type never
+  // falls back to a system face while offline.
+  "./vendor/fonts/caveat-latin-600-normal.woff2",
+  "./vendor/fonts/caveat-latin-700-normal.woff2",
+  "./vendor/fonts/caveat-latin-ext-600-normal.woff2",
+  "./vendor/fonts/caveat-latin-ext-700-normal.woff2",
+  "./vendor/fonts/playfair-display-latin-700-normal.woff2",
+  "./vendor/fonts/playfair-display-latin-800-normal.woff2",
+  "./vendor/fonts/playfair-display-latin-ext-700-normal.woff2",
+  "./vendor/fonts/playfair-display-latin-ext-800-normal.woff2",
+  "./vendor/fonts/work-sans-latin-400-normal.woff2",
+  "./vendor/fonts/work-sans-latin-500-normal.woff2",
+  "./vendor/fonts/work-sans-latin-600-normal.woff2",
+  "./vendor/fonts/work-sans-latin-700-normal.woff2",
+  "./vendor/fonts/work-sans-latin-ext-400-normal.woff2",
+  "./vendor/fonts/work-sans-latin-ext-500-normal.woff2",
+  "./vendor/fonts/work-sans-latin-ext-600-normal.woff2",
+  "./vendor/fonts/work-sans-latin-ext-700-normal.woff2"
 ];
 
 self.addEventListener("install", function (event) {
@@ -53,6 +78,32 @@ self.addEventListener("activate", function (event) {
 
 self.addEventListener("message", function (event) {
   if (event.data === "skip-waiting") self.skipWaiting();
+});
+
+/* Periodic background sync (installed apps only, Chrome/Edge).
+ *
+ * Collection Sathi keeps its data on the device, so there is no server record
+ * to sync. What this does refresh is the *app shell*: while the app is closed,
+ * the network copy of index.html and the manifest is pulled into the cache, so
+ * the next launch opens on the current release instead of waiting for the
+ * navigation to revalidate. It is registered from index.html and may be
+ * refused or never fired — the app works exactly the same either way.
+ */
+self.addEventListener("periodicsync", function (event) {
+  if (event.tag !== "refresh-shell") return;
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(function (cache) {
+      return Promise.all(["./index.html", "./manifest.json"].map(function (url) {
+        return fetch(new Request(url, { cache: "reload" }))
+          .then(function (response) {
+            if (response && response.status === 200) {
+              return cache.put(url, response.clone());
+            }
+          })
+          .catch(function () { /* offline: keep the cached copy */ });
+      }));
+    })
+  );
 });
 
 function isNavigation(request) {
