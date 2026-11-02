@@ -38,7 +38,11 @@ Legend: ✅ already satisfied · ⚠️ satisfied but weak · ➕ added in this 
 | B1 | **Maskable** icon (Android adaptive icons, no white letterboxing) | ❌ | ✅ | `icon-maskable-192.png` / `icon-maskable-512.png` ➕ — full-bleed cream background, artwork confined to the 80 % safe-zone circle (measured: 198.7 px of 204.8 px max radius) |
 | B2 | `screenshots` for the install dialog | ❌ | ✅ | 3 `form_factor: "narrow"` entries with labels ➕, real 840×1680 PNGs already in the repo |
 | B3 | Wide/desktop screenshot | ❌ | ⛔ | No desktop-sized capture exists and none can be produced without a rendering browser. Only affects the desktop install dialog's preview strip; installability is untouched. |
-| B4 | `shortcuts` (long-press app icon) | ❌ | ⛔ | Needs deep links into tabs, which the app does not have. Adding them would mean new in-app routing — too much surface for a "no-behaviour-change" pass. |
+| B4 | `shortcuts` (long-press / right-click app icon) | ❌ | ✅ | 4 shortcuts ➕ (Collect, Summary, Invoice, Export) pointing at `./#collectTab`, `./#summaryTab`, `./#invoiceTab`, `./#dataTab`; the app now honours those hashes (a hashless load is untouched). |
+| B5 | `launch_handler` | ❌ | ✅ | `{"client_mode":"navigate-existing"}` ➕ — a shortcut or link reuses the open window instead of spawning duplicates |
+| B6 | `edge_side_panel` | ❌ | ✅ | `{"preferred_width":400}` ➕ — Edge can pin the app to the sidebar |
+| B7 | `display_override: window-controls-overlay` | ❌ | ✅ | ➕, with one guarded CSS rule (`@media (display-mode: window-controls-overlay)`) so the header is never hidden under the window buttons. Cannot match in a tab, on mobile, or in plain standalone. |
+| B8 | `display_override: tabbed` | ❌ | ✅ | ➕ last in the list, so it is inert until a browser ships that mode |
 
 ### C. Offline behaviour
 
@@ -52,6 +56,7 @@ Legend: ✅ already satisfied · ⚠️ satisfied but weak · ➕ added in this 
 | C6 | Cache versioning / old cache eviction | ✅ | ✅ | `CACHE_VERSION` bumped `v2` → `v3`; `activate` still deletes every other cache |
 | C7 | Update path (pick up a new deploy) | ⚠️ | ✅ | `updateViaCache:"none"` stops the 10-minute GitHub Pages HTTP cache hiding a new `sw.js`; an hourly foreground `reg.update()` check was added. Still **no forced reload**, so a half-typed entry is never interrupted. |
 | C8 | Non-GET and cross-origin requests untouched | ✅ | ✅ | Unchanged (`request.method !== "GET"`, origin check) |
+| C9 | **Periodic background sync** (refresh the shell while closed) | ❌ | ✅ | `periodicsync` handler refreshes the cached `index.html` + `manifest.json`; registered from the page with a 12 h minimum interval, fully optional (refused → no behaviour change). Data stays on-device, so the shell is the only thing worth syncing. |
 
 ### D. Platform integration
 
@@ -80,25 +85,78 @@ Legend: ✅ already satisfied · ⚠️ satisfied but weak · ➕ added in this 
 
 | File | Change |
 |---|---|
-| `manifest.json` | `scope`, `display_override`, `lang`, `dir`, `categories`, `prefer_related_applications`; 2 maskable icons; 3 narrow screenshots. Name, short name, id, start_url, display, colours and orientation untouched. |
-| `index.html` | `<head>` only: dropped 2 `preconnect`s + the Google Fonts link, added `vendor/fonts.css`, `color-scheme`, `application-name`, a 192 px `rel="icon"`. End of script: service-worker registration gained `scope`, `updateViaCache:"none"` and an hourly foreground update check. |
-| `sw.js` | `CACHE_VERSION` → `v3`; precache now also contains the 2 maskable icons, `vendor/fonts.css` and the 16 woff2 files (27 entries). Strategies unchanged. |
+| `manifest.json` | `scope`, `display_override` (window-controls-overlay → standalone → minimal-ui → tabbed), `lang`, `dir`, `categories`, `prefer_related_applications`, `launch_handler`, `edge_side_panel`, `shortcuts` (4), 2 maskable icons, 3 narrow screenshots. Name, short name, id, start_url, display, colours and orientation untouched. |
+| `index.html` | `<head>`: dropped 2 `preconnect`s + the Google Fonts link, added `vendor/fonts.css`, `color-scheme`, `application-name` and a 192 px `rel="icon"`. CSS: **one** new rule, valid only inside `@media (display-mode: window-controls-overlay)`. End of script: `#hash` → tab deep links for the install shortcuts, plus service-worker registration with `scope`, `updateViaCache:"none"`, the hourly foreground update check and optional `periodicSync` registration. |
+| `sw.js` | `CACHE_VERSION` → `v4`; precache now also contains the 2 maskable icons, `vendor/fonts.css` and the 16 woff2 files (27 entries); new `periodicsync` handler. Existing strategies unchanged. |
 | `vendor/fonts.css`, `vendor/fonts/*.woff2` | **New.** 16 woff2 files (351 KB) — Playfair Display 700/800, Caveat 600/700, Work Sans 400/500/600/700, latin + latin-ext, generated from the same Google-subset files (`@fontsource`). Exactly the weights the old CDN link requested, with the same `unicode-range` so glyph selection is identical. |
 | `icon-maskable-192.png`, `icon-maskable-512.png` | **New.** Opaque, full-bleed, safe-zone compliant derivatives of `icon-512.png`. The original icons are untouched. |
 | `README.md` | Documents the install flow, the offline behaviour and this audit. |
 | `PWA-AUDIT.md` | This file. |
 
-Nothing else in the repository changed. The existing PNG icons, screenshots, `Banner.png`,
-`sample-report.pdf`, CSS, DOM and all app JavaScript are byte-identical.
+Nothing else in the repository changed. The existing PNG icons, screenshots, `Banner.png`
+and `sample-report.pdf` are byte-identical, no existing CSS declaration was edited, and no
+existing DOM node, handler or storage key was touched.
 
 ---
 
-## 3. Verification
+## 3. PWABuilder report — item by item
+
+The screenshot report lists every manifest member and service-worker feature PWABuilder
+looks for. Everything below was taken from that list.
+
+### Manifest — done
+
+| PWABuilder action item | Field |
+|---|---|
+| Jump to key tasks / pages | `shortcuts` — 4 entries + hash deep links |
+| Control how the app is displayed | `display_override`, `display` |
+| Provide a top-level URL path | `scope`, `start_url` |
+| Primary language | `lang` |
+| Language direction | `dir` |
+| Install-experience categories | `categories` |
+| PWA vs native app | `prefer_related_applications: false` |
+| Showcase the app (screenshots) | `screenshots` — 3 labelled narrow |
+| Pin to the Edge sidebar | `edge_side_panel` |
+| Customise the title bar | `display_override: window-controls-overlay` (+ guarded CSS) |
+| Open multiple tabs | `display_override: tabbed` (inert today) |
+| Control how the app is launched | `launch_handler: navigate-existing` |
+
+### Service worker — done
+
+| PWABuilder item | Implementation |
+|---|---|
+| Work offline by caching assets | 27 precache entries, network-first navigations, SWR assets |
+| Periodic background sync | `periodicsync` → refreshes cached `index.html` + `manifest.json`, 12 h minimum |
+
+### Deliberately **not** added, and why
+
+These are the remaining items in the report. Each one is a promise the app would have to
+keep at runtime; shipping the manifest field without the behaviour would be worse than
+leaving it out (dead shortcuts, share sheets that dump the user back with nothing, an
+invented store ID).
+
+| PWABuilder item | Why not |
+|---|---|
+| `share_target` (OS share tray) | Receiving a shared payment proof means handling a multipart POST in the worker, stashing the file and surfacing an "attach to which payment?" flow. That is a feature, not a manifest field. |
+| `file_handlers` (open a file) | Same shape: needs a `launchQueue` consumer that feeds a dropped `.json` backup into the existing import routine and reports success. |
+| `protocol_handlers` | There is no protocol this app owns. A `web+…` scheme with no handler behind it just dead-ends. |
+| `scope_extensions` | The app never navigates to another origin; the field also requires a `web-app-origin-association` file hosted on that origin. |
+| `related_applications` | No published store listing or package ID exists to reference. `prefer_related_applications: false` already states the choice. |
+| `iarc_rating_id` | Issued by the IARC per store submission — it cannot be self-assigned. |
+| `widgets` (Windows widget) | Needs an Adaptive Card template **and** a data source. The app's data lives in `localStorage`/IndexedDB on the device, which a Windows widget host cannot read. |
+| `note_taking` | Collection Sathi is not a notes app; registering it in the OS note menus would mislead users. |
+| Background Sync (one-off) | The app performs no network writes to retry — every save is local. |
+| Push notifications | Requires a VAPID key pair and a push server. The app is deliberately account-free and serverless. |
+
+> The two tips that stay "missing" on purpose are therefore **push** and **background
+> sync**: both need a backend, and this app's whole promise is that there is none.
+
+## 4. Verification
 
 No GUI browser is available in this environment, so the app was verified two ways.
 
 **A. PWA / service-worker harness** (`_backup/harness.mjs`, run against a local static
-server, emulating the Cache Storage + `fetch` events `sw.js` uses): **34/34 checks pass**,
+server, emulating the Cache Storage + `fetch` events `sw.js` uses): **55/55 checks pass**,
 including
 
 - every manifest icon and screenshot exists and its declared `sizes` match the real PNG header;
@@ -106,28 +164,33 @@ including
 - `sw.js` install really caches 27 entries (app shell, `html2canvas`, `fonts.css`, all 16 fonts);
 - with the network cut, a navigation still returns the app (`<title>Collection Sathi</title>`);
 - with the network cut, a webfont is still served from cache;
-- cross-origin requests are left to the network.
+- cross-origin requests are left to the network;
+- every `shortcuts` URL is in scope and its `#hash` target really exists in `index.html`;
+- the `periodicsync` handler actually rewrites the cached shell.
 
-**B. DOM smoke test** (`_backup/smoke.js`, jsdom, real `index.html` over HTTP): **15/15
+**B. DOM smoke test** (`_backup/smoke.js`, jsdom, real `index.html` over HTTP): **20/20
 checks pass** — page boots, five tabs render, every tab switches, a seeded collection
 (`Aarav Sharma` ₹500 cash + `Meera Patel` ₹1,250 UPI, total ₹1,750) is restored from
-`localStorage` and rendered, edits persist, and there are **no uncaught runtime errors**.
+`localStorage` and rendered, edits persist, deep links `#summaryTab` / `#invoiceTab` / `#dataTab`
+open the right tab while a hashless or unknown-hash load still opens Collect, and there are
+**no uncaught runtime errors**.
 
 Both harnesses live outside the repository so the shipped app stays dependency-free.
 
 ---
 
-## 4. Still on the table (not blocking install or offline)
+## 5. Still on the table (not blocking install or offline)
 
 1. **Desktop (wide) screenshot** for the desktop install dialog — needs a real desktop capture.
-2. **`shortcuts`** — needs tab deep links (`#summary`, `#invoice`) in the app.
-3. **iOS launch images** — cosmetic, ~2 MB of per-device PNGs.
-4. **"New version installed" toast** — would add UI; deliberately avoided in this pass.
-5. **Dark-mode `theme_color`** — the app is light-only by design.
+2. **iOS launch images** — cosmetic, ~2 MB of per-device PNGs.
+3. **"New version installed" toast** — would add UI; deliberately avoided in this pass.
+4. **Dark-mode `theme_color`** — the app is light-only by design.
+5. **`share_target` / `file_handlers`** — the two PWABuilder items worth real code later
+   (share a payment screenshot in, open a `.json` backup from the file manager).
 
 ---
 
-## 5. Rollback
+## 6. Rollback
 
 Three independent copies of the pre-change state were made before any edit:
 

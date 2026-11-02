@@ -87,6 +87,13 @@
     border-bottom: 3px solid var(--gold);
     box-shadow: 0 6px 16px var(--shadow);
   }
+  /* Installed desktop PWA in window-controls-overlay mode (see display_override
+     in manifest.json): keep the header clear of the window buttons. This media
+     query cannot match in a browser tab, on mobile, or in plain standalone
+     mode, so normal layout is untouched. */
+  @media (display-mode: window-controls-overlay){
+    header{ padding-top: calc(14px + env(titlebar-area-height, 0px)); }
+  }
   .hdr-row{
     display:grid;
     grid-template-columns:auto minmax(0,1fr) 34px;
@@ -3155,6 +3162,18 @@ var PdfEngine = (function(){
   wireDataTab();
   renderAll();
 
+  // ---- deep links ----
+  // Install shortcuts in manifest.json point at ./#summaryTab, ./#invoiceTab and
+  // friends; switching to a hash that names a panel opens that tab. Without a
+  // hash (the normal case) nothing happens, so boot behaviour is unchanged.
+  var DEEP_LINK_TABS = ["collectTab", "summaryTab", "historyTab", "invoiceTab", "dataTab"];
+  function applyTabFromHash(){
+    var id = (window.location.hash || "").replace(/^#/, "");
+    if(DEEP_LINK_TABS.indexOf(id) !== -1) activateTab(id);
+  }
+  applyTabFromHash();
+  window.addEventListener("hashchange", applyTabFromHash);
+
   // ---- service worker: install + keep itself up to date ----
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", function() {
@@ -3170,6 +3189,16 @@ var PdfEngine = (function(){
             lastCheck = Date.now();
             reg.update().catch(function(){ /* offline: try again later */ });
           });
+
+          // Periodic background sync (installed apps, Chrome/Edge): lets the
+          // worker refresh the cached shell while the app is closed. Optional
+          // by design — the browser may refuse or never fire it.
+          try{
+            if(reg.periodicSync && reg.periodicSync.register){
+              reg.periodicSync.register("refresh-shell", { minInterval: 12 * 60 * 60 * 1000 })
+                .catch(function(){ /* unsupported or not granted — fine */ });
+            }
+          }catch(e){ /* older browser */ }
         })
         .catch(function(){ /* ignore if missing */ });
     });

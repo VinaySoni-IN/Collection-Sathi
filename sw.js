@@ -15,7 +15,7 @@
  * index.html forever.
  */
 
-const CACHE_VERSION = "v3";
+const CACHE_VERSION = "v4";
 const CACHE_NAME = "collection-sathi-" + CACHE_VERSION;
 
 const PRECACHE = [
@@ -78,6 +78,32 @@ self.addEventListener("activate", function (event) {
 
 self.addEventListener("message", function (event) {
   if (event.data === "skip-waiting") self.skipWaiting();
+});
+
+/* Periodic background sync (installed apps only, Chrome/Edge).
+ *
+ * Collection Sathi keeps its data on the device, so there is no server record
+ * to sync. What this does refresh is the *app shell*: while the app is closed,
+ * the network copy of index.html and the manifest is pulled into the cache, so
+ * the next launch opens on the current release instead of waiting for the
+ * navigation to revalidate. It is registered from index.html and may be
+ * refused or never fired — the app works exactly the same either way.
+ */
+self.addEventListener("periodicsync", function (event) {
+  if (event.tag !== "refresh-shell") return;
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(function (cache) {
+      return Promise.all(["./index.html", "./manifest.json"].map(function (url) {
+        return fetch(new Request(url, { cache: "reload" }))
+          .then(function (response) {
+            if (response && response.status === 200) {
+              return cache.put(url, response.clone());
+            }
+          })
+          .catch(function () { /* offline: keep the cached copy */ });
+      }));
+    })
+  );
 });
 
 function isNavigation(request) {

@@ -200,8 +200,10 @@ What is in place (details and evidence in [PWA-AUDIT.md](PWA-AUDIT.md)):
 - **Manifest** — name, short name, stable `id`, `start_url` + `scope`, standalone display, theme & background colours, language, categories
 - **Icons** — 192 px and 512 px for every platform, plus dedicated **maskable** 192/512 icons so Android can crop the icon to a circle/squircle without clipping the artwork
 - **Install dialog** — three labelled phone screenshots so Android shows a proper preview
+- **Shortcuts** — long-press / right-click the installed icon for **Collect**, **Summary**, **Invoice** and **Export**, each deep-linking straight to that tab (`./#summaryTab`, …)
 - **Offline** — the service worker precaches the whole app shell (HTML, manifest, icons, `html2canvas`, fonts): **27 entries, zero third-party requests**, and the app is fully usable in aeroplane mode
-- **Updates** — network-first navigation plus an hourly foreground update check, so a new deploy is picked up on the next launch; nothing ever reloads under a half-entered payment
+- **Updates** — network-first navigation, an hourly foreground update check and optional periodic background sync (12 h) that refreshes the cached shell while the app is closed; nothing ever reloads under a half-entered payment
+- **Desktop** — `window-controls-overlay` title bar (safe-area padded so nothing sits under the buttons), `launch_handler` reuses the open window, and Edge can pin the app to its sidebar
 - **iOS** — `apple-touch-icon`, standalone meta tags and `viewport-fit=cover` with safe-area padding
 
 ---
