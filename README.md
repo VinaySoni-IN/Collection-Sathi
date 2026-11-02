@@ -191,6 +191,7 @@ window with its own icon and splash, and works with **no connection at all**.
 
 | Platform | How |
 |---|---|
+| **Android — APK** | **[Download Collection-Sathi-1.0.0.apk](android/Collection-Sathi-1.0.0.apk)** (4.1 MB, Android 7.0+) · see [android/README.md](android/README.md) |
 | **Android (Chrome / Edge / Samsung)** | Open the app → ⋮ menu → **Install app** / **Add to Home screen** |
 | **iPhone / iPad (Safari)** | Open the app → **Share** → **Add to Home Screen** |
 | **Desktop (Chrome / Edge)** | Install icon in the address bar → **Install** |
@@ -254,6 +255,7 @@ Collection-Sathi/
 │   ├── html2canvas.min.js  # Vendored + SRI-pinned (invoice image share)
 │   ├── fonts.css           # Self-hosted @font-face rules
 │   └── fonts/              # 16 woff2 files — Playfair Display, Caveat, Work Sans
+├── android/                # Signed Android (TWA) build, checksums, assetlinks reference
 ├── Banner.png              # README banner
 ├── screenshots/            # Screenshots used in this README and the install dialog
 ├── PWA-AUDIT.md            # PWA requirement-by-requirement audit

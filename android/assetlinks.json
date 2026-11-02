@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.vinaysoni_in.twa",
+        "sha256_cert_fingerprints": ["AB:FA:CA:7A:9E:26:74:7C:2C:0E:C8:3C:58:F5:C2:91:C8:F5:26:DB:21:97:7C:A6:B6:DB:94:40:C7:38:88:AA"]
+      }
+    }]
